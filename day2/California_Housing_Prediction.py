@@ -57,14 +57,6 @@ plt.ylabel('Predictions')
 plt.title('True vs Predicted House Values')
 plt.show()
 
-# --- 7. 結果視覺化 (觀察天花板效應) ---
-plt.figure(figsize=(10, 6))
-sns.histplot(df['Target'], bins=50, kde=True)
-plt.axvline(x=5.0, color='red', linestyle='--', label='Ceiling ($500k)')
-plt.title('Distribution of House Prices')
-plt.legend()
-plt.show()
-
 # --- 7. 結果視覺化 地理空間視覺化 (Geospatial Visualization) ---
 plt.figure(figsize=(10, 7))
 sns.scatterplot(
