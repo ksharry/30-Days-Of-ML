@@ -28,7 +28,7 @@ $$J(w, b) = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2$$
 
 ## 2. 實作：加州房價預測 (California Housing Prediction)
 
-本實作使用 Scikit-Learn 內建的 `California Housing` 資料集。此資料集是取代舊版波士頓房價資料集（因倫理爭議被棄用）的標準入門數據。
+本實作使用 Scikit-Learn 內建的 [California Housing](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_california_housing.html)資料集。此資料集是取代舊版波士頓房價資料集（因倫理爭議被棄用）的標準入門數據。
 
 ### 2.1 資料集介紹
 * **來源：** 1990 年加州人口普查數據。
@@ -105,11 +105,38 @@ plt.title('True vs Predicted House Values')
 plt.show()
 ```
 
-### 3. 實作心得與重點
+### 3. 資料集資訊：
+
+總樣本數：20,640 筆
+特徵數：8 個 + 1 個目標變數
+模型效能：
+
+MSE (均方誤差): 0.5559
+R² Score (決定係數): 0.5758 (約 57.58%)
+
+特徵重要性排序：
+AveBedrms (平均臥室數): +0.783 ⬆️
+MedInc (收入中位數): +0.449 ⬆️
+HouseAge (房齡): +0.010 ⬆️
+Population (人口): -0.000002 ≈ 0
+AveOccup (平均居住人數): -0.004 ⬇️
+AveRooms (平均房間數): -0.123 ⬇️
+Latitude (緯度): -0.420 ⬇️
+Longitude (經度): -0.434 ⬇️
+
+程式顯示了兩個圖表視窗：
+
+收入中位數 vs 房價的散點圖
+![收入中位數 vs 房價的散點圖](https://ithelp.ithome.com.tw/upload/images/20251210/20161788px5qCtT6PO.jpg)
+真實值 vs 預測值的對比圖
+![真實值 vs 預測值的對比圖](https://ithelp.ithome.com.tw/upload/images/20251210/20161788Vu9D0e7kfH.jpg)
+
+
+### 4. 實作心得與重點
 * **MSE (均方誤差)**： 此數值越低越好，代表預測誤差越小。
 
 * **R2 Score** (決定係數)： 最大值為 1。本次實作結果約在 0.57~0.60 之間，代表模型解釋了約 60% 的房價變異，這在僅使用簡單線性回歸的情況下是可以接受的基準點 (Baseline)。
 
 * **權重意義**： 從係數中可以發現 MedInc (收入) 對房價有極強的正向影響，這符合經濟學直覺。
 ---
-Next Day Preivew: Day 02 - 邏輯回歸 (Logistic Regression) 與分類問題
+Next Day Preivew: Day 03 - 正則化回歸 (Ridge & Lasso Regression)，重點： L1 與 L2 Regularization 的差別、如何解決 Overfitting、特徵篩選。
