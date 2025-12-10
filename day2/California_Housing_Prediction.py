@@ -24,6 +24,26 @@ plt.xlabel('Median Income')
 plt.ylabel('House Value')
 plt.show()
 
+# 房價分佈圖 (觀察天花板效應)
+plt.figure(figsize=(10, 6))
+
+# 繪製直方圖搭配密度曲線 (KDE)
+# bins=50 表示將資料切成 50 個區間，切越細看得越清楚
+sns.histplot(df['Target'], bins=50, kde=True, color='#4c72b0')
+
+# 加上一條紅色的垂直虛線在 5.0 的位置
+plt.axvline(x=5.0, color='red', linestyle='--', linewidth=2, label='Ceiling ($500k)')
+
+# 加入標題與標籤
+plt.title('Distribution of California House Prices', fontsize=14)
+plt.xlabel('Median House Value (in $100,000 units)', fontsize=12)
+plt.ylabel('Frequency (Count)', fontsize=12)
+plt.legend() # 顯示圖例
+
+plt.grid(axis='y', alpha=0.3) # 加入淡淡的水平網格線增加易讀性
+plt.show()
+
+# ==========================================
 # --- 3. 資料分割 ---
 # 將資料切分為 80% 訓練集，20% 測試集
 X = df.drop('Target', axis=1)
