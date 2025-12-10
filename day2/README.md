@@ -1,4 +1,4 @@
-# Day 01：線性回歸 (Linear Regression) 與房價預測
+# Day 02：線性回歸 (Linear Regression) 與房價預測
 
 ## 0. 歷史小故事：回歸 (Regression) 的由來
 「回歸」這個詞最早由英國科學家 **法蘭西斯·高爾頓爵士 (Sir Francis Galton)** 於 19 世紀末提出。作為達爾文的表弟，高爾頓熱衷於研究遺傳與生物統計，他最著名的研究之一就是觀察「父母身高與子女身高」的關係。
@@ -68,14 +68,6 @@ $$J(w, b) = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2$$
 ### 2.2 Python 程式碼實作
 完整程式連結-[California_Housing_Prediction.py](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/California_Housing_Prediction.py)
 
-```python
-# --- 2. 數據觀察 (EDA) ---
-# 觀察「收入中位數 (MedInc)」與「房價 (Target)」的關係
-plt.figure(figsize=(8, 6))
-sns.scatterplot(x='MedInc', y='Target', data=df, alpha=0.3)
-plt.title('Median Income vs House Value')
-plt.show()
-```
 ## 3. 結果與分析 (Results & Analysis)
 
 ### 3.1 模型效能指標
