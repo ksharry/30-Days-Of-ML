@@ -24,3 +24,5 @@ df.to_excel(output_file, index=False, engine='xlwt')
 
 print(f"✓ 資料集已成功儲存為 {output_file}")
 print(f"✓ 檔案位置: c:\\Users\\Harry\\Desktop\\30-Days-Of-ML\\day2\\{output_file}")
+
+

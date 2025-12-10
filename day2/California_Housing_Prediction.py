@@ -11,7 +11,6 @@ from sklearn.metrics import mean_squared_error, r2_score
 housing = fetch_california_housing()
 df = pd.DataFrame(housing.data, columns=housing.feature_names)
 df['Target'] = housing.target  # 加入目標變數 (房價)
-
 print("資料集維度:", df.shape)
 print(df.head())
 
@@ -20,30 +19,8 @@ print(df.head())
 plt.figure(figsize=(8, 6))
 sns.scatterplot(x='MedInc', y='Target', data=df, alpha=0.3)
 plt.title('Median Income vs House Value')
-plt.xlabel('Median Income')
-plt.ylabel('House Value')
 plt.show()
 
-# 房價分佈圖 (觀察天花板效應)
-plt.figure(figsize=(10, 6))
-
-# 繪製直方圖搭配密度曲線 (KDE)
-# bins=50 表示將資料切成 50 個區間，切越細看得越清楚
-sns.histplot(df['Target'], bins=50, kde=True, color='#4c72b0')
-
-# 加上一條紅色的垂直虛線在 5.0 的位置
-plt.axvline(x=5.0, color='red', linestyle='--', linewidth=2, label='Ceiling ($500k)')
-
-# 加入標題與標籤
-plt.title('Distribution of California House Prices', fontsize=14)
-plt.xlabel('Median House Value (in $100,000 units)', fontsize=12)
-plt.ylabel('Frequency (Count)', fontsize=12)
-plt.legend() # 顯示圖例
-
-plt.grid(axis='y', alpha=0.3) # 加入淡淡的水平網格線增加易讀性
-plt.show()
-
-# ==========================================
 # --- 3. 資料分割 ---
 # 將資料切分為 80% 訓練集，20% 測試集
 X = df.drop('Target', axis=1)
@@ -64,21 +41,55 @@ r2 = r2_score(y_test, y_pred)
 print(f"Mean Squared Error (MSE): {mse:.4f}")
 print(f"R-squared (R2 Score): {r2:.4f}")
 
-# --- 6. 解析權重 (Weights Interpretation) ---
-# 查看哪些特徵對房價影響最大
+# --- 6. 解析權重 ---
 feature_importance = pd.DataFrame({
     'Feature': X.columns,
     'Coefficient': model.coef_
 }).sort_values(by='Coefficient', ascending=False)
-
-print("\n特徵權重 (係數):")
 print(feature_importance)
 
-# --- 7. 結果視覺化 ---
+# --- 7. 結果視覺化(True vs Predicted House Values) ---
 plt.figure(figsize=(8, 6))
 plt.scatter(y_test, y_pred, alpha=0.3)
 plt.plot([y.min(), y.max()], [y.min(), y.max()], 'r--', lw=2)  # 完美預測線
 plt.xlabel('True Values')
 plt.ylabel('Predictions')
 plt.title('True vs Predicted House Values')
+plt.show()
+
+# --- 7. 結果視覺化 (觀察天花板效應) ---
+plt.figure(figsize=(10, 6))
+sns.histplot(df['Target'], bins=50, kde=True)
+plt.axvline(x=5.0, color='red', linestyle='--', label='Ceiling ($500k)')
+plt.title('Distribution of House Prices')
+plt.legend()
+plt.show()
+
+# --- 7. 結果視覺化 地理空間視覺化 (Geospatial Visualization) ---
+plt.figure(figsize=(10, 7))
+sns.scatterplot(
+    data=df, 
+    x="Longitude", 
+    y="Latitude", 
+    size="Population",    # 點的大小代表人口數
+    hue="Target",         # 點的顏色代表房價
+    palette="viridis",    # 顏色風格
+    alpha=0.5,            # 透明度
+    sizes=(10, 200),      # 點的大小範圍
+)
+plt.title("California Housing Prices: Location & Population", fontsize=15)
+plt.xlabel("Longitude")
+plt.ylabel("Latitude")
+plt.legend(title="House Value", loc="upper right")
+plt.show()
+
+# --- 7. 結果視覺化 殘差分析 (Residual Analysis) ---
+residuals = y_test - y_pred
+
+plt.figure(figsize=(8, 6))
+plt.scatter(y_pred, residuals, alpha=0.3)
+plt.axhline(y=0, color='r', linestyle='--', lw=2)  # 畫出 0 的基準線
+plt.xlabel('Predicted Values')
+plt.ylabel('Residuals (Actual - Predicted)')
+plt.title('Residual Plot')
 plt.show()
