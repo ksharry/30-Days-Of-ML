@@ -33,6 +33,7 @@
 這是 Python 最常用的機器學習套件 `scikit-learn` 官方繪製的流程圖。它的邏輯非常工程師思維：從 `Start` 開始，根據你的資料量大小、資料型態，一步步引導你走到適合的演算法。
 
 ![Scikit-Learn Algorithm Cheat Sheet](https://ithelp.ithome.com.tw/upload/images/20251210/20161788yTvqdqPRaB.jpg)
+![Scikit-Learn Algorithm Cheat Sheet](https://github.com/ksharry/30-Days-Of-ML/blob/main/day1/pic/1-2.jpg?raw=true)
 *(圖片來源：[Scikit-Learn Official Documentation](https://scikit-learn.org/stable/tutorial/machine_learning_map/index.html))*
 
 **怎麼看這張圖？**
