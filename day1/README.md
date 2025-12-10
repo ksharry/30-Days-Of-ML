@@ -14,7 +14,7 @@
 
 首先，我們要破除迷思。人工智慧 (AI)、機器學習 (ML) 與深度學習 (DL) 並不是三個獨立的技術，它們是層層包裹的關係。
 
-![https://ithelp.ithome.com.tw/upload/images/20251210/20161788WfwWpH7iaB.png](https://ithelp.ithome.com.tw/upload/images/20251210/20161788WfwWpH7iaB.png)
+![人工智慧、機器學習、深度學習](https://github.com/ksharry/30-Days-Of-ML/blob/main/day1/pic/1-1.png?raw=true)
 
 * **人工智慧 (Artificial Intelligence, AI)**：最外層的大圈圈。泛指所有展現智慧的機器技術。早期的 AI 甚至不需要「學習」，只要人類寫好 `if-else` 規則（Rule-based）就算。
 * **機器學習 (Machine Learning, ML)**：AI 的子集。核心在於**「讓機器從資料中找規律」**，而不是人類手寫規則。我們前兩週的重點（如回歸、決策樹、SVM）都在這裡。
@@ -32,7 +32,6 @@
 
 這是 Python 最常用的機器學習套件 `scikit-learn` 官方繪製的流程圖。它的邏輯非常工程師思維：從 `Start` 開始，根據你的資料量大小、資料型態，一步步引導你走到適合的演算法。
 
-![Scikit-Learn Algorithm Cheat Sheet](https://ithelp.ithome.com.tw/upload/images/20251210/20161788yTvqdqPRaB.jpg)
 ![Scikit-Learn Algorithm Cheat Sheet](https://github.com/ksharry/30-Days-Of-ML/blob/main/day1/pic/1-2.jpg?raw=true)
 *(圖片來源：[Scikit-Learn Official Documentation](https://scikit-learn.org/stable/tutorial/machine_learning_map/index.html))*
 

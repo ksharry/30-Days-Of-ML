@@ -63,7 +63,7 @@ $$J(w, b) = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2$$
 * **樣本數：** 20,640 筆。
 * **特徵 (Features)：** 8 個，包含 MedInc (收入中位數), HouseAge (房齡), AveRooms (平均房間數) 等。
 * **目標 (Target)：** 該街區的房價中位數 (MedHouseVal)，單位為 **10 萬美元**。
-![資料內容](https://ithelp.ithome.com.tw/upload/images/20251210/20161788oLGBSGPViW.jpg)
+![資料內容](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-1.jpg?raw=true)
 
 ### 2.2 Python 程式碼實作
 完整程式連結-[California_Housing_Prediction.py](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/California_Housing_Prediction.py)
@@ -86,23 +86,23 @@ $$J(w, b) = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2$$
 我們透過四張圖表來深入剖析模型的表現與資料的特性：
 
 #### 4.1 特徵關係：收入 vs 房價
-![Income vs House Value](https://ithelp.ithome.com.tw/upload/images/20251210/20161788px5qCtT6PO.jpg)
+![Income vs House Value](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-2.jpg?raw=true)
 * **觀察：** `MedInc` (收入中位數) 與房價呈現明顯的 **正相關**，這解釋了為什麼它在模型中的權重最高。
 * **細節：** 注意圖表上方有一條水平的橫線（與一些斷續的水平線），這預示了資料被「人為截斷」的痕跡。
 
 #### 4.2 預測結果：真實值 vs 預測值
-![True vs Predicted](https://ithelp.ithome.com.tw/upload/images/20251210/20161788Vu9D0e7kfH.jpg)
+![True vs Predicted](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-3.jpg?raw=true)
 * **觀察：** 紅色虛線代表完美預測。點越靠近紅線越好。
 * **異常：** 注意最右側 **X=5.0** 處，有一整排垂直的點。這代表對於那些真實價值 50 萬以上的豪宅，模型**嚴重低估**了它們的價格（因為模型沒看過大於 50 萬的數據，只能依照線性規律去猜）。
 
 #### 4.3 地理空間分析
-![Geospatial Map](https://ithelp.ithome.com.tw/upload/images/20251210/20161788dJ1YIF5RPt.jpg)
+![Geospatial Map](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-4.jpg?raw=true)
 * **觀察：** 圖中顏色越黃代表房價越高，圓圈大小代表人口。
 * **洞察：** 高房價清楚地集中在 **沿海地區**（舊金山灣區與洛杉磯）。
 * **限制：** 線性回歸只能處理簡單的數值增減（例如：緯度越低越貴？），但無法理解這種「沿著海岸線分布」的複雜地理聚落，這也是模型分數無法突破的主因之一。
 
 #### 4.4 殘差分析 (Residual Plot)
-![Residual Plot](https://ithelp.ithome.com.tw/upload/images/20251210/20161788FNBCp58ZJD.jpg)
+![Residual Plot](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-5.jpg?raw=true)
 * **觀察：** 殘差 = 真實值 - 預測值。理想的殘差圖應該像一團隨機散亂的雲。
 * **警訊：** 圖片右上角出現了一條明顯的 **切線邊界**。這是天花板效應留下的「疤痕」（因為 $True Value$ 被卡在 5.0，導致殘差呈現線性規律）。這再次證明線性模型無法完美處理這種非自然截斷的數據。
 
@@ -111,7 +111,7 @@ $$J(w, b) = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2$$
 ## 5. 深度反思與診斷 (Reflection & Diagnosis)
 
 為什麼 $R^2$ 只有 0.58？我們可以用 AI 專家吳恩達 (Andrew Ng) 的 **「火箭與燃料」** 哲學來診斷目前的模型狀態。
-![火箭升空翻譯](https://ithelp.ithome.com.tw/upload/images/20251210/201617881l3wPSfzsf.jpg)
+![火箭升空翻譯](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.jpg?raw=true)
 
 ### 5.1 診斷流程
 我們依序觀察 **訓練集** 與 **測試集** 的表現：
