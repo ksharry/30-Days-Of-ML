@@ -36,6 +36,8 @@ $$J(w, b) = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2$$
 * **特徵 (Features)：** 8 個，包含 MedInc (收入中位數), HouseAge (房齡), AveRooms (平均房間數) 等。
 * **目標 (Target)：** 該街區的房價中位數 (MedHouseVal)，單位為 10 萬美元。
 
+![加州房價預測](https://ithelp.ithome.com.tw/upload/images/20251210/20161788uCq3qJWypk.jpg)
+
 ### 2.2 Python 程式碼實作
 
 ```python
