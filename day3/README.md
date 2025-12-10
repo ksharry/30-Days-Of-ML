@@ -47,9 +47,8 @@ $$J(w) = \text{MSE} + \alpha \sum_{j=1}^{n} |w_j|$$
     * 當誤差函數的等高線接觸到菱形的「尖角」時，該維度的係數就會變成 0。
 * **優點：** 內建 **特徵選擇 (Feature Selection)** 功能。如果你有 1000 個特徵但只有 10 個有用，Lasso 會自動幫你挑出來。
 
-![L1 vs L2 Geometry](https://commons.wikimedia.org/wiki/File:Regularization.jpg)
-*(圖說：Lasso 的菱形限制區域（左）更容易讓解落在軸上，使係數變為 0；Ridge 的圓形區域（右）則傾向讓係數變小)*
-*The traditional yet perplexing L1 and L2 regularization graph found in textbooks.. source: https://commons.wikimedia.org/wiki/File:Regularization.jpg*
+![L1 vs L2 Geometry](https://upload.wikimedia.org/wikipedia/commons/5/58/Regularization.jpg)
+*(Lasso 的菱形限制區域（左）更容易讓解落在軸上，使係數變為 0；Ridge 的圓形區域（右）則傾向讓係數變小，圖片來源：[wikimedia](https://commons.wikimedia.org/wiki/File:Regularization.jpg))*
 
 ### 1.4 L1 vs L2 比較表
 
