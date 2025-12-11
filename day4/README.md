@@ -18,15 +18,36 @@
 
 ---
 
-## 1. 理論基礎：解構神秘公式
-
-邏輯回歸的運作可以拆解成兩個步驟。你剛才看到的那些數學符號，其實每一個都對應到鐵達尼號的具體情境。
+## 1 資料介紹
+### 1.1 資料集介紹 (Data Dictionary)
 
 本實作使用 kaggle 競賽預測生存率的 [Titanic](https://www.kaggle.com/competitions/titanic/data) 資料集。
 
 ![Titanic](https://github.com/ksharry/30-Days-Of-ML/blob/main/day4/pic/4-1.jpg?raw=true)
 
-### 第一步：線性計分 (The Linear Score)
+| 欄位名稱 (Column) | 說明 (Description) | 備註 (Key) |
+| :--- | :--- | :--- |
+| **Survived** | 生存與否 | 0 = 死亡, 1 = 生存 |
+| **Pclass** | 艙等 (社經地位) | 1 = 頭等艙, 2 = 二等艙, 3 = 三等艙 |
+| **Sex** | 性別 | male / female |
+| **Age** | 年齡 | 部分資料有缺失 |
+| **SibSp** | 同船兄弟姊妹/配偶數 | # of siblings / spouses aboard |
+| **Parch** | 同船父母/子女數 | # of parents / children aboard |
+| **Ticket** | 船票號碼 | |
+| **Fare** | 票價 | |
+| **Cabin** | 客艙號碼 | 缺失值較多 |
+| **Embarked** | 登船港口 | C = Cherbourg, Q = Queenstown, S = Southampton |
+
+### 1.2 數據預處理 (Data Preprocessing)
+
+我們使用 Python 的 `sklearn` 來實作。為了讓電腦讀懂資料，我們做了兩件重要的預處理：
+
+1.  **填補缺失值 (Missing Values)：** 很多乘客的年齡是空的，我們用「中位數」填補，避免誤導模型。
+2.  **獨熱編碼 (One-Hot Encoding)：** 電腦看不懂 "Male" 和 "Female"。我們將其轉換為數字。
+邏輯回歸的運作可以拆解成兩個步驟。你剛才看到的那些數學符號，其實每一個都對應到鐵達尼號的具體情境。
+
+## 2 解構神秘公式
+### 2.1 第一步：線性計分 (The Linear Score)
 模型會先幫每位乘客算一個「生存分數」($z$)，公式如下：
 
 $$z = w_1 x_1 + w_2 x_2 + \dots + b$$
@@ -42,7 +63,7 @@ $$z = w_1 x_1 + w_2 x_2 + \dots + b$$
     * 如果 $w_3$ (艙等權重) 是正數，代表艙等越高，分數加越多。
 * **$b$ (Bias)**：**偏差值**。代表基礎分數，就像是考試的基本分。
 
-### 第二步：機率轉換 (Sigmoid Function)
+### 2.2 第二步：機率轉換 (Sigmoid Function)
 算出來的 $z$ 可能是 100 或是 -500，這不像是「機率」。我們需要把它壓縮到 **0 ~ 1** 之間，這就是著名的 **Sigmoid 函數**：
 
 $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
@@ -58,14 +79,9 @@ $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
 
 ---
 
-## 2. 實驗設計：鐵達尼號數據 (The Titanic Experiment)
+## 3. 實驗結果：鐵達尼號數據 (The Titanic Experiment)
 
-我們使用 Python 的 `sklearn` 來實作。為了讓電腦讀懂資料，我們做了兩件重要的預處理：
-
-1.  **填補缺失值 (Missing Values)：** 很多乘客的年齡是空的，我們用「中位數」填補，避免誤導模型。
-2.  **獨熱編碼 (One-Hot Encoding)：** 電腦看不懂 "Male" 和 "Female"。我們將其轉換為數字。
-
-### 2.1 混淆矩陣 (Confusion Matrix)
+### 3.1 混淆矩陣 (Confusion Matrix)
 ![Confusion Matrix](https://github.com/ksharry/30-Days-Of-ML/blob/main/day4/pic/4-2.jpg?raw=true)
 
 模型跑完後，準確率大約落在 **81%**。
@@ -74,7 +90,7 @@ $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
 
 ---
 
-## 3. 深度分析：誰最容易活下來？
+## 4. 深度分析：誰最容易活下來？
 
 透過觀察程式跑出來的 **係數圖 (Coefficients)**，我們發現了 $w$ (權重) 的秘密：
 
@@ -83,7 +99,7 @@ $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
 
 ---
 
-## 4. 總結 (Conclusion)
+## 5. 總結 (Conclusion)
 
 邏輯回歸其實就是在做兩件事：
 1.  算出一個分數 $z$（根據性別、年齡加權）。
