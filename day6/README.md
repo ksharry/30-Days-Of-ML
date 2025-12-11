@@ -39,8 +39,8 @@ SVM 的目標不僅僅是畫一條線，而是要畫出 **「路寬 (Margin) 最
 $$w \cdot x + b = 0$$
 
 而「馬路的兩側邊緣」（也就是穿過支援向量的那兩條虛線）被定義為：
-* **正向邊緣**：$$\mathbf{w} \cdot \mathbf{x} + b = 1 \quad $$
-* **負向邊緣**：$$\mathbf{w} \cdot \mathbf{x} + b = -1 \quad $$
+* **正向邊緣**：$$\mathbf{w} \cdot \mathbf{x} + b = 1 $$
+* **負向邊緣**：$$\mathbf{w} \cdot \mathbf{x} + b = -1 $$
 
 **變數對照表：**
 * **$x$ (Features)**：乘客的特徵向量 (年齡, 票價...)。
