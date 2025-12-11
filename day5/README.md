@@ -71,7 +71,7 @@
 ## 4. 戰略總結：火箭發射之旅 (模型訓練 SOP)
 最後，讓我們引用 AI 大師 **吳恩達 (Andrew Ng)** 的經典圖表，來重新審視我們這幾天學到的模型，並將今天學到的 $K$ 值概念放入這張圖中。
 
-![Rocket](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.jpg?raw=true)
+![Rocket](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.png?raw=true)
 
 這張圖完美地將機器學習模型訓練、參數調整的過程，用「火箭發射」的比喻具象化了。我們可以把這個流程圖看作是訓練一個成功 AI 模型的標準操作程序 (SOP)。
 

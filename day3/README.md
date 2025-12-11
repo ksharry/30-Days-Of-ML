@@ -140,7 +140,7 @@ L2 的圖表亮點不在於特徵數量的減少，而在於 **「平均係數�
 
 最後，我們再次請出這張「火箭發射 SOP」圖，來看看我們如何在 Day 03 中調整 Ridge 和 Lasso 的 $\alpha$ 參數，完成這次的發射任務。
 
-![Model Training and Tuning Process](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.jpg?raw=true)
+![Model Training and Tuning Process](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.png?raw=true)
 
 在 Day 03 的實驗中，我們為了預測房價，使用多項式特徵 ($x^3$) 擴充了資料。這就像是我們安裝了一個 **超級強力的火箭引擎**（模型變得很複雜）。現在，我們需要透過調整 $\alpha$ (正則化強度) 來控制這枚火箭。
 
