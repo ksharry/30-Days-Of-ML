@@ -14,7 +14,12 @@ from sklearn.metrics import confusion_matrix, accuracy_score, classification_rep
 # 使用 Seaborn 內建的鐵達尼號資料集
 df = sns.load_dataset('titanic')
 
-# 簡單的預處理：
+# 【新增需求】印出前 10 筆原始資料，讓使用者觀察
+print("--- 原始資料前 10 筆 (Raw Data) ---")
+print(df.head(10))
+print("-" * 30)
+
+#  簡單的預處理：
 # - 填補 Age 的缺失值 (用中位數)
 # - 丟棄缺失過多的 'deck' 欄位
 # - 填補 Embarked 缺失值
