@@ -25,7 +25,7 @@
 
 我們將模型簡化，只使用 **Age (年齡)** 與 **Fare (票價)** 兩個特徵，畫出了這張對比圖。這張圖展示了兩種截然不同的世界觀。
 
-![Decision Boundary Comparison](https://github.com/ksharry/30-Days-Of-ML/blob/main/day5/pic/5-1.png?raw=true)
+![Decision Boundary Comparison](https://github.com/ksharry/30-Days-Of-ML/blob/main/day5/pic/5-1.jpg?raw=true)
 
 ### 左圖：邏輯回歸 (Logistic Regression)
 * **功能**：這是一條 **直線決策邊界 (Linear Decision Boundary)**。它將畫面一分為二，藍色區域預測死亡，白色區域預測生存。
@@ -45,7 +45,7 @@
 
 既然 KNN 是看鄰居，那「看幾個鄰居」就成了關鍵。我們測試了 K 從 1 到 40 的結果。
 
-![Accuracy and Confusion Matrix](https://github.com/ksharry/30-Days-Of-ML/blob/main/day5/pic/5-2.png?raw=true)
+![Accuracy and Confusion Matrix](https://github.com/ksharry/30-Days-Of-ML/blob/main/day5/pic/5-2.jpg?raw=true)
 
 ### 左圖：K 值調參 (Accuracy vs. K Value)
 * **功能**：這張折線圖顯示了 **K 值 (橫軸)** 與 **預測準確率 (縱軸)** 的關係。紅色虛線標示出了最佳的 K 值 (K=17)。
