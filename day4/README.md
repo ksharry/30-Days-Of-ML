@@ -46,6 +46,10 @@
 2.  **獨熱編碼 (One-Hot Encoding)：** 電腦看不懂 "Male" 和 "Female"。我們將其轉換為數字。
 邏輯回歸的運作可以拆解成兩個步驟。你剛才看到的那些數學符號，其實每一個都對應到鐵達尼號的具體情境。
 
+### 1.3 Python 程式碼實作
+完整程式連結-[Logistic_Titanic.py](https://github.com/ksharry/30-Days-Of-ML/blob/main/day4/Logistic_Titanic.py)
+
+
 ## 2 解構神秘公式
 ### 2.1 第一步：線性計分 (The Linear Score)
 模型會先幫每位乘客算一個「生存分數」($z$)，公式如下：
