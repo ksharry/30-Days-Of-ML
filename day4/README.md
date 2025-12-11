@@ -134,7 +134,7 @@ $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
 
 雖然邏輯回歸本質上是一個「小火箭」（線性模型），但我們依然能透過這張圖的流程來優化它：
 
-![Rocket](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.png?raw=true)
+![Rocket](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.jpg?raw=true)
 
 **流程 1：起飛失敗 (欠擬合 / Underfitting)**
 * **症狀**：訓練集分數就很低 (例如 60%)，連基本規律都抓不到。
