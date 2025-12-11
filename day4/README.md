@@ -80,13 +80,31 @@ $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
 ---
 
 ## 3. 實驗結果：鐵達尼號數據 (The Titanic Experiment)
+![Sigmoid Curve](https://github.com/ksharry/30-Days-Of-ML/blob/main/day4/pic/4-2.jpg?raw=true)
+![Accuracy](https://github.com/ksharry/30-Days-Of-ML/blob/main/day4/pic/4-3.jpg?raw=true)
 
-### 3.1 混淆矩陣 (Confusion Matrix)
-![Confusion Matrix](https://github.com/ksharry/30-Days-Of-ML/blob/main/day4/pic/4-2.jpg?raw=true)
+### 3.1 Sigmoid 曲線與決策邊界
+意義： 這是**「可視化驗證」**。
+解讀：
+* **藍色 S 型線**： 就是 Image 1 的 Sigmoid 函數圖形。
+* **橘色點點**： 每一位乘客。你可以看到，只要 $z$ 分數 (橫軸) 大於 0 的乘客，機率 (縱軸) 都在 0.5 以上，被模型判定為「生存」。分數小於 0 的，就滑向左下角的「死亡區」。
 
-模型跑完後，準確率大約落在 **81%**。
+### 3.2 混淆矩陣 (Confusion Matrix)
+意義： 這是**「成績單」**，看模型猜對了多少。
 * **TP (True Positive):** 模型猜他活，他也真的活了。
 * **FN (False Negative):** 模型猜他會死，結果他奇蹟生還（遺憾的錯誤）。
+
+解讀：
+* **深藍色區塊 (90, 55)**： 代表猜對了。模型猜死且真的死 (90人)，模型猜活且真的活 (55人)。
+* **淺藍色區塊 (15, 19)**： 代表猜錯了。這些是模型需要檢討的地方（例如那 19 個被誤判為死亡的倖存者）。
+
+模型跑完後，準確率大約落在 **81%**。
+
+### 3.3 特徵重要性 (Feature Importance)
+意義： 這是模型的**「權重 ($w$) 排行榜」**，告訴我們誰對 $z$ 分數影響最大。
+解讀：
+* **紅色長條 (Sex_male)**： 最長且向左（負值）。代表**「男性」**這個特徵會讓 $z$ 分數被扣最重，導致生存率大幅下降。
+* **綠色長條 (Fare)**： 向右（正值）。代表票價付得越高，生存分數會稍微加一點分。
 
 ---
 
