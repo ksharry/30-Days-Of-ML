@@ -3,6 +3,7 @@
 2. py -3.10 California_Housing_Prediction.py
 3. py -3.10 Regularization_Demo.py
 4. py -3.10 Logistic_Titanic.py
+5. py -3.10 NaiveBayes_Spam.py
 
 # 30 天 AI/ML 實戰挑戰：從入門到落地 (Story-Driven Edition)
 
