@@ -25,9 +25,7 @@
 
 ### 1.2 資料範例
 這份資料沒有像鐵達尼號那樣的數值特徵（年齡、票價），只有赤裸裸的文字：
-
-* **Ham**: "Ok lar... Joking wif u oni..."
-* **Spam**: "Free entry in 2 a wkly comp to win FA Cup final tkts 21st May 2005."
+![data](https://github.com/ksharry/30-Days-Of-ML/blob/main/day7/pic/7-1.jpg?raw=true)
 
 這引出了一個巨大的挑戰：**電腦看不懂文字，它只看得懂數字。** 我們該怎麼把這些英文單字餵給模型吃？
 
@@ -88,8 +86,7 @@ $$P(\text{垃圾} | \text{文字}) = \frac{P(\text{文字} | \text{垃圾}) \tim
 
 我們使用真實的 UCI 資料集訓練模型，結果通常會讓人驚艷。
 
-![Naive Bayes Results](https://github.com/ksharry/30-Days-Of-ML/blob/main/day7/pic/image_f7c8e2.png?raw=true)
-*(示意圖，實際執行結果可能會有所不同)*
+![Naive Bayes Results](https://github.com/ksharry/30-Days-Of-ML/blob/main/day7/pic/7-2.jpg?raw=true)
 
 ### 4.1 準確率 (Accuracy)
 在 UCI 資料集上，多項式貝氏分類器 (MultinomialNB) 的準確率通常能達到 **98% 以上**。這證明了對於「簡訊」這種短文本，關鍵字出現的頻率具有極強的決定性。
@@ -105,6 +102,45 @@ $$P(\text{垃圾} | \text{文字}) = \frac{P(\text{文字} | \text{垃圾}) \tim
     * 相反地，諸如 **"later", "home", "sorry", "today"** 等生活用語，則是正常簡訊的特徵。
 
 貝氏分類器就是這樣一個單純的模型：它不理解語義，它只是在**比較機率**。如果一封信裡「紅色詞彙」的總機率乘積大於「藍色詞彙」，它就蓋上「垃圾信」的印章。
+
+
+## 6. 戰略總結：模型訓練的火箭發射之旅 (貝氏分類版)
+
+最後，我們再次請出這張「火箭發射 SOP」圖。雖然貝氏分類器以「簡單快速」著稱，但它同樣需要經過這趟發射檢測，才能確保在真實世界的垃圾信海中穩定運行。
+
+![Model Training and Tuning Process](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.jpg?raw=true)
+
+### 6.1 流程一：詞彙貧乏，無法判斷 (Underfitting 迴圈)
+
+* **設定**：假設我們的「詞袋」設得太小 (例如 `max_features=10`)，只看整封信裡出現頻率最高的 10 個字。
+* **第一關：訓練集表現好嗎？**
+    * **否 (No)**。
+    * **診斷**：**欠擬合 (Underfitting)**。
+        * **原因**：模型掌握的資訊太少。如果只看 "the", "a", "is" 這些字，根本無法區分垃圾信。這就像火箭燃料不足（資訊量不足），根本飛不起來。
+* **行動 (Action)**：箭頭指向 **「調整參數：增加複雜度」**。
+    * **擴充字典**：增加 `max_features` (例如從 10 改成 3000)，讓模型看懂更多關鍵字。
+    * **使用 N-gram**：不只看單字 ("Win")，改看詞組 ("Win Cash")，增加特徵的豐富度。
+
+### 6.2 流程二：鑽牛角尖，過度敏感 (Overfitting 迴圈)
+
+* **設定**：假設我們把所有出現過的字都當成特徵 (包含只出現一次的亂碼、時間戳記)，而且將平滑係數 $\alpha$ 設為 0 (不平滑)。
+* **第一關：訓練集表現好嗎？**
+    * **是 (Yes)**。模型把每一封信裡的每一個獨特字串都背下來了。
+* **第二關：測試集表現好嗎？**
+    * **否 (No)**。
+    * **診斷**：**過擬合 (Overfitting)**。
+        * **原因**：模型記住了太多的雜訊。例如某封垃圾信剛好有一個錯字 "Pr1ze"，模型就認定 "Pr1ze" 是絕對的垃圾信特徵。如果測試集裡剛好沒這個字，或者正常信裡不小心打錯字，機率計算就會出錯 (Zero Probability Problem)。
+* **行動 (Action)**：箭頭指向 **「調整參數：限制複雜度」**。
+    * **啟動平滑 (Smoothing)**：增加 **$\alpha$ (Alpha)** 值。這就像給機率計算加了一點「緩衝」，避免讓單一罕見字詞決定一切。
+    * **過濾雜訊**：設定 `min_df` (例如忽略出現少於 5 次的字)，去除那些太過冷門的雜訊特徵。
+
+### 6.3 流程三：完美入軌 (The Sweet Spot)
+
+* **設定**：我們選用了 `max_features=3000` 配合預設的 `alpha=1.0` (Laplace Smoothing)。
+* **第一關 & 第二關**：
+    * 訓練集與測試集準確率都極高 (UCI 資料集約 **98%**)。
+* **結果**：**完成！**
+    * 火箭成功入軌。我們的 Spam Filter 既能識別常見的詐騙關鍵字 (Win, Free)，又不會因為一個從沒見過的生字就判斷錯誤，達到了完美的平衡。
 
 ---
 
