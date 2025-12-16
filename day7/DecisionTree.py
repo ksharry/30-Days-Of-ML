@@ -214,12 +214,13 @@ def main():
     y_dt = df_dt['target']
     X_train_dt, X_test_dt, y_train_dt, y_test_dt = train_test_split(X_dt, y_dt, test_size=0.3, random_state=42)
 
+    # min_samples_split-至少要有多少筆資料，這個節點才允許繼續切分
     print("🧠 訓練 Decision Tree (Max Depth = 3)...")
-    dt_model = DecisionTreeClassifier(max_depth=3, random_state=42)
+    dt_model = DecisionTreeClassifier(max_depth=3, random_state=42, min_samples_split=2)
     dt_model.fit(X_train_dt, y_train_dt)
     
     y_pred_dt = dt_model.predict(X_test_dt)
-    
+
     # --- 5. 詳細評估 (Validation & Test) ---
     print("\n📝 正在評估模型表現...")
     
