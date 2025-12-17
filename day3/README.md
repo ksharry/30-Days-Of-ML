@@ -12,12 +12,15 @@
 到了現代機器學習領域，這個原則演變成了 **「正則化」 (Regularization)**。當我們的模型為了追求完美的訓練分數，變得過度複雜（像是背誦答案的學生）時，我們需要一把「剃刀」來修剪它，強制它保持簡單。這把數學上的剃刀，就是我們今天要介紹的 **Ridge (L2)** 與 **Lasso (L1)**。
 
 ---
+## 1. 資料集來源
+本實作使用 Scikit-Learn 內建的 [California Housing](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_california_housing.html) 資料集。
 
-## 1. 理論基礎 (Theory)
+---
+## 2. 理論
 
 在 Day 02 中，我們遇到了「低度擬合 (Underfitting)」的問題。假設我們為了提高分數，瘋狂增加特徵（例如加入 $x^2, x^3, \dots, x^{10}$），模型可能會變得極度扭曲以穿過每一個訓練數據點，這就導致了 **「過度擬合」 (Overfitting)**。
 
-### 1.1 什麼是正則化？
+### 什麼是正則化？
 
 正則化的本質，是在原本的 **損失函數 (Loss Function)** 後面加上一個 **「懲罰項」 (Penalty Term)**。這就像是老師告訴學生：「考一百分雖然好，但如果你用死記硬背的方式（模型參數 $w$ 太大或太複雜），我要扣你分數。」
 
@@ -29,7 +32,7 @@ $$J(\text{total}) = \text{MSE (原本的誤差)} + \alpha \times \text{Penalty (
 * $\alpha = 0$：就是一般的線性回歸。
 * $\alpha$ 越大：懲罰越重，模型越簡單（趨向水平線）。
 
-### 1.2 Ridge Regression (脊回歸 / L2 正則化)
+### Ridge Regression (脊回歸 / L2 正則化)
 
 Ridge 使用 **權重的平方和** 作為懲罰項。
 
@@ -39,7 +42,7 @@ $$J(w) = \text{MSE} + \alpha \sum_{j=1}^{n} w_j^2$$
 * **幾何意義：** 想像一個圓形限制區域。Ridge 傾向於均勻地縮小所有參數。
 * **優點：** 非常適合處理 **共線性 (Multicollinearity)** 問題（即特徵之間高度相關，如「房間數」與「臥室數」）。
 
-### 1.3 Lasso Regression (套索回歸 / L1 正則化)
+### Lasso Regression (套索回歸 / L1 正則化)
 
 Lasso (Least Absolute Shrinkage and Selection Operator) 使用 **權重的絕對值和** 作為懲罰項。
 
@@ -51,7 +54,7 @@ $$J(w) = \text{MSE} + \alpha \sum_{j=1}^{n} |w_j|$$
 
 *(Lasso 的菱形限制區域容易讓解落在軸上，使係數變為 0；Ridge 的圓形區域則傾向讓係數變小。)*
 
-### 1.4 L1 vs L2 比較表
+### L1 vs L2 比較表
 
 | 特性 | Ridge (L2) | Lasso (L1) |
 | :--- | :--- | :--- |
@@ -62,17 +65,25 @@ $$J(w) = \text{MSE} + \alpha \sum_{j=1}^{n} |w_j|$$
 
 ---
 
-## 2. 實驗設計：製造混亂 (Creating Chaos)
+## 3. 實戰：加州房價預測
+### Python 程式碼實作
 
+完整程式連結：[Regularization_Demo.py](https://github.com/ksharry/30-Days-Of-ML/blob/main/day3/Regularization_Demo.py)
+
+## 4. 模型評估
+
+### 整體成績單
+* 🔹 **測試集準確率 (Test Acc): 0.88** 
+
+
+### **實驗設定 (`Regularization_Demo.py`)：**
 為了演示正則化的威力，我們這次不能只用簡單的線性資料。我們需要先 **「製造過擬合」**。
-
-**實驗設定 (`Regularization_Demo.py`)：**
 
 1.  **多項式擴充 (Polynomial Features)：** 將原本的加州房價資料特徵進行 3 次方擴充。這會讓特徵數量從原本的 8 個暴增到 **164 個**（包含 $x^2, x^3$ 及交互作用項）。這就像給模型裝上了一顆過大的引擎。
 2.  **減少數據量：** 故意只取 200 筆資料，製造「題目少、變數多」的高風險環境。
 3.  **標準化 (Standardization)：** 務必將資料縮放至同一尺度，以免數值大的特徵被不公平地懲罰。
 
-### 2.1 偏差與變異權衡 (Bias-Variance Tradeoff)
+#### 偏差與變異權衡 (Bias-Variance Tradeoff)
 ![Bias-Variance Tradeoff](https://github.com/ksharry/30-Days-Of-ML/blob/main/day3/pic/3-1.jpg?raw=true)
 * **觀察現象：**
     * **Linear (No Reg - 最左側)：** 典型的過度擬合。訓練集分數 (藍色) 高達 1.0 (死記硬背)，但測試集分數 (橘色) 卻是 **負值** (徹底崩潰)。
@@ -80,7 +91,7 @@ $$J(w) = \text{MSE} + \alpha \sum_{j=1}^{n} |w_j|$$
 * **解讀：**
     正則化強迫模型「不要那麼極端」。雖然犧牲了一點點訓練準度（Bias 略微增加），但換來了模型在未知資料上的穩定表現（Variance 大幅降低）。
 
-### 2.2 權重係數的收縮與稀疏性
+#### 權重係數的收縮與稀疏性
 ![Ridge vs Lasso](https://github.com/ksharry/30-Days-Of-ML/blob/main/day3/pic/3-2.jpg?raw=true)
 * **觀察現象：**
     * **Ridge (L2, 藍色圓點)：** 藍點分布在 0 的上下，雖然數值都被壓縮得很小，但幾乎沒有一個點完全等於 0。
@@ -89,9 +100,7 @@ $$J(w) = \text{MSE} + \alpha \sum_{j=1}^{n} |w_j|$$
     這張圖證實了 Lasso (L1) 具備「特徵選擇」能力，將不重要的雜訊權重直接砍成 0；而 Ridge (L2) 則是做「權重衰減」，保留所有資訊但讓模型變平滑。
 
 ---
-
-## 3. 深度分析：Lasso (L1) 的大刀闊斧
-
+### 深度分析：Lasso (L1) 的大刀闊斧
 我們在 `Regularization_L1.py` 中針對 Alpha 進行了深度調參。
 ![Lasso](https://github.com/ksharry/30-Days-Of-ML/blob/main/day3/pic/3-3.jpg?raw=true)
 **實驗結果**
@@ -106,8 +115,7 @@ $$J(w) = \text{MSE} + \alpha \sum_{j=1}^{n} |w_j|$$
 **結論：** Lasso 像一位精準的外科醫生，切除掉 100 多個壞特徵，只保留關鍵組合，成功將分數救回 0.88。
 
 ---
-
-## 4. 深度分析：Ridge (L2) 的穩健收縮
+### 深度分析：Ridge (L2) 的穩健收縮
 
 我們在 `Regularization_L2.py` 中觀察係數的變化。
 ![Ridge](https://github.com/ksharry/30-Days-Of-ML/blob/main/day3/pic/3-4.jpg?raw=true)
@@ -122,7 +130,7 @@ L2 的圖表亮點不在於特徵數量的減少，而在於 **「平均係數�
 
 ---
 
-## 5. 終極挑戰：ElasticNet 與天花板
+### 終極挑戰：ElasticNet 與天花板
 
 既然 L1 和 L2 各有千秋，我們使用 ElasticNet (`Regularization_EL.py`) 來尋找最佳混合比例。
 ![ElasticNet](https://github.com/ksharry/30-Days-Of-ML/blob/main/day3/pic/3-5.jpg?raw=true)
@@ -136,15 +144,15 @@ L2 的圖表亮點不在於特徵數量的減少，而在於 **「平均係數�
 這 200 筆資料裡蘊含的資訊極限，最多只能解釋 88% 的房價波動。剩下的 12% 是隨機雜訊或未收集到的變因，這是任何線性模型都無法突破的天花板。
 
 
-## 6. 戰略總結：火箭發射 SOP (Ridge & Lasso 版)
+## 5. 戰略總結:模型訓練的火箭發射之旅
 
-最後，我們再次請出這張「火箭發射 SOP」圖，來看看我們如何在 Day 03 中調整 Ridge 和 Lasso 的 $\alpha$ 參數，完成這次的發射任務。
+最後，讓我們引用 AI 大師 **吳恩達 (Andrew Ng)** 的經典圖表，來重新審視我們如何在 Day 03 中調整 Ridge 和 Lasso 的 $\alpha$ 參數，完成這次的發射任務。
 
 ![Model Training and Tuning Process](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.jpg?raw=true)
 
 在 Day 03 的實驗中，我們為了預測房價，使用多項式特徵 ($x^3$) 擴充了資料。這就像是我們安裝了一個 **超級強力的火箭引擎**（模型變得很複雜）。現在，我們需要透過調整 $\alpha$ (正則化強度) 來控制這枚火箭。
 
-### 6.1 流程一：動力太強，失控墜毀 (Overfitting 迴圈)
+### 5.1 流程一：動力太強，失控墜毀 (Overfitting 迴圈)
 
 * **設定**：我們將 $\alpha$ 設為 **0** (也就是 Linear Regression)。
 * **第一關：訓練集表現好嗎？**
@@ -155,7 +163,7 @@ L2 的圖表亮點不在於特徵數量的減少，而在於 **「平均係數�
 * **行動 (Action)**：箭頭指向 **「調整參數：增加正則化」**。
     * **操作**：我們開始 **增加 $\alpha$ 值** (例如從 0 變成 0.001)。這就像是幫火箭裝上 **「穩定翼」或「自動煞車系統」**，限制權重 $w$ 不要暴衝。
 
-### 6.2 流程二：煞車踩死，無法升空 (Underfitting 迴圈)
+### 5.2 流程二：煞車踩死，無法升空 (Underfitting 迴圈)
 
 * **設定**：我們試著將 $\alpha$ 設得很大 (例如 $\alpha = 100$)。
 * **第一關：訓練集表現好嗎？**
@@ -164,7 +172,7 @@ L2 的圖表亮點不在於特徵數量的減少，而在於 **「平均係數�
 * **行動 (Action)**：箭頭指向 **「調整參數：減少限制」**。
     * **操作**：我們需要 **減小 $\alpha$ 值**，放鬆懲罰，讓模型多學一點特徵。
 
-### 6.3 流程三：完美入軌 (The Sweet Spot)
+### 5.3 流程三：完美入軌 (The Sweet Spot)
 
 * **設定**：經過反覆測試，我們找到了 **$\alpha = 0.00085$** (Lasso 的最佳解)。
 * **第一關：訓練集表現好嗎？**
@@ -173,15 +181,9 @@ L2 的圖表亮點不在於特徵數量的減少，而在於 **「平均係數�
     * **是** (約 0.88)。模型在未知的資料上也能穩定飛行。
 * **結果**：**完成！** 火箭成功入軌。
 
-### 總結
-在 Day 03 中，這張圖的意義在於：
-1.  **火箭引擎** = 多項式特徵 ($x^3$)。
-2.  **控制系統** = 正則化項 ($\alpha \times |w|$)。
-3.  **調參過程** = 我們在尋找一個剛剛好的 $\alpha$，既能保留大引擎的推力 (Bias 低)，又能透過煞車系統防止它失控 (Variance 低)。
-
 ---
 
-## 6. 總結與回顧 (Conclusion)
+## 6. 總結與比較
 
 ### 6.1 Day 02 vs Day 03：引擎與剎車
 

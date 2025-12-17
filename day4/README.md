@@ -46,11 +46,7 @@
 2.  **獨熱編碼 (One-Hot Encoding)：** 電腦看不懂 "Male" 和 "Female"。我們將其轉換為數字。
 邏輯回歸的運作可以拆解成兩個步驟。你剛才看到的那些數學符號，其實每一個都對應到鐵達尼號的具體情境。
 
-### 1.3 Python 程式碼實作
-完整程式連結-[Logistic_Titanic.py](https://github.com/ksharry/30-Days-Of-ML/blob/main/day4/Logistic_Titanic.py)
-
-
-## 2 解構神秘公式
+## 2 原理
 ### 2.1 第一步：線性計分 (The Linear Score)
 模型會先幫每位乘客算一個「生存分數」($z$)，公式如下：
 
@@ -83,18 +79,23 @@ $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
 
 ---
 
-## 3. 實驗結果：鐵達尼號數據 (The Titanic Experiment)
-![Sigmoid Curve](https://github.com/ksharry/30-Days-Of-ML/blob/main/day4/pic/4-2.jpg?raw=true)
-![Accuracy](https://github.com/ksharry/30-Days-Of-ML/blob/main/day4/pic/4-3.jpg?raw=true)
+## 3. 實戰：鐵達尼號數據
+### Python 程式碼實作
+完整程式連結-[Logistic_Titanic.py](https://github.com/ksharry/30-Days-Of-ML/blob/main/day4/Logistic_Titanic.py)
 
-### 3.1 Sigmoid 曲線與決策邊界
-意義： 這是**「可視化驗證」**。
+## 4. 模型評估
+### 整體成績單
+模型跑完後，準確率大約落在 **81%**。
+
+### 圖解分析-Sigmoid 曲線與決策邊界
+![Sigmoid Curve](https://github.com/ksharry/30-Days-Of-ML/blob/main/day4/pic/4-2.jpg?raw=true) 
 解讀：
 * **藍色 S 型線**： 就是 Image 1 的 Sigmoid 函數圖形。
 * **橘色點點**： 每一位乘客。你可以看到，只要 $z$ 分數 (橫軸) 大於 0 的乘客，機率 (縱軸) 都在 0.5 以上，被模型判定為「生存」。分數小於 0 的，就滑向左下角的「死亡區」。
 
 ### 3.2 混淆矩陣 (Confusion Matrix)
-意義： 這是「成績單」，看模型猜對了多少。
+![Accuracy](https://github.com/ksharry/30-Days-Of-ML/blob/main/day4/pic/4-3.jpg?raw=true)
+解讀： 這是「成績單」，看模型猜對了多少。
 * **TP (True Positive):** 模型猜他活，他也真的活了。
 * **FN (False Negative):** 模型猜他會死，結果他奇蹟生還
 
@@ -102,9 +103,7 @@ $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
 * **深藍色區塊 (90, 55)**： 代表猜對了。模型猜死且真的死 (90人)，模型猜活且真的活 (55人)。
 * **淺藍色區塊 (15, 19)**： 代表猜錯了。這些是模型需要檢討的地方（例如那 19 個被誤判為死亡的倖存者）。
 
-模型跑完後，準確率大約落在 **81%**。
-
-### 3.3 特徵重要性 (Feature Importance)
+### 特徵重要性 (Feature Importance)
 意義： 這是模型的「權重 ($w$) 排行榜」，告訴我們誰對 $z$ 分數影響最大。
 解讀：
 * **紅色長條 (Sex_male)**： 最長且向左（負值）。代表「男性」這個特徵會讓 $z$ 分數被扣最重，導致生存率大幅下降。
@@ -112,9 +111,7 @@ $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
 
 ---
 
-## 4. 深度分析：
-
-### 4.1 誰最容易活下來？
+### 深度分析-誰最容易活下來？
 透過觀察程式跑出來的 **係數圖 (Coefficients)**，我們不僅能預測生死，還能理解「為什麼」：
 
 1.  **性別 (Sex_male) - 決定性的權重**：
@@ -130,9 +127,9 @@ $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
     *   權重呈現微幅負值。
     *   雖然我們常說「老弱婦孺」，但在統計上，年齡越大，生存機率確實有些微下降的趨勢。不過邏輯回歸只能抓到「線性關係」，如果真實情況是「小孩活、老人活、壯年死」這種 U 型關係，它可能就抓不準了。
 
-### 4.2 火箭維修站：邏輯回歸的調整循環
+## 5. 戰略總結:模型訓練的火箭發射之旅
 
-雖然邏輯回歸本質上是一個「小火箭」（線性模型），但我們依然能透過這張圖的流程來優化它：
+最後，讓我們引用 AI 大師 **吳恩達 (Andrew Ng)** 的經典圖表，來重新審視我們學到的模型訓練流程。
 
 ![Rocket](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.jpg?raw=true)
 
@@ -147,12 +144,9 @@ $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
 * **診斷**：引擎改太強，失去控制。我們加了太多特徵 (如 $x^{10}$)，導致模型死記硬背每一個雜訊。
 * **維修 (調整參數)**：**增強正則化 (Regularization)**。
     * 在 sklearn 中調整 `C` 參數。把 `C` 調小，就像是踩煞車，強制讓權重 $w$ 變小，讓模型回復平穩，找回通用的規則。
-
-**總結**
-邏輯回歸的「火箭發射」其實就是在 **「多項式特徵 (油門)」** 與 **「正則化 (煞車)」** 之間尋找平衡的過程。
 ---
 
-## 5. 總結 (Conclusion)
+##  6. 總結
 
 今天我們學會了機器學習中最經典的分類器 —— **邏輯回歸 (Logistic Regression)**。
 

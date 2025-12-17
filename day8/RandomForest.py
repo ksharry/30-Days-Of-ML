@@ -63,9 +63,13 @@ def main():
     rf_model.fit(X_train, y_train)
 
     # --- 5. 評估與視覺化 ---
+    # 5.1 準確率比較 (Overfitting Check)
+    train_acc = rf_model.score(X_train, y_train)
+    print(f"\n🎯 訓練集準確率 (Training Acc): {train_acc:.2f}")
+
     y_pred = rf_model.predict(X_test)
-    acc = accuracy_score(y_test, y_pred)
-    print(f"\n🏆 模型準確率: {acc:.2f}")
+    test_acc = accuracy_score(y_test, y_pred)
+    print(f"🏆 測試集準確率 (Test Acc):     {test_acc:.2f}")
     
     # 設定畫布
     plt.figure(figsize=(14, 6))

@@ -16,8 +16,12 @@
 * **統計大師 (1984)**：**Leo Breiman** 提出了 **CART** (Classification and Regression Trees)，這也是 Python Scikit-learn 目前採用的核心演算法（使用 Gini 不純度）。
 
 ## 1. 經典資料集介紹 (German Credit Data)
+**資料集來源**：[UCI Machine Learning Repository - German Credit Data](https://archive.ics.uci.edu/ml/datasets/statlog+(german+credit+data))
+
+這份資料集是金融風控領域的「Hello World」，由漢堡大學 (University of Hamburg) 的 Hans Hofmann 教授於 1994 年捐贈。它包含 1,000 筆真實的貸款紀錄，包含以下關鍵欄位，每一個都是徵信審核的重點：
+
 ![German Credit Data](https://github.com/ksharry/30-Days-Of-ML/blob/main/day7/pic/7-1.jpg?raw=true)
-這份資料集包含 1,000 筆真實的貸款紀錄，包含以下關鍵欄位，每一個都是徵信審核的重點：
+
 
 | 特徵欄位 (Feature) | 意義 | 觀察重點 |
 | :--- | :--- | :--- |
@@ -70,8 +74,16 @@ $$Gini = 1 - \sum_{i=1}^{C} (p_i)^2$$
 完整程式連結：[DecisionTree.py](https://github.com/ksharry/30-Days-Of-ML/blob/main/day7/DecisionTree.py)
 執行程式後，我們會得到一張漂亮的樹狀圖，讓我們來解讀這張圖背後的商業意義。
 
-### 圖解分析 (Visualization Analysis)
+## 4. 模型評估
+### 整體成績單
 
+首先，我們來看模型的三項核心指標。這些數字告訴我們，模型並沒有「死記硬背」（過擬合），因為訓練分數與測試分數相當接近。
+
+* 🔹 **訓練集準確率 (Training Acc): 0.75** (平常練習考 75 分)
+* 🔹 **交叉驗證準確率 (Validation Acc): 0.72 (+/- 0.04)** (多次模擬考平均 72 分)
+* 🔹 **測試集準確率 (Test Acc): 0.74** (期末考 74 分，表現穩定)
+
+### 圖解分析 (Visualization Analysis)
 ![Decision Tree](https://github.com/ksharry/30-Days-Of-ML/blob/main/day7/pic/7-2.jpg?raw=true)
 
 **1. 找出第一關鍵因素 (Root Node)**
@@ -103,7 +115,7 @@ $$Gini = 1 - \sum_{i=1}^{C} (p_i)^2$$
 
 ---
 
-## 4. 特徵重要性 (Feature Importance)
+### 特徵重要性
 
 除了畫樹，決策樹還能直接告訴我們每個特徵的「分數」。
 
@@ -117,23 +129,9 @@ $$Gini = 1 - \sum_{i=1}^{C} (p_i)^2$$
 
 **[數據洞察]**：這張圖告訴我們，對於信用評分來說，**「現在有多少錢 (Checking Status)」比「你是誰 (Age/Job)」更重要**。這就是數據驅動決策的價值。
 
----
-
-## 5. 模型評估：這張考卷考得怎麼樣？
-
-訓練完模型後，我們不能只看它「背答案」的能力，重點是它面對沒看過的客戶（測試集）表現如何。
-
-### 整體成績單 (Performance Metrics)
-
-首先，我們來看模型的三項核心指標。這些數字告訴我們，模型並沒有「死記硬背」（過擬合），因為訓練分數與測試分數相當接近。
-
-* 🔹 **訓練集準確率 (Training Acc): 0.75** (平常練習考 75 分)
-* 🔹 **交叉驗證準確率 (Validation Acc): 0.72 (+/- 0.04)** (多次模擬考平均 72 分)
-* 🔹 **測試集準確率 (Test Acc): 0.74** (期末考 74 分，表現穩定)
-
 ### 圖表解讀 (Visualization Analysis)
 
-我們進一步透過 **混淆矩陣 (Confusion Matrix)** 與 **ROC 曲線** 來拆解這 74 分是怎麼來的。
+我們進一步透過 **混淆矩陣 (Confusion Matrix)** 與 **ROC 曲線** 來拆解這 76 分是怎麼來的。
 
 ![Confusion Matrix and ROC Curve](https://github.com/ksharry/30-Days-Of-ML/blob/main/day7/pic/7-4.jpg?raw=true)
 
@@ -161,7 +159,7 @@ $$Gini = 1 - \sum_{i=1}^{C} (p_i)^2$$
 
 ---
 
-## 6. 戰略總結：模型訓練的火箭發射之旅
+## 5. 戰略總結：模型訓練的火箭發射之旅
 
 決策樹雖然好解釋，但它有一個天生的致命傷：**「容易鑽牛角尖」**。如果不加限制，它會試圖把訓練資料分得一清二楚，導致模型變得過度複雜。
 
@@ -189,7 +187,7 @@ $$Gini = 1 - \sum_{i=1}^{C} (p_i)^2$$
 * 當我們透過調整參數（如 `max_depth`, `min_samples_split`），在「太簡單」與「太複雜」之間找到平衡點，模型就能在測試資料上穩定運行，這才是我們追求的完美 AI。
 
 ---
-## 7. 總結與比較 (Conclusion)
+## 6. 總結與比較 (Conclusion)
 
 讓我們看看目前的最終排行榜：
 
