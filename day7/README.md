@@ -67,8 +67,7 @@ $$Gini = 1 - \sum_{i=1}^{C} (p_i)^2$$
 ## 3. 實戰：信用違約預測 (Credit Risk)
 
 ### Python 程式碼實作
-*(請使用 `german_credit_data.csv` 與提供的 Python 腳本進行分析)*
-
+完整程式連結：[DecisionTree.py](https://github.com/ksharry/30-Days-Of-ML/blob/main/day7/DecisionTree.py)
 執行程式後，我們會得到一張漂亮的樹狀圖，讓我們來解讀這張圖背後的商業意義。
 
 ### 圖解分析 (Visualization Analysis)
