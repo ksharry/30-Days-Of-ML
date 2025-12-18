@@ -75,22 +75,32 @@
 (根據模型類型選擇對應的評估方式)
 
 ### 若為回歸模型 (Regression)
-*   指標：MSE, RMSE, R-Squared
-*   圖表：殘差圖 (Residual Plot) 或 預測值 vs 真實值散佈圖
+*   **指標數字**：
+    *   **R-Squared (R2)**: (數值，解釋)
+    *   **MSE**: (數值)
+    *   **Intercept/Coefficient**: (數值，解釋意義)
+*   **圖表**：
+    *   **預測結果圖**：(說明)
+    *   **殘差圖 (Residual Plot)**：(說明)
 
 ### 若為分類模型 (Classification)
-*   指標：混淆矩陣, ROC, 準確率
-*   圖表：決策邊界圖 (Decision Boundary) (若無 Feature Importance)
+*   **指標數字**：
+    *   **Accuracy**: (數值)
+    *   **Confusion Matrix**: (數值)
+*   **圖表**：
+    *   **決策邊界圖** 或 **Feature Importance**
 
 ### 若為非監督模型 (Unsupervised)
-*   指標：Silhouette Score (輪廓係數)
-*   圖表：分群視覺化圖 (Cluster Visualization) 或 手肘法圖 (Elbow Method)
+*   **指標數字**：
+    *   **Silhouette Score**: (數值)
+*   **圖表**：
+    *   **分群視覺化圖** 或 **手肘法圖**
 
 ## 5. 戰略總結:模型訓練的火箭發射之旅
 
 ### (回歸與監督式學習適用day2-12)
-引用吳恩達的 Rocket 理論 (Bias vs Variance)：
-![rocket](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.jpg?raw=true)
+引用大師-吳恩達教授的 Rocket 進行說明 Bias vs Variance：
+![rocket](pic/2-4_Rocket.jpg)
 
 #### 5.1 流程一：推力不足，無法升空 (Underfitting 迴圈)
 *   **設定**：(參數設定)

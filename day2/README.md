@@ -51,9 +51,11 @@ y_pred = model.predict(X_test_scaled)
 
 ## 4. 模型評估
 ### 若為回歸模型 (Regression)
-*   **指標**：
-    *   **R-Squared (R2)**: 衡量模型解釋數據變異的能力 (越接近 1 越好)。
-    *   **MSE**: 預測誤差的平方平均 (越小越好)。
+*   **指標數字**：
+    *   **R-Squared (R2)**: `0.9024` (非常接近 1，代表模型解釋力極佳)
+    *   **MSE**: `49830096.8559` (預測誤差的平方平均)
+    *   **Intercept (b)**: `74207.62` (預測起薪)
+    *   **Coefficient (a)**: `27151.54` (年資每增加一年，薪水增加約 27k)
 
 *   **圖表**：
     *   **預測結果圖**：紅線為模型預測的趨勢線。
@@ -65,8 +67,8 @@ y_pred = model.predict(X_test_scaled)
 ## 5. 戰略總結:模型訓練的火箭發射之旅
 
 ### (回歸與監督式學習適用day2-12)
-引用吳恩達的 Rocket 理論 (Bias vs Variance)：
-![rocket](pic/2-4 Rocket.jpg)
+引用大師-吳恩達教授的 Rocket 進行說明Bias vs Variance：
+![rocket](pic/2-4_Rocket.jpg)
 
 #### 5.1 流程一：推力不足，無法升空 (Underfitting 迴圈)
 *   **設定**：使用簡單的線性模型 ($y=ax+b$)。
