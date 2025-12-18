@@ -22,7 +22,7 @@ from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 # 使用 __file__ 確保檔案路徑相對於腳本位置
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(SCRIPT_DIR, 'Salary_Data.csv')
-DATA_URL = 'https://raw.githubusercontent.com/ksharry/30-Days-Of-ML/main/day2/Salary_Data.csv'
+DATA_URL = 'https://raw.githubusercontent.com/krishnaik06/Simple-Linear-Regression/master/Salary_Data.csv'
 
 def load_or_download_data(local_path, url):
     """
@@ -32,14 +32,27 @@ def load_or_download_data(local_path, url):
         print(f"找不到檔案：{local_path}，嘗試從網路下載...")
         try:
             import requests
-            response = requests.get(url)
+            response = requests.get(url, verify=False) # 嘗試關閉 verify 避開 SSL 問題
             response.raise_for_status()
             with open(local_path, 'wb') as f:
                 f.write(response.content)
-            print(f"下載成功！已儲存為 {local_path}")
+            print(f"下載成功 (requests)！已儲存為 {local_path}")
         except Exception as e:
-            print(f"下載失敗 (或 requests 模組不可用)：{e}")
-            return None
+            print(f"requests 下載失敗：{e}，嘗試使用 urllib...")
+            try:
+                import urllib.request
+                import ssl
+                # 忽略 SSL 憑證驗證
+                ctx = ssl.create_default_context()
+                ctx.check_hostname = False
+                ctx.verify_mode = ssl.CERT_NONE
+                
+                with urllib.request.urlopen(url, context=ctx) as u, open(local_path, 'wb') as f:
+                    f.write(u.read())
+                print(f"下載成功 (urllib)！已儲存為 {local_path}")
+            except Exception as e2:
+                print(f"urllib 下載也失敗：{e2}")
+                return None
     else:
         print(f"發現本地檔案：{local_path}")
     

@@ -1,16 +1,24 @@
 # Day 02: 線性回歸 (Linear Regression)
 
-## 0. 核心貢獻者:
-(無)
+## 0. 歷史小故事/核心貢獻者:
+線性回歸最早的數學基礎——**最小平方法 (Least Squares)**，由法國數學家 **勒讓德 (Adrien-Marie Legendre)** 於 1805 年首次發表，不過「數學王子」**高斯 (Carl Friedrich Gauss)** 聲稱他在 1795 年就已經在使用這套方法來計算天體軌道。有趣的是，「回歸 (Regression)」這個詞其實是後來由 **法蘭西斯·高爾頓 (Francis Galton)** 在研究父子身高遺傳關係時提出的；他發現極高或極矮父親的兒子，身高都會傾向於「回歸」到大眾平均值 (Regression to the mean)，這個生物學上的觀察後來與最小平方法結合，演變成了我們今日熟知的線性回歸。
 
 ## 1. 資料集來源
-### 資料集來源：[Salary_Data.csv](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/Salary_Data.csv)
-### 資料集畫面與欄位介紹:
-這是一個非常簡單的資料集，僅包含兩個欄位：
-*   **YearsExperience**: 工作年資 (X)
-*   **Salary**: 薪水 (y)
+### 資料集來源：[Salary_Data.csv](https://github.com/krishnaik06/Simple-Linear-Regression/blob/master/Salary_Data.csv)
+> 備註：原始資料來自 Kaggle 或機器學習入門教學常見的範例數據，此處使用 GitHub 公開資源作為下載點。
 
-我們想知道，年資每增加一年，薪水會增加多少？這就是最典型的線性回歸問題。
+### 資料集特色與欄位介紹:
+這是一個專為**簡單線性回歸 (Simple Linear Regression)** 設計的入門級資料集，特色如下：
+1.  **極簡潔**：只有兩個欄位，非常適合初學者理解 $X$ 與 $y$ 的關係。
+2.  **強相關性**：年資與薪水之間存在明顯的正相關，模型訓練效果通常很好。
+3.  **無缺失值**：數據乾淨，不需要複雜的清洗步驟。
+4.  **資料量少**：約 30 筆數據，運算速度極快。
+
+**欄位說明**：
+*   **YearsExperience (特徵 X)**: 工作年資 (數值型)。代表員工在該領域的工作年數。
+*   **Salary (目標 y)**: 年薪 (數值型)。代表對應年資的薪資水平。
+
+我們想知道，**年資每增加一年，薪水會增加多少？** 這就是最典型的線性回歸問題。
 
 ![EDA](pic/2-1_EDA.png)
 
@@ -22,10 +30,8 @@
 ## 2. 原理
 ### 核心公式與參數
 線性回歸試圖找到一條直線 $y = ax + b$ 來擬合數據。
-
-**$a$ (Coefficient/Slope)**: 斜率，代表年資對薪水的影響力。
-
-**$b$ (Intercept/Bias)**: 截距，代表起薪 (年資為 0 時的薪水)。
+* **$a$ (Coefficient/Slope)**: 斜率，代表年資對薪水的影響力。
+* **$b$ (Intercept/Bias)**: 截距，代表起薪 (年資為 0 時的薪水)。
 
 **損失函數 (Loss Function)**：
 我們使用 **均方誤差 (MSE, Mean Squared Error)** 來衡量預測值與真實值的差距：
@@ -60,7 +66,7 @@ y_pred = model.predict(X_test_scaled)
 
 ### (回歸與監督式學習適用day2-12)
 引用吳恩達的 Rocket 理論 (Bias vs Variance)：
-![rocket](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.jpg?raw=true)
+![rocket](pic/2-4 Rocket.jpg)
 
 #### 5.1 流程一：推力不足，無法升空 (Underfitting 迴圈)
 *   **設定**：使用簡單的線性模型 ($y=ax+b$)。

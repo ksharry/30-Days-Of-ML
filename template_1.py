@@ -18,7 +18,6 @@ from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 # 根據 Day 換模型：
 from sklearn.linear_model import LinearRegression 
 # from sklearn.linear_model import Lasso, Ridge (Day 04)
-
 # --- 1. 載入資料 (Data Loading) ---
 # 設定資料集路徑與下載網址 (請依實際需求修改)
 DATA_FILE = 'dataset.csv' 
@@ -31,14 +30,27 @@ def load_or_download_data(local_path, url):
     if not os.path.exists(local_path):
         print(f"找不到檔案：{local_path}，嘗試從網路下載...")
         try:
-            response = requests.get(url)
+            import requests
+            response = requests.get(url, verify=False)
             response.raise_for_status()
             with open(local_path, 'wb') as f:
                 f.write(response.content)
-            print(f"下載成功！已儲存為 {local_path}")
+            print(f"下載成功 (requests)！已儲存為 {local_path}")
         except Exception as e:
-            print(f"下載失敗：{e}")
-            return None
+            print(f"requests 下載失敗：{e}，嘗試使用 urllib...")
+            try:
+                import urllib.request
+                import ssl
+                ctx = ssl.create_default_context()
+                ctx.check_hostname = False
+                ctx.verify_mode = ssl.CERT_NONE
+                
+                with urllib.request.urlopen(url, context=ctx) as u, open(local_path, 'wb') as f:
+                    f.write(u.read())
+                print(f"下載成功 (urllib)！已儲存為 {local_path}")
+            except Exception as e2:
+                print(f"urllib 下載也失敗：{e2}")
+                return None
     else:
         print(f"發現本地檔案：{local_path}")
     
