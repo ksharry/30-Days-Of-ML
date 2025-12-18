@@ -1,114 +1,86 @@
-# Day 02：線性回歸 (Linear Regression) 與房價預測
+# Day 02: 線性回歸 (Linear Regression)
 
-## 0. 歷史小故事：回歸 (Regression) 的由來
-「回歸」這個詞最早由英國科學家 **法蘭西斯·高爾頓爵士 (Sir Francis Galton)** 於 19 世紀末提出。作為達爾文的表弟，高爾頓熱衷於研究遺傳與生物統計，他最著名的研究之一就是觀察「父母身高與子女身高」的關係。
+## 0. 核心貢獻者:
+(無)
 
-高爾頓發現了一個有趣的現象：雖然高個子的父母傾向生出高個子的子女，但這些子女的平均身高通常會**比父母矮一些**；反之，矮個子的父母所生的子女，平均身高則會**比父母高一些**。也就是說，極端的特徵在下一代會傾向「縮減」並向整體的平均值靠攏。
-
-他將這種現象稱為 **「回歸平均值」 (Regression toward the Mean)**。當時的 "Regression" 原意是指生物特徵在遺傳過程中「倒退」回平均狀態的趨勢，而非我們現在所理解的「數據預測」。
-
-隨著時間推移，統計學家（如 Pearson 和 Fisher）將高爾頓的概念數學化，發展出我們今日使用的線性模型。雖然現代的 **線性回歸 (Linear Regression)** 已經不再僅限於描述「回歸平均」的生物現象，而是指「利用自變數 $X$ 來預測應變數 $Y$ 的統計方法」，但這個充滿歷史意義的名字卻一直沿用至今。
-
----
 ## 1. 資料集來源
-本實作使用 Scikit-Learn 內建的 [California Housing](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_california_housing.html) 資料集。
+### 資料集來源：[Salary_Data.csv](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/Salary_Data.csv)
+### 資料集畫面與欄位介紹:
+這是一個非常簡單的資料集，僅包含兩個欄位：
+*   **YearsExperience**: 工作年資 (X)
+*   **Salary**: 薪水 (y)
 
-![資料內容](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-1.jpg?raw=true)
+我們想知道，年資每增加一年，薪水會增加多少？這就是最典型的線性回歸問題。
 
-* **來源：** 1990 年加州人口普查數據。
-* **樣本數：** 20,640 筆。
-* **特徵 (Features)：** 8 個，包含 MedInc (收入中位數), HouseAge (房齡), AveRooms (平均房間數) 等。
-* **目標 (Target)：** 該街區的房價中位數 (MedHouseVal)，單位為 **10 萬美元**。
+![EDA](pic/2-1_EDA.png)
 
----
+### 資料清理
+1.  **檢查缺失值**：此資料集通常完整，無缺失值。
+2.  **資料分割**：將資料分為 80% 訓練集與 20% 測試集。
+3.  **特徵縮放**：雖然單變量回歸不一定需要，但為了養成好習慣，我們使用 `StandardScaler` 進行標準化。
 
-## 2. 理論
-線性回歸 (Linear Regression) 是機器學習中最基礎的模型。它的核心思想是尋找一條直線（或多維空間中的超平面），來擬合數據的分布趨勢，藉此預測連續型的數值。
+## 2. 原理
+### 核心公式與參數
+線性回歸試圖找到一條直線 $y = ax + b$ 來擬合數據。
 
-### 2.1 核心公式
-模型假設輸入特徵 $X$ 與輸出 $y$ 之間存在線性關係：
+**$a$ (Coefficient/Slope)**: 斜率，代表年資對薪水的影響力。
 
-$$\hat{y} = w_1 x_1 + w_2 x_2 + \dots + w_n x_n + b$$
+**$b$ (Intercept/Bias)**: 截距，代表起薪 (年資為 0 時的薪水)。
 
-* **$\hat{y}$ (Prediction)：** 模型的預測值。
-* **$x$ (Features)：** 輸入的特徵（例如：房屋的坪數、房齡）。
-* **$w$ (Weights/Coefficients)：** 權重。代表該特徵對結果的影響力。
-    * 若 $w > 0$：正相關（例如：坪數越大，房價越高）。
-    * 若 $w < 0$：負相關（例如：犯罪率越高，房價越低）。
-* **$b$ (Bias/Intercept)：** 截距項。代表當所有特徵為 0 時的基礎數值。
+**損失函數 (Loss Function)**：
+我們使用 **均方誤差 (MSE, Mean Squared Error)** 來衡量預測值與真實值的差距：
+$$MSE = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$
+目標是找到一組 $(a, b)$ 使得 MSE 最小。這通常透過 **梯度下降 (Gradient Descent)** 或 **最小平方法 (OLS)** 來達成。
 
-### 2.2 損失函數 (Loss Function)
-我們的目標是讓預測值 $\hat{y}$ 盡可能接近真實值 $y$。在線性回歸中，最常用的損失函數是 **均方誤差 (Mean Squared Error, MSE)**：
-
-$$J(w, b) = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2$$
-
-### 2.3 優化方法 (Optimization)
-為了找到讓誤差最小的 $w$ 和 $b$，通常使用以下方法：
-1.  **最小平方法 (Ordinary Least Squares, OLS)：** 透過數學解析解直接算出最佳參數（Scikit-Learn 的 `LinearRegression` 預設使用此法）。
-2.  **梯度下降法 (Gradient Descent)：** 透過迭代更新權重來尋找最低點（適合極大規模數據）。
-
----
-## 3. 實戰：加州房價預測
+## 3. 實戰
 ### Python 程式碼實作
-完整程式連結-[California_Housing_Prediction.py](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/California_Housing_Prediction.py)
+完整程式連結：[Linear_Regression_Salary.py](Linear_Regression_Salary.py)
+
+```python
+# 核心程式碼片段
+model = LinearRegression()
+model.fit(X_train_scaled, y_train)
+y_pred = model.predict(X_test_scaled)
+```
 
 ## 4. 模型評估
-### 整體成績單
-* 🔹 **測試集準確率 (Test Acc): 0.6** 
+### 若為回歸模型 (Regression)
+*   **指標**：
+    *   **R-Squared (R2)**: 衡量模型解釋數據變異的能力 (越接近 1 越好)。
+    *   **MSE**: 預測誤差的平方平均 (越小越好)。
 
-### 模型效能指標
-* **MSE (均方誤差): `0.5559`**
-    * **解讀：** 由於資料單位是「10 萬美元」，直接看 MSE 較無感。將其開根號 (RMSE) 約為 `0.745`。
-    * **結論：** 這代表模型預測房價時，**平均誤差約為 74,500 美元**。考慮到加州房價動輒數十萬，這個誤差顯示模型抓到了大方向，但精確度仍有空間。
-* **R² Score (決定係數): `0.5758` (約 57.6%)**
-    * **解讀：** 模型解釋了約 58% 的房價變異。以社會科學數據（充滿雜訊）而言，這是一個及格的基準線 (Baseline)。
-
-### 特徵重要性 (Feature Importance)
-從係數 (`Coefficient`) 可以看出哪些因素最影響房價：
-* **正相關最強：** `MedInc` (+0.449)。收入中位數越高，房價越高（符合直覺）。
-* **負相關最強：** `Latitude` / `Longitude` (-0.42 / -0.43)。這顯示「地理位置」是決定房價的關鍵因素（例如越往內陸或特定緯度房價越低）。
-
-### 圖解分析-特徵關係：收入 vs 房價
-![Income vs House Value](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-2.jpg?raw=true)
-* **觀察：** `MedInc` (收入中位數) 與房價呈現明顯的 **正相關**，這解釋了為什麼它在模型中的權重最高。
-* **細節：** 注意圖表上方有一條水平的橫線（與一些斷續的水平線），這預示了資料被「人為截斷」的痕跡。
-
-### 圖解分析-預測結果：真實值 vs 預測值
-![True vs Predicted](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-3.jpg?raw=true)
-* **觀察：** 紅色虛線代表完美預測。點越靠近紅線越好。
-* **異常：** 注意最右側 **X=5.0** 處，有一整排垂直的點。這代表對於那些真實價值 50 萬以上的豪宅，模型**嚴重低估**了它們的價格（因為模型沒看過大於 50 萬的數據，只能依照線性規律去猜）。
-
-### 圖解分析-地理空間分析
-![Geospatial Map](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-4.jpg?raw=true)
-* **觀察：** 圖中顏色越黃代表房價越高，圓圈大小代表人口。
-* **洞察：** 高房價清楚地集中在 **沿海地區**（舊金山灣區與洛杉磯）。
-* **限制：** 線性回歸只能處理簡單的數值增減（例如：緯度越低越貴？），但無法理解這種「沿著海岸線分布」的複雜地理聚落，這也是模型分數無法突破的主因之一。
-
-### 圖解分析-殘差分析 (Residual Plot)
-![Residual Plot](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-5.jpg?raw=true)
-* **觀察：** 殘差 = 真實值 - 預測值。理想的殘差圖應該像一團隨機散亂的雲。
-* **警訊：** 圖片右上角出現了一條明顯的 **切線邊界**。這是天花板效應留下的「疤痕」（因為 $True Value$ 被卡在 5.0，導致殘差呈現線性規律）。這再次證明線性模型無法完美處理這種非自然截斷的數據。
-
----
+*   **圖表**：
+    *   **預測結果圖**：紅線為模型預測的趨勢線。
+    ![Prediction](pic/2-2_Prediction.png)
+    
+    *   **殘差圖 (Residual Plot)**：檢查誤差是否隨機分佈。若有規律 (如 U 型)，代表線性模型可能不足以擬合數據。
+    ![Residuals](pic/2-3_Residuals.png)
 
 ## 5. 戰略總結:模型訓練的火箭發射之旅
-最後，讓我們引用 AI 大師 **吳恩達 (Andrew Ng)** 的經典圖表，來重新審視我們學到的模型
+
+### (回歸與監督式學習適用day2-12)
+引用吳恩達的 Rocket 理論 (Bias vs Variance)：
 ![rocket](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.jpg?raw=true)
 
-### 5.1 診斷流程
-我們依序觀察 **訓練集** 與 **測試集** 的表現：
+#### 5.1 流程一：推力不足，無法升空 (Underfitting 迴圈)
+*   **設定**：使用簡單的線性模型 ($y=ax+b$)。
+*   **第一關：訓練集表現好嗎？** 若 R2 很低，代表模型太簡單 (Underfitting)。
+*   **行動 (Action)**：增加特徵 (如多項式特徵 $x^2$) 或換更強的模型。
 
-1.  **第一關：檢查訓練集表現 (Train Error)**
-    * **現象：** 分數不高 (0.6 左右)。
-    * **診斷：** **Underfitting (低度擬合)**。這代表我們的「火箭引擎」（線性回歸）太小了，無法捕捉複雜的房價變化。
-    * **解法：** 更換更複雜的模型（例如神經網路），或增加多項式特徵。
+#### 5.2 流程二：動力太強，失控亂飛 (Overfitting 迴圈)
+*   **設定**：使用了過於複雜的模型 (如高階多項式)。
+*   **第一關：訓練集表現好嗎？** 很好 (R2 接近 1)。
+*   **第二關：測試集表現好嗎？** 很差 (R2 低，MSE 高)。
+*   **行動 (Action)**：收集更多數據、減少特徵、或使用正則化 (Regularization, Day 04)。
 
-2.  **第二關：檢查測試集表現 (Test Error)**
-    * **現象：** 與訓練集差不多差。
-    * **結論：** 問題不在於資料不足（燃料夠），而在於模型太簡單。
+#### 5.3 流程三：完美入軌 (The Sweet Spot)
+*   **設定**：適當的模型複雜度。
+*   **第一關 & 第二關**：訓練集與測試集表現都很好。
+*   **結果**：完成！在此案例中，單變量線性回歸通常就能達到不錯的效果。
 
-### 6. 總結
-在本次實作中，我們屬於 **High Bias (高偏差)** 的情況。這告訴我們，單純增加數據量（燃料）已經沒有幫助，下一階段的挑戰，我們需要換上**「更大的引擎」**來突破 0.6 的天花板。
-
----
-Next Day Preivew: Day 03 - 正則化回歸 (Ridge & Lasso Regression)，重點： L1 與 L2 Regularization 的差別、如何解決 Overfitting、特徵篩選。
+## 6. 總結
+Day 02 我們學習了機器學習的 "Hello World" —— 線性回歸。
+*   理解了 $y=ax+b$ 的幾何意義。
+*   學會使用 `scikit-learn` 建立模型。
+*   學會看懂 MSE 與 R2 指標。
+下一章 (Day 03)，我們將挑戰更複雜的 **多元線性回歸**，處理多個特徵的情況！
