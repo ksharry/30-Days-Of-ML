@@ -49,6 +49,15 @@
     將數據轉為平均值 0，標準差 1 的分佈。
 *   **為什麼要做？** 避免「票價 (0-500)」的權重遠大於「年齡 (0-80)」，讓梯度下降收斂更快。
 
+#### 4. 自動化流水線 (Pipeline)
+這是 Scikit-Learn 的殺手級功能。
+*   **概念**：將多個處理步驟 (填補 -> 編碼 -> 縮放 -> 模型) 串接成一個物件。
+*   **好處**：
+    1.  **程式碼簡潔**：不用寫一堆 `fit_transform`。
+    2.  **防止資料洩漏 (Data Leakage)**：確保測試集 (Test Set) 永遠只用訓練集 (Train Set) 的統計數據 (如平均值) 來進行填補或縮放，這是新手最常犯的錯誤！
+        *   **錯誤做法**：先算出「全班平均身高」，然後用這個平均值來填補「轉學生 (測試集)」的身高。這樣你就偷看了轉學生的資訊！
+        *   **正確做法**：先算出「舊生平均身高」，然後用這個舊生的平均值來填補「轉學生」的身高。Pipeline 會自動幫你做到這點。
+
 ## 3. 實戰
 ### Python 程式碼實作
 完整程式連結：[Data_Preprocessing_Titanic.py](Data_Preprocessing_Titanic.py)
@@ -100,4 +109,5 @@ categorical_transformer = Pipeline(steps=[
 Day 05 我們完成了機器學習最重要的一步 —— **數據預處理**。
 *   **Garbage In, Garbage Out**：沒有好的預處理，再強的模型也是垃圾。
 *   **Pipeline**：學會使用 Scikit-Learn 的 Pipeline 來自動化處理流程，這在未來部署時非常重要。
-下一章 (Day 06)，我們將利用處理好的鐵達尼號數據，正式進入 **分類模型 (Classification)** 的世界，挑戰 **邏輯回歸 (Logistic Regression)**！
+
+我們將利用處理好的鐵達尼號數據放到Day09再進行模型訓練，今天僅作資料預處理過程，下一章(Day 06)正式進入 **分類模型 (Classification)** 的世界，挑戰 **邏輯回歸 (Logistic Regression)**！
