@@ -77,8 +77,8 @@ for name, model in models.items():
 coef_df = pd.DataFrame({
     'Feature': X.columns,
     'Linear': results['Linear']['model'].coef_,
-    'Ridge': results['Ridge']['model'].coef_,
-    'Lasso': results['Lasso']['model'].coef_
+    'Ridge': results['Ridge (L2)']['model'].coef_,
+    'Lasso': results['Lasso (L1)']['model'].coef_
 })
 
 print("\n係數比較 (注意 Lasso 是否將某些係數變為 0):")

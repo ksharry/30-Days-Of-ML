@@ -53,6 +53,9 @@ df_encoded = pd.get_dummies(df, columns=['State'], drop_first=True)
         *   **R&D Spend**: `38102.27` (研發支出影響最大，每增加 1 單位標準化支出，獲利增加最多)
         *   **Administration**: `-1864.75` (行政支出反而與獲利呈微幅負相關)
 *   **圖表**：
+    *   **特徵重要性長條圖**：直觀比較各特徵對獲利的影響力 (R&D Spend 遙遙領先)。
+    ![Feature Importance](pic/3-5_Feature_Importance.png)
+
     *   **相關係數熱力圖**：觀察哪些特徵與 Profit 最相關。
         *   **怎麼看？** 顏色越紅 (接近 1.0) 代表正相關越強。
         *   **觀察點**：請看 `Profit` 這一行，你會發現 `R&D Spend` 的格子非常紅 (係數高達 0.97)，代表研發支出越高，獲利通常越高；而 `Administration` 顏色很淡 (係數僅 0.20)，代表行政支出跟獲利沒什麼關係。
@@ -60,9 +63,6 @@ df_encoded = pd.get_dummies(df, columns=['State'], drop_first=True)
     
     *   **預測結果圖**：觀察預測點是否落在紅線上。
     ![Prediction](pic/3-3_Prediction.png)
-
-    *   **特徵重要性長條圖**：直觀比較各特徵對獲利的影響力 (R&D Spend 遙遙領先)。
-    ![Feature Importance](pic/3-5_Feature_Importance.png)
 
 ## 5. 戰略總結:模型訓練的火箭發射之旅
 

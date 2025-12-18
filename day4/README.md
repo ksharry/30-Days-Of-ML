@@ -56,10 +56,15 @@ models = {
 ## 4. 模型評估
 ### 若為回歸模型 (Regression)
 *   **指標數字**：
-    *   **R-Squared (R2)**: (待程式執行後填入)
-    *   **MSE**: (待程式執行後填入)
+    *   **R-Squared (R2)**: 
+        *   Linear: `0.5758`
+        *   Ridge: `0.5758` (幾乎沒變，代表此資料集共線性問題不嚴重)
+        *   **Lasso**: `0.5816` (表現最好！稍微提升了預測力)
+    *   **MSE**: 
+        *   Linear: `0.5559`
+        *   Lasso: `0.5483` (誤差最小)
     *   **Intercept/Coefficient**: 
-        *   **Lasso 特性觀察**: 觀察是否有係數變成 0？(這代表該特徵被剔除了)
+        *   **Lasso 特性觀察**: 請看 `Population` 的係數，在 Linear 中是 `-0.0023`，但在 Lasso 中變成了 **`-0.0000`**！這代表 Lasso 認為「人口數」對房價沒有幫助，直接把它剔除了。這就是 Lasso 的**特徵選擇**能力。
 *   **圖表**：
     *   **係數比較圖**：直觀比較 Linear, Ridge, Lasso 對特徵權重的影響。
     ![Coefficients](pic/4-2_Coefficients.png)
@@ -71,7 +76,7 @@ models = {
 
 ### (回歸與監督式學習適用day2-12)
 引用大師-吳恩達教授的 Rocket 進行說明 Bias vs Variance：
-![rocket](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.jpg?raw=true)
+![rocket](pic/2-4.jpg)
 
 #### 5.1 流程一：推力不足，無法升空 (Underfitting 迴圈)
 *   **設定**：$\alpha$ 設得太大 (如 Lasso alpha=100)。
