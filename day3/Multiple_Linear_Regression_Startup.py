@@ -127,6 +127,15 @@ feature_importance = pd.DataFrame({
 print("\n特徵重要性:")
 print(feature_importance)
 
+# (C) 特徵重要性長條圖 (新增)
+plt.figure(figsize=(10, 6))
+sns.barplot(x='Coefficient', y='Feature', data=feature_importance, palette='viridis')
+plt.title('Feature Importance (Standardized Coefficients)')
+plt.xlabel('Coefficient Value (Impact on Profit)')
+plt.ylabel('Feature')
+plt.savefig(os.path.join(pic_dir, '3-5_Feature_Importance.png'))
+# plt.show()
+
 # --- 6. 結果視覺化 ---
 # (A) 預測值 vs 真實值
 plt.figure(figsize=(8, 6))
