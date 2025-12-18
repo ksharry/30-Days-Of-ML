@@ -68,7 +68,7 @@ df_encoded = pd.get_dummies(df, columns=['State'], drop_first=True)
 
 ### (回歸與監督式學習適用day2-12)
 引用大師-吳恩達教授的 Rocket 進行說明 Bias vs Variance：
-![rocket](pic/2-4_Rocket.jpg)
+![rocket](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-4_Rocket.jpg?raw=true)
 
 #### 5.1 流程一：推力不足，無法升空 (Underfitting 迴圈)
 *   **設定**：如果只用單一特徵 (如只看行政支出) 來預測獲利。

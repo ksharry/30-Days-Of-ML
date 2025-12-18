@@ -100,7 +100,8 @@
 
 ### (回歸與監督式學習適用day2-12)
 引用大師-吳恩達教授的 Rocket 進行說明 Bias vs Variance：
-![rocket](pic/2-4_Rocket.jpg)
+![rocket](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-4_Rocket.jpg?raw=true)
+(圖表固定用2-4這個網址)
 
 #### 5.1 流程一：推力不足，無法升空 (Underfitting 迴圈)
 *   **設定**：(參數設定)
