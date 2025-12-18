@@ -48,7 +48,7 @@ df_encoded = pd.get_dummies(df, columns=['State'], drop_first=True)
 ### 若為回歸模型 (Regression)
 *   **指標數字**：
     *   **R-Squared (R2)**: `0.8987` (模型解釋了約 90% 的獲利變異，表現優異)
-    *   **MSE**: `82010363.0450`
+    *   **MSE**: `82010363.0450` (看起來很大是因為單位是「美金的平方」。若開根號看 **RMSE** 約為 **9055**，代表我們預測的獲利與真實情況平均誤差約 **9000 美金**，考慮到公司獲利動輒十幾萬，這誤差是可以接受的)
     *   **Intercept/Coefficient**: 
         *   **R&D Spend**: `38102.27` (研發支出影響最大，每增加 1 單位標準化支出，獲利增加最多)
         *   **Administration**: `-1864.75` (行政支出反而與獲利呈微幅負相關)
@@ -63,7 +63,7 @@ df_encoded = pd.get_dummies(df, columns=['State'], drop_first=True)
 
 ### (回歸與監督式學習適用day2-12)
 引用大師-吳恩達教授的 Rocket 進行說明 Bias vs Variance：
-![rocket](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-6.jpg?raw=true)
+![rocket](pic/2-4_Rocket.jpg)
 
 #### 5.1 流程一：推力不足，無法升空 (Underfitting 迴圈)
 *   **設定**：如果只用單一特徵 (如只看行政支出) 來預測獲利。
