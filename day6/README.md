@@ -78,6 +78,13 @@ classifier.fit(X_train, y_train)
         *   TP / (TP + FN) = 65 / (65 + 5) = 0.7500
     *   **F1-Score**: `0.8136`
         *   2 * (Precision * Recall) / (Precision + Recall) = 2 * (0.8889 * 0.7500) / (0.8889 + 0.7500) = 0.8136
+    *   **ROC 曲線 (ROC Curve)**：
+    ![ROC Curve](pic/6-4_ROC_Curve.png)
+        *   **橘色線**：模型的表現。越靠近左上角越好。
+        *   **藍色虛線**：隨機猜測 (AUC=0.5)。
+        *   **AUC 值**：曲線下的面積，越高代表模型區分正負樣本的能力越強。
+    *   **AUC (Area Under Curve)**: `0.9540` - ROC 曲線下的面積。0.5 代表亂猜，1.0 代表完美預測。
+
     *   **決策邊界圖 (Decision Boundary)**：這是 Day 06 的重頭戲！
     ![Decision Boundary](pic/6-3_Decision_Boundary.png)
         *   **紅色區域**：模型預測「不會買」的範圍。
@@ -87,13 +94,6 @@ classifier.fit(X_train, y_train)
             *   公式推導：當 $Sigmoid(z) = 0.5$ 時，代表 $z = 0$。
             *   也就是 $ax_1 + bx_2 + c = 0$。這在數學上就是一條直線方程式！所以邏輯回歸的邊界永遠是直的。
     
-    *   **ROC 曲線 (ROC Curve)**：
-    ![ROC Curve](pic/6-4_ROC_Curve.png)
-        *   **橘色線**：模型的表現。越靠近左上角越好。
-        *   **藍色虛線**：隨機猜測 (AUC=0.5)。
-        *   **AUC 值**：曲線下的面積，越高代表模型區分正負樣本的能力越強。
-    *   **AUC (Area Under Curve)**: `0.9540` - ROC 曲線下的面積。0.5 代表亂猜，1.0 代表完美預測。
-
 ## 5. 戰略總結:模型訓練的火箭發射之旅
 
 ### (回歸與監督式學習適用day2-12)
