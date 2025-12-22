@@ -59,12 +59,16 @@ SVM 的數學很深奧，但我們只要懂兩個最重要的參數：
 
 #### 1. 核函數公式
 *   **Linear Kernel**: $K(x, x') = x \cdot x'$ (單純的內積)
-*   **RBF Kernel**: $K(x, x') = \exp(-\gamma ||x - x'||^2)$ (高斯分佈，衡量兩點相似度)
+*   **RBF Kernel**:
+    $$K(x, x') = \exp(-\gamma ||x - x'||^2)$$
+    *   這裡的 **$\gamma$ (Gamma)** 就是控制高斯分佈寬度的參數。
 
 #### 2. 關鍵參數 (C 與 Gamma)
-*   **C (懲罰係數)**：控制「容錯率」。
-    *   **大 C**：**嚴格**。不允許任何分類錯誤 (Hard Margin)。容易 Overfitting。
-    *   **小 C**：**寬鬆**。允許一些點跑到馬路上 (Soft Margin)。追求更寬的邊界，泛化能力較好。
+*   **C (懲罰係數)**：出現在 **Soft Margin** 的目標函數中：
+    $$min \frac{1}{2}||w||^2 + C \sum \xi_i$$
+    *   $\xi_i$ 是每個點的錯誤距離 (跑進馬路的距離)。
+    *   **大 C**：權重很大，代表**非常在意錯誤** $\rightarrow$ **嚴格** (Hard Margin)，容易 Overfitting。
+    *   **小 C**：權重很小，代表**不太在意錯誤** $\rightarrow$ **寬鬆** (Soft Margin)，追求更寬的邊界。
 *   **Gamma ($\gamma$)**：控制 RBF 核函數的「影響範圍」。
     *   **大 Gamma**：**短視近利**。只看附近的點，邊界會扭曲得很複雜 (容易 Overfitting)。
     *   **小 Gamma**：**遠見**。考慮較遠的點，邊界比較平滑。
