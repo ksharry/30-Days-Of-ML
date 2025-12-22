@@ -56,15 +56,15 @@ classifier.fit(X_train, y_train)
 *   **混淆矩陣圖**：
     ![Confusion Matrix](pic/6-2_Confusion_Matrix.png)
 *   **指標數字**：
-    *   **Accuracy (準確率)**: `0.8900`
+    *   **Accuracy (準確率)**: `0.8900`   ** <--本篇重點 **
         *   (TP + TN) / Total = (65 + 24) / 80 = 0.89
-    *   **Precision (精確率)**: `0.8889`
+    *   **Precision (精確率)**: `0.8889`  ** <--Day12說明 **
         *   TP / (TP + FP) = 65 / (65 + 5) = 0.8889
-    *   **Recall (召回率)**: `0.7500`
+    *   **Recall (召回率)**: `0.7500` ** <--Day12說明 **
         *   TP / (TP + FN) = 65 / (65 + 5) = 0.7500
-    *   **F1-Score**: `0.8136`
+    *   **F1-Score**: `0.8136` ** <--Day12說明 **
         *   2 * (Precision * Recall) / (Precision + Recall) = 2 * (0.8889 * 0.7500) / (0.8889 + 0.7500) = 0.8136
-    *   **ROC 曲線 (ROC Curve)**：
+    *   **ROC 曲線 (ROC Curve)**： ** <--Day12說明 **
     ![ROC Curve](pic/6-4_ROC_Curve.png)
         *   **橘色線**：模型的表現。越靠近左上角越好。
         *   **藍色虛線**：隨機猜測 (AUC=0.5)。
