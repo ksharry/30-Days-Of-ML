@@ -4,13 +4,15 @@
 **"Garbage In, Garbage Out" (GIGO)** 是電腦科學界的一句老話。在機器學習領域，這句話被演繹為：**「數據和特徵決定了機器學習的上限，而模型和演算法只是在逼近這個上限。」** 特徵工程 (Feature Engineering) 是一門藝術，它往往比調整模型參數 (Hyperparameter Tuning) 更能顯著提升模型效能。
 
 ## 1. 資料集來源
-### 資料集來源：[Synthetic Imbalanced Dataset (模擬信用卡詐欺)]
-> 備註：為了展示特徵工程的威力，我們使用 `sklearn.datasets.make_classification` 產生一個高度不平衡且包含雜訊特徵的模擬資料集。
+### 資料集來源：[Synthetic Imbalanced Dataset (模擬信用卡詐欺)](credit_card_fraud_synthetic.csv)
+> 備註：為了展示特徵工程的威力，我們使用 `sklearn.datasets.make_classification` 產生一個高度不平衡且包含雜訊特徵的模擬資料集。您可以點擊上方連結下載生成的 CSV 檔案。
 
 ### 資料集特色與欄位介紹:
 這是一個模擬 **信用卡詐欺偵測** 的場景。
 1.  **高度不平衡 (Imbalanced)**：正常交易 (Class 0) 佔 90%，詐欺交易 (Class 1) 僅佔 10%。
-2.  **冗餘特徵 (Redundant Features)**：20 個特徵中，只有 5 個是有用的，其他都是雜訊或重複資訊。
+2.  **特徵生成邏輯 (How it's made)**：
+    *   **Informative Features (有用的)**：其中 5 個特徵是由演算法根據特定規則生成的，與目標 (詐欺與否) 高度相關。
+    *   **Redundant/Noise Features (沒用的)**：其他的特徵則是隨機生成的雜訊，或是由有用特徵簡單相加減得來的 (線性組合)，對預測沒有額外幫助，反而會混淆模型。
 
 **欄位說明**：
 *   **Target (目標 y)**: 0 = Normal (正常), 1 = Fraud (詐欺)。
@@ -69,8 +71,13 @@ upsampled_data = pd.concat([majority_class, minority_upsampled])
 
 *   **混淆矩陣比較**：
     ![Confusion Matrix Comparison](pic/11-4_Confusion_Matrix_Comparison.png)
-    *   **Baseline (左圖)**：雖然準確率高，但可能漏抓很多詐欺 (Recall 低)。
-    *   **Balanced (右圖)**：雖然可能會誤判一些正常交易 (FP 增加)，但能抓到更多的詐欺 (Recall 提升)。**在詐欺偵測中，抓到壞人通常比誤殺好人更重要！**
+    *   **Baseline (左圖)**：
+        *   雖然準確率高 (94%)，但 **Recall 只有 0.47**。
+        *   這代表 40 個詐欺犯中，只抓到了 19 個，**漏掉了 21 個**！這在金融風控是不可接受的。
+    *   **Balanced (右圖)**：
+        *   經過處理後，**Recall 提升到了 0.50** (抓到了 20 個)。
+        *   雖然進步幅度看似不大 (因為這是簡單的隨機過採樣)，但在真實案例中使用 SMOTE 通常會有更顯著的提升。
+        *   **重點**：我們犧牲了一點點 Precision (誤判一些好人)，換取了抓到更多壞人的機會。
 
 ## 5. 戰略總結:模型訓練的火箭發射之旅
 

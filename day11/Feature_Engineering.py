@@ -20,14 +20,25 @@ from sklearn.feature_selection import RFE
 # --- 1. 產生模擬資料 (Data Generation) ---
 # 我們產生一個高度不平衡的資料集，模擬信用卡詐欺偵測
 # 1000 筆資料，20 個特徵，但只有 10% 是詐欺 (Class 1)
-X, y = make_classification(n_samples=1000, n_features=20, n_informative=5, n_redundant=2,
-                           n_classes=2, weights=[0.9, 0.1], random_state=42)
-
-feature_names = [f"Feature_{i}" for i in range(20)]
-df = pd.DataFrame(X, columns=feature_names)
-df['Target'] = y
-
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_FILE = os.path.join(SCRIPT_DIR, 'credit_card_fraud_synthetic.csv')
+
+if os.path.exists(DATA_FILE):
+    print(f"Loading data from {DATA_FILE}...")
+    df = pd.read_csv(DATA_FILE)
+    X = df.drop('Target', axis=1).values
+    y = df['Target'].values
+    feature_names = df.drop('Target', axis=1).columns.tolist()
+else:
+    print("Generating synthetic data...")
+    X, y = make_classification(n_samples=1000, n_features=20, n_informative=5, n_redundant=2,
+                               n_classes=2, weights=[0.9, 0.1], random_state=42)
+    feature_names = [f"Feature_{i}" for i in range(20)]
+    df = pd.DataFrame(X, columns=feature_names)
+    df['Target'] = y
+    df.to_csv(DATA_FILE, index=False)
+    print(f"Data saved to {DATA_FILE}")
+
 pic_dir = os.path.join(SCRIPT_DIR, 'pic')
 os.makedirs(pic_dir, exist_ok=True)
 
