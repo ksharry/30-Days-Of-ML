@@ -90,7 +90,7 @@ clf.fit(X_train_counts, y_train)
 
 ### (回歸與監督式學習適用day2-12)
 引用大師-吳恩達教授的 Rocket 進行說明 Bias vs Variance：
-![rocket](https://github.com/ksharry/30-Days-Of-ML/blob/main/day2/pic/2-4_Rocket.jpg?raw=true)
+![rocket](https://github.com/ksharry/30-Days-Of-ML/blob/main/day02/pic/2-4_Rocket.jpg?raw=true)
 
 #### 5.1 流程一：推力不足，無法升空 (Underfitting 迴圈)
 *   **設定**：只用少數幾個關鍵字 (如 "free") 來判斷。
