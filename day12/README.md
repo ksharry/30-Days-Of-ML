@@ -15,7 +15,7 @@
 ### 核心概念：除了準確率 (Accuracy)，我們還能看什麼？
 
 #### 2.1 混淆矩陣 (Confusion Matrix) - 再複習一次
-![Confusion Matrix Explanation](pic/12-6_Confusion_Matrix_Explanation.png)
+![Confusion Matrix Explanation](pic/12-5_Confusion_Matrix_Explanation.png)
 
 ##### 1. 混淆矩陣四象限 (The Four Quadrants)
 *   **TP (True Positive, 真陽性)**：預測生存，真的生存。(救到了！成功抓出目標)

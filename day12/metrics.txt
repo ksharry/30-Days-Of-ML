@@ -11,10 +11,10 @@ weighted avg       0.81      0.81      0.81       223
 
 
 --- ROC AUC Score ---
-0.8779
+0.8780
 
 --- Cross Validation Scores (10-Fold) ---
-Scores: [0.8        0.76404494 0.7752809  0.83146067 0.76404494 0.80898876
+Scores: [0.8        0.75280899 0.7752809  0.83146067 0.76404494 0.80898876
  0.7752809  0.80898876 0.84269663 0.78651685]
-Mean Accuracy: 0.7957
-Standard Deviation: 0.0260
+Mean Accuracy: 0.7946
+Standard Deviation: 0.0276
