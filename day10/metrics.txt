@@ -1,0 +1,11 @@
+
+Linear Kernel Accuracy: 0.9720
+RBF Kernel Accuracy: 0.9650
+
+Linear Confusion Matrix:
+[[51  2]
+ [ 2 88]]
+
+RBF Confusion Matrix:
+[[50  3]
+ [ 2 88]]
