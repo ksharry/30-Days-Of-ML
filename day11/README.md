@@ -57,6 +57,12 @@ minority_upsampled = minority_class.sample(n=len(majority_class), replace=True)
 upsampled_data = pd.concat([majority_class, minority_upsampled])
 ```
 
+> **思考：為什麼最終模型沒有用 RFE 篩選出的特徵？**
+> 在程式碼中，我們故意只用了 SMOTE 而沒有移除特徵，這是為了 **控制變因 (Control Variables)**。
+> *   如果我們同時做了「特徵刪減」和「樣本平衡」，最後模型變好了，我們就不知道是誰的功勞。
+> *   為了教學清晰，我們這一步先單獨看 SMOTE 的效果。
+> *   **實務上**：當然是火力全開！我們會同時使用 RFE 挑出的最佳特徵 + SMOTE 平衡樣本，通常能得到最強的模型。
+
 ## 4. 模型評估
 ### 比較特徵工程前後的差異
 
