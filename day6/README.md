@@ -34,6 +34,26 @@ $$P(y=1|x) = \frac{1}{1 + e^{-(ax+b)}}$$
 *   **Sigmoid**：將直線彎曲成 S 型曲線。
 *   **決策邊界 (Decision Boundary)**：通常以 0.5 為界。機率 > 0.5 猜 1 (買)，機率 < 0.5 猜 0 (不買)。
 
+### 評估指標概念 (Evaluation Metrics)
+我們使用混淆矩陣 (Confusion Matrix) 來評估分類模型的表現：
+![Confusion Matrix Explanation](pic/2-5.png)
+
+#### 1. 混淆矩陣四象限 (The Four Quadrants)
+*   **TP (True Positive, 真陽性)**：預測為 1 (買)，實際也為 1 (買)。(猜對了！成功抓出目標)
+*   **TN (True Negative, 真陰性)**：預測為 0 (不買)，實際也為 0 (不買)。(猜對了！正確排除非目標)
+*   **FP (False Positive, 偽陽性) - Type I Error (型別一錯誤)**：預測為 1 (買)，但實際為 0 (不買)。
+    > 像是「誤報」，例如沒病被診斷有病。
+*   **FN (False Negative, 偽陰性) - Type II Error (型別二錯誤)**：預測為 0 (不買)，但實際為 1 (買)。
+    > 像是「漏報」，例如有病沒被檢查出來 (這是醫療診斷最不想發生的)。
+
+#### 2. 計算指標 (Calculated Metrics)
+*   **Accuracy (準確率)**：整體猜對的比例。 `(TP+TN) / Total`
+*   **Precision (精確率)**：預測為「會買」當中，真的「會買」的比例。 `TP / (TP + FP)`
+    > 適用於「寧可漏抓，不可錯殺」的情境 (e.g. 垃圾郵件)。
+*   **Recall (召回率)**：實際「會買」當中，被抓出來的比例。 `TP / (TP + FN)`
+    > 適用於「寧可錯殺，不可漏抓」的情境 (e.g. 癌症篩檢)。
+*   **F1-Score**：Precision 和 Recall 的調和平均，綜合指標。
+
 ## 3. 實戰
 ### Python 程式碼實作
 完整程式連結：[Logistic_Regression_Ads.py](Logistic_Regression_Ads.py)
@@ -47,18 +67,16 @@ classifier.fit(X_train, y_train)
 
 ## 4. 模型評估
 ### 若為分類模型 (Classification)
-*   **混淆矩陣圖**：直觀看出模型猜對了多少 (對角線)，猜錯了多少。
+*   **混淆矩陣圖**：
     ![Confusion Matrix](pic/6-2_Confusion_Matrix.png)
 *   **指標數字**：
-    *   **Accuracy (準確率)**: `0.8900` - 整體猜對的比例 (89%)。適用於類別平衡時。
-        *   (TP + TN) / Total = 65+24 / 80 = 0.89
-    *   **Precision (精確率)**: `0.8889` - 預測為「會買」當中，真的「會買」的比例。適用於「寧可漏抓，不可錯殺」。
+    *   **Accuracy (準確率)**: `0.8900`
+        *   (TP + TN) / Total = (65 + 24) / 80 = 0.89
+    *   **Precision (精確率)**: `0.8889`
         *   TP / (TP + FP) = 65 / (65 + 5) = 0.8889
-        > e.g. 垃圾郵件，不想把重要信件誤判為垃圾。
-    *   **Recall (召回率)**: `0.7500` - 實際「會買」當中，被抓出來的比例。適用於「寧可錯殺，不可漏抓」。
+    *   **Recall (召回率)**: `0.7500`
         *   TP / (TP + FN) = 65 / (65 + 5) = 0.7500
-        > e.g. 癌症篩檢，不想漏掉任何一個病人。
-    *   **F1-Score**: `0.8136` - Precision 和 Recall 的調和平均，綜合指標。
+    *   **F1-Score**: `0.8136`
         *   2 * (Precision * Recall) / (Precision + Recall) = 2 * (0.8889 * 0.7500) / (0.8889 + 0.7500) = 0.8136
     *   **決策邊界圖 (Decision Boundary)**：這是 Day 06 的重頭戲！
     ![Decision Boundary](pic/6-3_Decision_Boundary.png)
