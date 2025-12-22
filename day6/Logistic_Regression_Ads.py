@@ -17,13 +17,13 @@ from matplotlib.colors import ListedColormap
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report, precision_score, recall_score, f1_score, roc_auc_score
 
 # --- 1. 載入資料 (Data Loading) ---
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(SCRIPT_DIR, 'Social_Network_Ads.csv')
 # 使用常見的公開資料源
-DATA_URL = 'https://raw.githubusercontent.com/krishnaik06/Complete-Machine-Learning-2023/main/Social_Network_Ads.csv'
+DATA_URL = 'https://raw.githubusercontent.com/shivang98/Social-Network-ads-Boost/master/Social_Network_Ads.csv'
 
 def load_or_download_data(local_path, url):
     if not os.path.exists(local_path):
@@ -86,15 +86,31 @@ model.fit(X_train_scaled, y_train)
 
 # --- 5. 模型評估 ---
 y_pred = model.predict(X_test_scaled)
+y_pred_proba = model.predict_proba(X_test_scaled)[:, 1] # 取得預測為 1 (購買) 的機率，用於計算 AUC
 
 acc = accuracy_score(y_test, y_pred)
 cm = confusion_matrix(y_test, y_pred)
+precision = precision_score(y_test, y_pred)
+recall = recall_score(y_test, y_pred)
+f1 = f1_score(y_test, y_pred)
+auc = roc_auc_score(y_test, y_pred_proba)
 
-print(f"Accuracy: {acc:.4f}")
-print("Confusion Matrix:")
-print(cm)
-print("\nClassification Report:")
-print(classification_report(y_test, y_pred))
+metrics_output = f"""
+Accuracy: {acc:.4f}
+Precision: {precision:.4f}
+Recall: {recall:.4f}
+F1-Score: {f1:.4f}
+AUC: {auc:.4f}
+Confusion Matrix:
+{cm}
+
+Classification Report:
+{classification_report(y_test, y_pred)}
+"""
+
+print(metrics_output)
+with open(os.path.join(SCRIPT_DIR, 'metrics.txt'), 'w') as f:
+    f.write(metrics_output)
 
 # 繪製混淆矩陣
 plt.figure(figsize=(6, 5))
