@@ -17,7 +17,11 @@ from matplotlib.colors import ListedColormap
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import confusion_matrix, accuracy_score, classification_report, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report, precision_score, recall_score, f1_score, roc_auc_score, roc_curve
+
+# ... (略)
+
+
 
 # --- 1. 載入資料 (Data Loading) ---
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -119,6 +123,18 @@ plt.title('Confusion Matrix')
 plt.ylabel('True Label')
 plt.xlabel('Predicted Label')
 plt.savefig(os.path.join(pic_dir, '6-2_Confusion_Matrix.png'))
+# plt.show()
+
+# 繪製 ROC 曲線 (新增)
+fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba)
+plt.figure(figsize=(8, 6))
+plt.plot(fpr, tpr, color='orange', label=f'ROC Curve (AUC = {auc:.4f})')
+plt.plot([0, 1], [0, 1], color='darkblue', linestyle='--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver Operating Characteristic (ROC) Curve')
+plt.legend()
+plt.savefig(os.path.join(pic_dir, '6-4_ROC_Curve.png'))
 # plt.show()
 
 # --- 6. 結果視覺化 (決策邊界 Decision Boundary) ---
