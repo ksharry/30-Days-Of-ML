@@ -135,3 +135,75 @@ def plot_decision_boundary(X_set, y_set, model, title, filename):
     plt.savefig(os.path.join(pic_dir, filename))
 
 plot_decision_boundary(X_test_pca, y_test, classifier_viz, 'SVM (RBF Kernel) - PCA Reduced Data', '10-2_Decision_Boundary.png')
+
+# --- 6. 概念視覺化 (Educational Visualization) ---
+# 為了讓使用者更直觀理解 "Margin" 和 "Kernel"，我們用簡單的人造資料來畫圖
+from sklearn.datasets import make_blobs, make_circles
+
+# 6.1 視覺化 Margin (馬路寬度)
+def plot_svm_margin():
+    # 產生簡單的兩群資料
+    X, y = make_blobs(n_samples=50, centers=2, random_state=6, cluster_std=1.2) # random_state=6 分得比較開
+    clf = SVC(kernel='linear', C=1000)
+    clf.fit(X, y)
+
+    plt.figure(figsize=(8, 6))
+    plt.scatter(X[:, 0], X[:, 1], c=y, s=30, cmap=plt.cm.Paired)
+
+    # 畫出 Decision Boundary (實線) 和 Margins (虛線)
+    ax = plt.gca()
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+
+    # 建立網格
+    xx = np.linspace(xlim[0], xlim[1], 30)
+    yy = np.linspace(ylim[0], ylim[1], 30)
+    YY, XX = np.meshgrid(yy, xx)
+    xy = np.vstack([XX.ravel(), YY.ravel()]).T
+    Z = clf.decision_function(xy).reshape(XX.shape)
+
+    # 畫出等高線 (Level Sets): -1, 0, 1
+    # 0 是中間實線 (決策邊界)
+    # -1 和 1 是兩條虛線 (馬路的邊緣)
+    ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1], alpha=0.5,
+               linestyles=['--', '-', '--'])
+    
+    # 圈出支持向量 (Support Vectors) - 也就是踩在虛線上的點
+    ax.scatter(clf.support_vectors_[:, 0], clf.support_vectors_[:, 1], s=100,
+               linewidth=1.5, facecolors='none', edgecolors='k', label='Support Vectors')
+    
+    plt.title('SVM Margin Visualization (The "Road")')
+    plt.legend(loc='upper right')
+    plt.savefig(os.path.join(pic_dir, '10-3_SVM_Margin_Concept.png'))
+
+plot_svm_margin()
+
+# 6.2 視覺化 Kernel Trick (同心圓)
+def plot_svm_kernel():
+    # 產生同心圓資料 (線性不可分)
+    X, y = make_circles(n_samples=100, factor=0.1, noise=0.1, random_state=0)
+    
+    # 建立 RBF 模型
+    clf = SVC(kernel='rbf', C=1000)
+    clf.fit(X, y)
+
+    plt.figure(figsize=(8, 6))
+    plt.scatter(X[:, 0], X[:, 1], c=y, s=30, cmap=plt.cm.Paired)
+
+    # 畫出決策邊界
+    ax = plt.gca()
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+    xx = np.linspace(xlim[0], xlim[1], 30)
+    yy = np.linspace(ylim[0], ylim[1], 30)
+    YY, XX = np.meshgrid(yy, xx)
+    xy = np.vstack([XX.ravel(), YY.ravel()]).T
+    Z = clf.decision_function(xy).reshape(XX.shape)
+
+    # 畫出邊界
+    ax.contour(XX, YY, Z, colors='k', levels=[0], alpha=0.5, linestyles=['-'])
+    
+    plt.title('SVM Kernel Trick (RBF) on Non-Linear Data')
+    plt.savefig(os.path.join(pic_dir, '10-4_SVM_Kernel_Concept.png'))
+
+plot_svm_kernel()
