@@ -36,7 +36,7 @@ $$P(y=1|x) = \frac{1}{1 + e^{-(ax+b)}}$$
 
 ### 評估指標概念 (Evaluation Metrics)
 我們使用混淆矩陣 (Confusion Matrix) 來評估分類模型的表現：
-![Confusion Matrix Explanation](pic/2-5.png)
+![Confusion Matrix Explanation](pic/6-5.png)
 
 #### 1. 混淆矩陣四象限 (The Four Quadrants)
 *   **TP (True Positive, 真陽性)**：預測為 1 (買)，實際也為 1 (買)。(猜對了！成功抓出目標)
