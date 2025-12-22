@@ -1,0 +1,25 @@
+
+--- Baseline Model ---
+              precision    recall  f1-score   support
+
+           0       0.93      1.00      0.96       260
+           1       1.00      0.47      0.64        40
+
+    accuracy                           0.93       300
+   macro avg       0.96      0.74      0.80       300
+weighted avg       0.94      0.93      0.92       300
+
+
+--- RFE Selected Features ---
+['Feature_1' 'Feature_4' 'Feature_10' 'Feature_15' 'Feature_18']
+
+--- Final Model (with SMOTE) ---
+              precision    recall  f1-score   support
+
+           0       0.93      1.00      0.96       260
+           1       0.95      0.50      0.66        40
+
+    accuracy                           0.93       300
+   macro avg       0.94      0.75      0.81       300
+weighted avg       0.93      0.93      0.92       300
+
