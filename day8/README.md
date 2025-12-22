@@ -36,6 +36,22 @@ $$P(Spam|Word) = \frac{P(Word|Spam) \times P(Spam)}{P(Word)}$$
 *   **P(Spam)**：(先驗機率) 總體來說，垃圾郵件出現的機率是多少？
 *   **樸素 (Naive)**：假設每個單字出現的機率是**獨立**的 (互不影響)。這簡化了計算，讓模型跑得飛快。
 
+### 從機率到決策 (Probability to Decision)
+這就是連接「貝氏公式」與「混淆矩陣」的關鍵橋樑：
+1.  模型會分別計算這封信是 Spam 的機率 $P(Spam|Message)$ 和 Ham 的機率 $P(Ham|Message)$。
+2.  **比大小**：如果 $P(Spam) > P(Ham)$，模型就**預測為 1 (Spam)**；反之則預測為 0 (Ham)。
+3.  **產生混淆矩陣**：
+    *   如果預測為 1，且實際上真的是 1 $\rightarrow$ **TP (抓到了！)**
+    *   如果預測為 1，但實際上是 0 $\rightarrow$ **FP (誤判)**
+    *   這就是為什麼我們需要混淆矩陣來評估模型「比大小」的結果準不準。
+
+### 關鍵技術：拉普拉斯平滑 (Laplace Smoothing)
+*   **問題**：如果有一個字從來沒在垃圾郵件訓練集中出現過 (例如 "Pokemon")，那麼 $P("Pokemon"|Spam) = 0$。
+*   **後果**：根據公式，只要有一個機率是 0，整封信是 Spam 的機率就會變成 0 (因為是連乘)。這顯然不合理！
+*   **解法**：**平滑化**。就像給每個單字的計數都 **+1**。
+    *   這樣就算沒出現過的字，機率也會是一個很小的數 (而不是 0)，不會讓整個計算崩潰。
+    *   sklearn 的 `MultinomialNB(alpha=1.0)` 預設就開啟了這個功能。
+
 ## 3. 實戰
 ### Python 程式碼實作
 完整程式連結：[Naive_Bayes_Spam.py](Naive_Bayes_Spam.py)
@@ -50,7 +66,8 @@ vectorizer = CountVectorizer(stop_words='english')
 X_train_counts = vectorizer.fit_transform(X_train)
 
 # 2. 訓練樸素貝氏模型 (MultinomialNB 適合計數資料)
-clf = MultinomialNB()
+# alpha=1.0 代表啟用拉普拉斯平滑
+clf = MultinomialNB(alpha=1.0)
 clf.fit(X_train_counts, y_train)
 ```
 
@@ -84,8 +101,8 @@ clf.fit(X_train_counts, y_train)
 *   **結果**：模型可能會記住某個特定的人名就是垃圾郵件，導致新郵件誤判 (High Variance)。
 
 #### 5.3 流程三：完美入軌 (The Sweet Spot)
-*   **設定**：使用 Bag of Words，去除停用詞 (Stopwords)，並使用平滑化 (Laplace Smoothing，sklearn 預設 alpha=1.0)。
-*   **結果**：模型能泛化地識別 "claim", "prize" 等高風險詞彙，準確過濾垃圾郵件。
+*   **設定**：使用 Bag of Words，去除停用詞 (Stopwords)，並啟用 **拉普拉斯平滑 (Laplace Smoothing)**。
+*   **結果**：模型能泛化地識別 "claim", "prize" 等高風險詞彙，且不會因為遇到新單字而當機，準確過濾垃圾郵件。
 
 ## 6. 總結
 Day 08 我們進入了 **NLP (自然語言處理)** 的大門。
