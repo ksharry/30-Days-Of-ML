@@ -4,18 +4,29 @@
 **層次聚類 (Hierarchical Clustering)** 的概念非常直觀，早在亞里斯多德時代的生物分類學中就有了雛形。但在統計學和電腦科學領域，它的發展與 **Sokal & Sneath** 在 1963 年出版的《數值分類學 (Numerical Taxonomy)》密不可分。這本書奠定了現代生物資訊學和聚類分析的基礎，主張用數學方法來量化生物之間的相似度，並畫出親緣關係樹 (Phylogenetic Tree)。
 
 ## 1. 資料集來源
-### 資料集來源：[Vertebrate Dataset (自製脊椎動物資料)]
-> 備註：為了讓樹狀圖 (Dendrogram) 的標籤清晰可讀，我們在程式中手動建立了一個包含 15 種動物的小型資料集。
+### 資料集來源：[UCI Zoo Data Set](https://archive.ics.uci.edu/ml/datasets/zoo)
+> 備註：這是一個非常著名的機器學習資料集，包含 101 種動物與 17 個特徵。
 
 ### 資料集特色與欄位介紹:
-我們記錄了 15 種動物的 6 項生物特徵，目標是看演算法能不能自動把牠們分成合理的類別 (如哺乳類、魚類、爬蟲類)。
-*   **Name**: 動物名稱 (如 Human, Python, Salmon...)。
-*   **Warm-blooded**: 是否恆溫 (1=Yes, 0=No)。
-*   **Gives Birth**: 是否胎生 (1=Yes, 0=No)。
-*   **Aquatic**: 是否水生 (1=Yes, 0=No)。
-*   **Aerial**: 是否會飛 (1=Yes, 0=No)。
-*   **Has Legs**: 是否有腳 (1=Yes, 0=No)。
-*   **Hibernates**: 是否冬眠 (1=Yes, 0=No)。
+目標是根據動物的特徵，將牠們分成 7 大類 (哺乳類、鳥類、爬蟲類、魚類、兩棲類、昆蟲、無脊椎動物)。
+*   **animal_name**: 動物名稱。
+*   **hair**: 有毛髮。
+*   **feathers**: 有羽毛。
+*   **eggs**: 會產卵。
+*   **milk**: 會哺乳。
+*   **airborne**: 會飛。
+*   **aquatic**: 水生。
+*   **predator**: 是掠食者。
+*   **toothed**: 有牙齒。
+*   **backbone**: 有脊椎。
+*   **breathes**: 用肺呼吸。
+*   **venomous**: 有毒。
+*   **fins**: 有鰭。
+*   **legs**: 腿的數量。
+*   **tail**: 有尾巴。
+*   **domestic**: 是家養的。
+*   **catsize**: 體型像貓一樣大。
+*   **class_type**: 真實類別 (1-7)。
 
 ## 2. 原理
 ### 核心概念：像拼圖一樣，把像的黏在一起
@@ -50,31 +61,32 @@
 ```python
 # 關鍵程式碼：繪製樹狀圖與訓練
 
-# 1. 繪製 Dendrogram
+# 1. 繪製 Dendrogram (取樣 40 隻動物以保持清晰)
 import scipy.cluster.hierarchy as sch
-dendrogram = sch.dendrogram(sch.linkage(X, method='ward'))
+dendrogram = sch.dendrogram(sch.linkage(X_sample, method='ward'))
 
-# 2. 訓練模型 (決定分 3 群)
+# 2. 訓練模型 (設定分 7 群)
 from sklearn.cluster import AgglomerativeClustering
-hc = AgglomerativeClustering(n_clusters=3, affinity='euclidean', linkage='ward')
+hc = AgglomerativeClustering(n_clusters=7, linkage='ward')
 y_hc = hc.fit_predict(X)
 ```
 
 ## 4. 模型評估與視覺化
 ### 1. 樹狀圖 (Dendrogram)
 ![Dendrogram](pic/14-1_Dendrogram.png)
-*   **觀察**：
-    *   最左邊：**Human (人)** 和 **Cat (貓)** 很早就合併了 (因為都是恆溫、胎生、有腳)。
-    *   中間：**Python (蟒蛇)** 和 **Komodo (科莫多龍)** 聚在一起 (爬蟲類)。
-    *   最右邊：**Salmon (鮭魚)** 和 **Eel (鰻魚)** 聚在一起 (魚類)。
-    *   **切一刀**：如果我們在 Y=2 的地方畫一條水平線，會切斷 3 條直線，代表分成 **3 大群** 是合理的。
+*   **觀察**：這張圖顯示了隨機抽取的 40 隻動物的親緣關係。
+    *   可以看到 **Lion (獅子)** 和 **Leopard (豹)** 很早就合併了。
+    *   **Duck (鴨子)** 和 **Swan (天鵝)** 也是好朋友。
+    *   透過觀察垂直線的高度，我們可以直觀地看到動物之間的相似程度。
 
 ### 2. 特徵熱圖 (Heatmap)
 ![Heatmap](pic/14-2_Cluster_Heatmap.png)
-*   **Cluster 0 (爬蟲/兩棲/鳥)**：特徵比較雜，但大多是非恆溫、卵生。
-*   **Cluster 1 (哺乳類)**：特徵非常明顯 —— **Warm-blooded (恆溫)** 且 **Gives Birth (胎生)** 都是 1。
-*   **Cluster 2 (水生類)**：特徵是 **Aquatic (水生)** 為 1，且大多無腳。
-    *   *有趣發現*：**Whale (鯨魚)** 被分到哪裡了？雖然它是哺乳類，但因為它「水生」且「無腳」的特徵太強烈，演算法可能會把它跟魚類分得比較近 (取決於權重)，這就是非監督式學習有趣的地方！(在本次執行中，Whale 被分到了 Cluster 2 水生類)。
+*   **觀察**：這張圖展示了 101 隻動物的所有特徵分佈，並依照我們分出的 Cluster 排序。
+*   **分群結果分析**：
+    *   **Cluster 1 (哺乳類)**：特徵非常明顯 (有毛、哺乳、有脊椎)。
+    *   **Cluster 3 (鳥類)**：有羽毛、產卵、會飛。
+    *   **Cluster 0 (無脊椎/昆蟲)**：無脊椎、無骨骼。
+    *   **Cluster 2/4/5/6**：分別對應到了魚類、爬蟲類、兩棲類等，雖然有些微混淆 (例如海豚可能被分錯)，但整體而言，非監督式學習**成功還原了生物學的分類系統**！
 
 ## 5. 戰略總結: 非監督式學習的火箭發射之旅
 

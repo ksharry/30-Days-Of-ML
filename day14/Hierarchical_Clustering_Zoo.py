@@ -20,70 +20,89 @@ DATA_FILE = os.path.join(SCRIPT_DIR, 'vertebrate.csv')
 pic_dir = os.path.join(SCRIPT_DIR, 'pic')
 os.makedirs(pic_dir, exist_ok=True)
 
-# 我們手動建立一個小型的脊椎動物資料集
-# 這樣畫出來的樹狀圖才看得清楚每個動物的名字
-data = {
-    'Name': ['Human', 'Python', 'Salmon', 'Whale', 'Frog', 'Komodo', 'Bat', 'Pigeon', 'Cat', 'Leopard Shark', 'Turtle', 'Penguin', 'Porcupine', 'Eel', 'Salamander'],
-    'Warm-blooded': [1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0], # 恆溫
-    'Gives Birth':  [1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0], # 胎生
-    'Aquatic':      [0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1], # 水生
-    'Aerial':       [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0], # 飛翔
-    'Has Legs':     [1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1], # 有腳
-    'Hibernates':   [0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0]  # 冬眠
-}
+# --- 1. 準備資料 (Data Preparation) ---
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_FILE = os.path.join(SCRIPT_DIR, 'zoo.csv')
+pic_dir = os.path.join(SCRIPT_DIR, 'pic')
+os.makedirs(pic_dir, exist_ok=True)
 
-df = pd.DataFrame(data)
-df.to_csv(DATA_FILE, index=False)
-print("Vertebrate data created:")
-print(df)
+# 下載 UCI Zoo Dataset
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/zoo/zoo.data"
+if not os.path.exists(DATA_FILE):
+    print(f"Downloading data from {url}...")
+    try:
+        import urllib.request
+        urllib.request.urlretrieve(url, DATA_FILE)
+        print("Download complete.")
+    except Exception as e:
+        print(f"Download failed: {e}")
+        exit()
 
-# 取出特徵 (不包含名字)
-X = df.drop('Name', axis=1)
+# 定義欄位名稱 (UCI 資料集沒有 Header)
+cols = ['animal_name', 'hair', 'feathers', 'eggs', 'milk', 'airborne', 
+        'aquatic', 'predator', 'toothed', 'backbone', 'breathes', 'venomous', 
+        'fins', 'legs', 'tail', 'domestic', 'catsize', 'class_type']
+
+df = pd.read_csv(DATA_FILE, names=cols)
+print("Zoo data loaded:")
+print(df.head())
 
 # --- 2. 繪製樹狀圖 (Dendrogram) ---
-# 這是層次聚類最精華的部分！
-# linkage 函數會計算兩兩樣本之間的距離，並把它們「黏」在一起
-# method='ward' 是一種最小化變異數的黏合策略 (類似 K-Means 的精神)
-linked = linkage(X, method='ward')
+# 為了讓圖表清晰，我們只隨機抽取 40 隻動物來畫樹狀圖
+df_sample = df.sample(n=40, random_state=42)
+X_sample = df_sample.drop(['animal_name', 'class_type'], axis=1)
+names_sample = df_sample['animal_name'].values
 
-plt.figure(figsize=(10, 7))
+linked = linkage(X_sample, method='ward')
+
+plt.figure(figsize=(12, 7))
 dendrogram(linked,
             orientation='top',
-            labels=df['Name'].values, # 把動物名字標上去
+            labels=names_sample,
             distance_sort='descending',
-            show_leaf_counts=True)
-plt.title('Hierarchical Clustering Dendrogram (Vertebrates)')
-plt.xlabel('Species')
+            show_leaf_counts=True,
+            leaf_rotation=90,
+            leaf_font_size=10)
+plt.title('Hierarchical Clustering Dendrogram (40 Random Animals)')
+plt.xlabel('Animal Name')
 plt.ylabel('Euclidean Distance')
-plt.xticks(rotation=45)
 plt.tight_layout()
 plt.savefig(os.path.join(pic_dir, '14-1_Dendrogram.png'))
 print("Dendrogram saved.")
 
 # --- 3. 訓練模型 (Agglomerative Clustering) ---
-# 透過觀察樹狀圖，我們可以決定要切幾刀 (幾群)
-# 假設我們想分成 3 大類 (哺乳類/鳥類, 爬蟲/兩棲, 魚類?)
-n_clusters = 3
-cluster = AgglomerativeClustering(n_clusters=n_clusters, affinity='euclidean', linkage='ward')
+# 使用完整資料集 (101 隻動物)
+X = df.drop(['animal_name', 'class_type'], axis=1)
+
+# 真實世界有 7 大類 (哺乳、鳥、爬蟲、魚、兩棲、昆蟲、無脊椎)
+# 我們看看演算法能不能自己發現這 7 群
+n_clusters = 7
+cluster = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward')
 y_pred = cluster.fit_predict(X)
 
-# 將分群結果加回 DataFrame
 df['Cluster'] = y_pred
 
+# --- 4. 評估結果 (與真實類別比較) ---
+# 因為我們有真實答案 (class_type)，可以做個交叉比對
+# class_type: 1=Mammal, 2=Bird, 3=Reptile, 4=Fish, 5=Amphibian, 6=Bug, 7=Invertebrate
+class_names = {1:'Mammal', 2:'Bird', 3:'Reptile', 4:'Fish', 5:'Amphibian', 6:'Bug', 7:'Invertebrate'}
+df['Class_Name'] = df['class_type'].map(class_names)
+
 print(f"\n--- Clustering Results (K={n_clusters}) ---")
-for i in range(n_clusters):
-    print(f"\nCluster {i}:")
-    print(df[df['Cluster'] == i]['Name'].values)
+# 建立混淆矩陣 (Crosstab) 來看每一群抓到了什麼
+ct = pd.crosstab(df['Cluster'], df['Class_Name'])
+print(ct)
 
-# --- 4. 視覺化分群結果 (Heatmap) ---
-# 因為特徵是 0/1 的類別型數據，用 Heatmap 來看每一群的特徵分佈最適合
-# 我們把資料依據 Cluster 排序
+# --- 5. 視覺化分群結果 (Heatmap) ---
+# 排序以便觀察
 df_sorted = df.sort_values('Cluster')
-X_sorted = df_sorted.drop(['Name', 'Cluster'], axis=1)
+# 只取特徵欄位畫圖
+X_sorted = df_sorted.drop(['animal_name', 'class_type', 'Class_Name', 'Cluster'], axis=1)
 
-plt.figure(figsize=(8, 6))
-sns.heatmap(X_sorted, annot=True, cmap='coolwarm', cbar=False, yticklabels=df_sorted['Name'])
+plt.figure(figsize=(10, 8))
+sns.heatmap(X_sorted, cmap='coolwarm', cbar=False, yticklabels=df_sorted['animal_name'])
 plt.title('Features Heatmap sorted by Cluster')
+plt.yticks(fontsize=6) # 動物名字縮小一點才塞得下
 plt.tight_layout()
 plt.savefig(os.path.join(pic_dir, '14-2_Cluster_Heatmap.png'))
 print("Heatmap saved.")
