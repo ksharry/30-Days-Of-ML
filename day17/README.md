@@ -33,7 +33,12 @@ $$R \approx U \Sigma V^T$$
 *   **$\Sigma$ (Weights)**：這些隱藏特徵的重要性。
 *   **預測**：把這三個矩陣乘回去，就能填補原本 $R$ 矩陣中的 0 (沒看過的電影)，這些填補的值就是預測評分！
 
-#### 2.3 國中生也能懂的案例：矩陣填空題
+#### 2.3 運作案例：矩陣填空題
+原始資料 (`u.data`) 其實是一長串的「流水帳」 (Long Format)，像這樣：
+`小華, 鋼鐵人, 5分`
+`小華, 美國隊長, 5分`
+`小華, 鐵達尼號, 1分`
+我們使用 Pandas 的 `pivot_table` 指令，把它「轉置」成矩陣 (Wide Format)，
 想像這是一個考試卷，但有些格子破洞了 (0 代表沒看過)，你要怎麼猜出破洞的數字？
 
 | | 鋼鐵人 | 美國隊長 | 鐵達尼號 |
@@ -48,22 +53,6 @@ $$R \approx U \Sigma V^T$$
 ## 3. 實戰
 ### Python 程式碼實作
 完整程式連結：[Recommender_SVD.py](Recommender_SVD.py)
-
-#### 關鍵步驟：如何把檔案變成矩陣？
-原始資料 (`u.data`) 其實是一長串的「流水帳」 (Long Format)，像這樣：
-`User1, Matrix, 5分`
-`User1, Titanic, 3分`
-`User2, Matrix, 4分`
-
-我們使用 Pandas 的 `pivot_table` 指令，把它「轉置」成矩陣 (Wide Format)：
-*   **Index (列)** 變成 User
-*   **Columns (行)** 變成 Movie
-*   **Values (值)** 填入 Rating
-
-| | Matrix | Titanic |
-|---|---|---|
-| **User1** | 5 | 3 |
-| **User2** | 4 | 0 |
 
 ```python
 # 關鍵程式碼：SVD 矩陣分解
