@@ -17,32 +17,11 @@ DATA_FILE = os.path.join(SCRIPT_DIR, 'Mall_Customers.csv')
 pic_dir = os.path.join(SCRIPT_DIR, 'pic')
 os.makedirs(pic_dir, exist_ok=True)
 
-# 為了避免環境問題 (OpenSSL/requests)，我們直接使用模擬資料
+# 檢查資料是否存在
 if not os.path.exists(DATA_FILE):
-    print("Generating synthetic data...")
-    from sklearn.datasets import make_blobs
-    # 產生 5 群資料
-    X, y = make_blobs(n_samples=200, centers=5, cluster_std=2.5, random_state=42)
-    
-    # 調整數值範圍以模擬真實資料
-    # Income: 15-137, Score: 1-100
-    # 這裡做一些簡單的線性變換讓分佈看起來像商場資料
-    X[:, 0] = X[:, 0] * 3 + 60  # Income
-    X[:, 1] = X[:, 1] * 3 + 50  # Score
-    
-    # 確保數值在合理範圍
-    X[:, 0] = np.clip(X[:, 0], 15, 137)
-    X[:, 1] = np.clip(X[:, 1], 1, 100)
-    
-    df = pd.DataFrame(X, columns=['Annual Income (k$)', 'Spending Score (1-100)'])
-    
-    # 補上其他欄位以符合格式 (雖然 K-Means 不會用到)
-    df.insert(0, 'CustomerID', range(1, 201))
-    df.insert(1, 'Gender', ['Female']*100 + ['Male']*100)
-    df.insert(2, 'Age', np.random.randint(18, 70, 200))
-    
-    df.to_csv(DATA_FILE, index=False)
-    print(f"Synthetic data saved to {DATA_FILE}")
+    print(f"Error: {DATA_FILE} not found.")
+    print("Please download 'Mall_Customers.csv' from Kaggle and place it in the day13 folder.")
+    exit()
 
 # 讀取資料
 df = pd.read_csv(DATA_FILE)
