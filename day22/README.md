@@ -27,7 +27,7 @@
 
 #### 2.1 核心公式與關鍵參數
 我們這次調參的主角是 **XGBoost**，它的目標函數如下：
-$$ Obj = \sum L(y_i, \hat{y}_i) + \sum \Omega(f_k) $$
+`Obj = Sum(Loss) + Sum(Regularization)`
 (前面是誤差，後面是正則化項)
 
 我們主要調整以下三個 **超參數 (Hyperparameters)** 來影響這個公式：
@@ -36,7 +36,7 @@ $$ Obj = \sum L(y_i, \hat{y}_i) + \sum \Omega(f_k) $$
     *   **影響**：越多越準，但也越慢，且容易 Overfitting。
 2.  **`learning_rate` (學習率 $\eta$)**：
     *   **意義**：每次修正的幅度。
-    *   **公式**：$\hat{y}_t = \hat{y}_{t-1} + \eta \cdot f_t(x)$
+    *   **公式**：`y_new = y_old + learning_rate * new_prediction`
     *   **影響**：越小越穩 (慢工出細活)，但需要更多棵樹。
 3.  **`max_depth` (樹的深度)**：
     *   **意義**：每棵樹可以問幾個問題？
