@@ -52,6 +52,7 @@ print(df.head())
 df_sample = df.sample(n=40, random_state=42)
 X_sample = df_sample.drop(['animal_name', 'class_type'], axis=1)
 names_sample = df_sample['animal_name'].values
+print("Sampled animals:", names_sample)
 
 linked = linkage(X_sample, method='ward')
 
@@ -96,13 +97,16 @@ print(ct)
 # --- 5. 視覺化分群結果 (Heatmap) ---
 # 排序以便觀察
 df_sorted = df.sort_values('Cluster')
-# 只取特徵欄位畫圖
-X_sorted = df_sorted.drop(['animal_name', 'class_type', 'Class_Name', 'Cluster'], axis=1)
+# 建立一個標籤欄位：Cluster - Name (例如 "1 - Lion")
+df_sorted['Label'] = df_sorted['Cluster'].astype(str) + ' - ' + df_sorted['animal_name']
 
-plt.figure(figsize=(10, 8))
-sns.heatmap(X_sorted, cmap='coolwarm', cbar=False, yticklabels=df_sorted['animal_name'])
+# 只取特徵欄位畫圖
+X_sorted = df_sorted.drop(['animal_name', 'class_type', 'Class_Name', 'Cluster', 'Label'], axis=1)
+
+plt.figure(figsize=(12, 14)) # 拉長一點才看得到所有動物
+sns.heatmap(X_sorted, cmap='coolwarm', cbar=False, yticklabels=df_sorted['Label'])
 plt.title('Features Heatmap sorted by Cluster')
-plt.yticks(fontsize=6) # 動物名字縮小一點才塞得下
+plt.yticks(fontsize=8) 
 plt.tight_layout()
 plt.savefig(os.path.join(pic_dir, '14-2_Cluster_Heatmap.png'))
 print("Heatmap saved.")
