@@ -64,7 +64,14 @@ dendrogram(linked,
             show_leaf_counts=True,
             leaf_rotation=90,
             leaf_font_size=10)
-plt.title('Hierarchical Clustering Dendrogram (40 Random Animals)')
+
+# 畫出「切一刀」的示意線 (假設我們在距離=10的地方切)
+# 這條線穿過了幾條垂直線，就代表分成了幾群
+threshold = 10
+plt.axhline(y=threshold, color='r', linestyle='--')
+plt.text(x=5, y=threshold + 0.5, s=f'Cut at Distance={threshold}', color='r', fontsize=12)
+
+plt.title('Hierarchical Clustering Dendrogram (Red Line = The "Cut")')
 plt.xlabel('Animal Name')
 plt.ylabel('Euclidean Distance')
 plt.tight_layout()
