@@ -87,8 +87,9 @@ predicted_ratings = np.dot(np.dot(U, sigma), Vt) + user_ratings_mean.reshape(-1,
 ![Latent Space](pic/17-1_Latent_Space.png)
 *   **觀察**：這張圖展示了 **評分次數最多的前 20 部電影** 在潛在空間中的位置。
 *   **解讀**：
-    *   可以看到 **Star Wars (星際大戰)** 和 **Raiders of the Lost Ark (法櫃奇兵)** 靠得滿近的 (都是 Harrison Ford 主演的冒險片)。
-    *   **注意**：你可能會發現 *Return of the Jedi* 離 *Star Wars* 有點遠。這是因為我們把 **50 維** 的資料硬壓成 **2 維** 來畫圖，導致距離失真 (Distortion)。在原本的 50 維空間中，它們其實是很近的！
+    *   可以看到 **Raiders of the Lost Ark (法櫃奇兵)** 和 **The Godfather (教父)** 靠得非常近。
+    *   這兩部看似類型不同 (冒險 vs 黑幫)，但都是**影史經典的高分神作**。SVD 捕捉到了它們「受大眾歡迎且評價極高」的共同特徵 (Latent Features)。
+    *   **注意**：這也提醒我們，潛在特徵不一定只是「電影類型」，也可能包含「知名度」、「拍攝年代」或「觀眾群重疊度」等複雜資訊。
 
 ### 2. 推薦結果 (User 1)
 *   **User 1 的喜好**：他給了 *Cinema Paradiso (新天堂樂園)* 和 *Brazil (巴西)* 5 分。這顯示他可能喜歡 **科幻、劇情、經典** 類型的電影。

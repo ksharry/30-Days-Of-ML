@@ -140,3 +140,8 @@ plt.grid(True)
 plt.tight_layout()
 plt.savefig(os.path.join(pic_dir, '17-1_Latent_Space.png'))
 print("Latent space plot saved.")
+
+# 印出座標以供觀察
+print("\nTop 20 Movies Coordinates (2D):")
+for i in top_movies_indices:
+    print(f"{R_df.columns[i]}: ({V_subset[i, 0]:.4f}, {V_subset[i, 1]:.4f})")
