@@ -7,9 +7,13 @@
 ### 資料集來源：[Scikit-Learn Make Moons](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_moons.html)
 > 備註：這是一個經典的合成資料集，專門用來測試聚類演算法對「非線性結構」的處理能力。
 
-### 資料集特色:
+### 資料集特色與欄位介紹:
 *   **形狀**：兩個互相交錯的半月形 (Double Moon)。
 *   **挑戰**：這兩群數據無法用一條直線切開 (線性不可分)，且 K-Means 這種基於「圓心距離」的算法會徹底失敗。
+*   **欄位說明**：
+    *   **Feature 1 (X1)**: 資料點在 X 軸的座標。
+    *   **Feature 2 (X2)**: 資料點在 Y 軸的座標。
+    *   **Target (y)**: 所屬的月亮類別 (0 或 1)。但在非監督學習中，我們假裝看不到這個答案。
 
 ## 2. 原理
 ### 核心概念：朋友的朋友也是朋友 (密度相連)
@@ -18,9 +22,12 @@
 *   K-Means 假設群聚是**凸的 (Convex)** 且像球一樣圓。它只在乎「離圓心近不近」。
 *   面對月亮形狀，K-Means 會硬切成兩半，導致頭尾分家。
 
-#### 2.2 DBSCAN 的兩大參數
+#### 2.2 DBSCAN 的兩大參數與數學定義
 DBSCAN 不用設 K (分幾群)，而是設：
 1.  **$\epsilon$ (Epsilon, eps)**：**半徑**。以我為圓心，多遠以內算我的鄰居？
+    *   **數學公式 (Epsilon Neighborhood)**：
+        $$N_\epsilon(p) = \{q \in D \mid dist(p, q) \le \epsilon\}$$
+    *   意思就是：所有距離點 $p$ 小於等於 $\epsilon$ 的點 $q$ 的集合。通常 $dist$ 使用歐式距離。
 2.  **MinPts (min_samples)**：**最小點數**。半徑內至少要有幾個鄰居，我才算「核心人物」？
 
 #### 2.3 三種角色
