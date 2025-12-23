@@ -30,6 +30,9 @@
 `Obj = Sum(Loss) + Sum(Regularization)`
 (前面是誤差，後面是正則化項)
 
+*   **參數 (Parameters)**：模型自己學出來的 (例如：回歸的係數 $w$, $b$)。我們不用管。
+*   **超參數 (Hyperparameters)**：我們在訓練前要設定的 (例如：XGBoost 的樹有幾棵？樹要多深？)。這就是我們要調的。
+
 我們主要調整以下三個 **超參數 (Hyperparameters)** 來影響這個公式：
 1.  **`n_estimators` (樹的數量)**：
     *   **意義**：總共要改幾次考卷？
