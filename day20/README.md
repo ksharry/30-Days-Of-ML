@@ -44,7 +44,7 @@ $$Obj \approx \text{const} + g_i f_t(x_i) + \frac{1}{2} h_i f_t^2(x_i)$$
 
 #### 2.2 梯度提升 (Gradient Boosting) - 糖尿病預測案例
 如果說 AdaBoost 是「錯題本複習」(加權重)，那 Gradient Boosting 就是 **「改考卷」** (修正殘差)。
-我們以 Pima Indians Diabetes 資料集 (**共 768 個病人**) 為例，**每一輪都會看這 768 個病人**，但目標不同：
+我們以 Pima Indians Diabetes 資料集 (**共 768 個病人**) 為例，**每一輪都會看這 768 個病人**，但目標不同，如果你覺得上面的數學太抽象，想像你在打高爾夫球，目標是把球打進洞 (預測準確)：
 
 1.  **第一棒 (Model 1)**：
     *   它看了一下血糖 (Glucose)，覺得風險偏高，預測機率是 **0.6**。
