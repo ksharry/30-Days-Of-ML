@@ -92,12 +92,24 @@ acc = accuracy_score(y_test, y_pred)
 
 print(f"\n--- Model Evaluation ---")
 print(f"Accuracy: {acc:.4f}")
+
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred))
 
 # 繪製混淆矩陣
 plt.figure(figsize=(6, 5))
 cm = confusion_matrix(y_test, y_pred)
+
+# 印出數值供 README 使用
+tn, fp, fn, tp = cm.ravel()
+print(f"\n--- Confusion Matrix Values ---")
+print(f"TN (True Negative): {tn}")
+print(f"FP (False Positive): {fp}")
+print(f"FN (False Negative): {fn}")
+print(f"TP (True Positive): {tp}")
+print(f"Total: {tn + fp + fn + tp}")
+print("-------------------------------\n")
+
 sns.heatmap(cm, annot=True, fmt='d', cmap='Greens',
             xticklabels=['Negative', 'Positive'], yticklabels=['Negative', 'Positive'])
 plt.title('Confusion Matrix (XGBoost)')
@@ -106,10 +118,6 @@ plt.ylabel('Actual')
 plt.tight_layout()
 plt.savefig(os.path.join(pic_dir, '20-1_Confusion_Matrix.png'))
 print("Confusion Matrix saved.")
-
-# --- 5. 特徵重要性 (Feature Importance) ---
-# XGBoost 內建畫圖功能
-plt.figure(figsize=(10, 8))
 plot_importance(model, importance_type='weight', title='Feature Importance (Weight)', height=0.5)
 plt.tight_layout()
 plt.savefig(os.path.join(pic_dir, '20-2_Feature_Importance.png'))

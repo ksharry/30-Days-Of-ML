@@ -90,10 +90,10 @@ model.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=False)
 ### 1. 混淆矩陣 (Confusion Matrix)
 ![Confusion Matrix](pic/20-1_Confusion_Matrix.png)
 *   **準確率 (Accuracy)**：約 **76.0%**。
-    *   **計算過程**：$$ \text{Accuracy} = \frac{80 + 37}{154} \approx 76.0\% $$
+    *   **計算過程**：`(79 + 38) / 154 ≈ 76.0%`
 *   **觀察**：
-    *   對於沒有糖尿病 (0) 的預測較準 (Recall 0.80)。
-    *   對於有糖尿病 (1) 的預測稍弱 (Recall 0.69)。這在醫療上是可以接受的起點，但通常我們希望 Recall 更高 (寧可誤判有病，也不要漏掉病人)。
+    *   對於沒有糖尿病 (0) 的預測較準 (Recall 0.80，計算：`79 / 99 ≈ 0.80`)。
+    *   對於有糖尿病 (1) 的預測稍弱 (Recall 0.69，計算：`38 / 55 ≈ 0.69`)。這在醫療上是可以接受的起點，但通常我們希望 Recall 更高 (寧可誤判有病，也不要漏掉病人)。
 
 ### 2. 特徵重要性 (Feature Importance)
 ![Feature Importance](pic/20-2_Feature_Importance.png)
