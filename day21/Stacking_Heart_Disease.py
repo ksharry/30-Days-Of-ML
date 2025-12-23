@@ -112,6 +112,17 @@ print("Correlation Heatmap saved.")
 # --- 8. 視覺化：混淆矩陣 (Stacking) ---
 y_pred_stack = stacking_model.predict(X_test)
 cm = confusion_matrix(y_test, y_pred_stack)
+
+# 印出數值供 README 使用
+tn, fp, fn, tp = cm.ravel()
+print(f"\n--- Confusion Matrix Values (Stacking) ---")
+print(f"TN (True Negative): {tn}")
+print(f"FP (False Positive): {fp}")
+print(f"FN (False Negative): {fn}")
+print(f"TP (True Positive): {tp}")
+print(f"Total: {tn + fp + fn + tp}")
+print("------------------------------------------\n")
+
 plt.figure(figsize=(6, 5))
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
             xticklabels=['Healthy', 'Heart Disease'], yticklabels=['Healthy', 'Heart Disease'])

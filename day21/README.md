@@ -11,6 +11,7 @@
 
 ### 資料集特色與欄位介紹:
 這是一個用於判斷心臟病風險的數據集。
+*   **數量 (Samples)**：270 筆。
 *   **目標 (Target)**：
     *   0: **Absence (健康)**
     *   1: **Presence (有心臟病)**
@@ -83,10 +84,10 @@ stacking_model.fit(X_train, y_train)
     *   SVM: ~88.9%
     *   Random Forest: ~79.6%
     *   **Stacking: ~87.0%**
-*   **分析**：
-    *   這次實驗中，SVM 表現超強 (88.9%)，Stacking (87.0%) 雖然比 KNN 和 RF 好，但略輸 SVM。
-    *   **這很正常！** Stacking 不保證永遠贏過最強的單一模型，它的價值在於 **「穩健性 (Robustness)」**。
-    *   在資料量小 (只有 270 筆) 的情況下，變異數很大。如果換一組測試資料，可能 SVM 就掉下來了，但 Stacking 通常能維持在平均水準之上。
+*   **分析：為什麼 SVM 比 Stacking 還高？**
+    *   **小樣本優勢**：我們的資料只有 270 筆。SVM (特別是 RBF 核函數) 非常擅長在小樣本、高維度 (13 特徵) 的空間中找到漂亮的切分線。
+    *   **Stacking 的代價**：Stacking 需要把資料切分來訓練「總醫師」(Meta Learner)。在資料量這麼少的情況下，再切分會導致訓練資料不足，總醫師可能學得不夠好。
+    *   **那為什麼還要學 Stacking？** 因為它的價值在於 **「穩健性 (Robustness)」**。如果今天換了一批新的病人，SVM 可能會因為過度適應舊病人而失準，但 Stacking 因為綜合了三位專家的意見，通常能維持穩定的表現。
 
 ### 2. 預測相關性 (Prediction Correlation)
 ![Prediction Correlation](pic/21-2_Prediction_Correlation.png)
@@ -97,6 +98,8 @@ stacking_model.fit(X_train, y_train)
 
 ### 3. 混淆矩陣 (Confusion Matrix)
 ![Confusion Matrix](pic/21-3_Confusion_Matrix.png)
+*   **準確率 (Accuracy)**：約 **87.0%**。
+    *   **計算過程**：`(31 + 16) / 54 ≈ 87.0%`
 *   顯示了 Stacking 模型最終的分類結果。
 
 ## 5. 戰略總結: 集成學習的火箭發射之旅
