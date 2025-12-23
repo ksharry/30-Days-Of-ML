@@ -77,9 +77,13 @@ R = R_df.values
 from scipy.sparse.linalg import svds
 U, sigma, Vt = svds(R_demeaned, k=50)
 sigma = np.diag(sigma)
-
 # 3. 預測評分 (乘回去)
 predicted_ratings = np.dot(np.dot(U, sigma), Vt) + user_ratings_mean.reshape(-1, 1)
+
+# 4. 推薦電影 (找出預測分最高且沒看過的)
+def recommend_movies(user_id):
+    # ... (省略排序與過濾邏輯，詳見完整程式碼) ...
+    return recommendations
 ```
 
 ## 4. 模型評估與視覺化
@@ -98,6 +102,19 @@ predicted_ratings = np.dot(np.dot(U, sigma), Vt) + user_ratings_mean.reshape(-1,
     2.  **Batman (蝙蝠俠)**
     3.  **Dave (冒牌總統)**
 *   **分析**：推薦 *E.T.* 和 *Batman* 給喜歡 *Brazil* (科幻神作) 的人是非常合理的！系統成功抓住了他的口味。
+
+### 3. 模型驗證 (Evaluation)
+我們如何知道模型準不準？通常使用 **RMSE (均方根誤差)** 來評估。
+$$RMSE = \sqrt{\frac{1}{N} \sum (y_{true} - y_{pred})^2}$$
+*   **意義**：預測分數與真實分數平均差了幾分？
+*   **結果**：我們的模型 RMSE 約為 **1.85**。
+*   **範例檢查 (User 1 - Cinema Paradiso)**：
+    *   真實評分：**5.0**
+    *   預測評分：**2.83**
+    *   誤差：**2.17**
+*   **解讀**：
+    *   雖然單看這部電影誤差很大 (預測偏低)，但這是因為 SVD 是一種「平滑化」的過程，極端高分往往會被拉低。
+    *   **沒關係嗎？** 在推薦系統中，我們更在乎 **「排序 (Ranking)」** (誰是第一名) 而不是 **「絕對分數」**。只要好電影排在前面 (例如 E.T. 被排在推薦名單前幾名)，推薦就是成功的！
 
 ## 5. 戰略總結: 非監督式學習的火箭發射之旅
 
@@ -119,8 +136,7 @@ predicted_ratings = np.dot(np.dot(U, sigma), Vt) + user_ratings_mean.reshape(-1,
 
 ## 6. 總結
 Day 17 我們學習了 **推薦系統**。
-*   這是機器學習**最具商業價值 (變現能力最強)** 的應用之一。
-    *   **變現 (Monetization)**：意思是能直接把技術換成錢。推薦系統越準，使用者買越多東西 (Amazon) 或看越久廣告 (YouTube)，直接貢獻營收。
+*   這是機器學習**最具商業價值 (變現能力最強)** 的應用之一，能直接把技術換成錢。推薦系統越準，使用者買越多東西 (Amazon) 或看越久廣告 (YouTube)，直接貢獻營收。
 *   **SVD** 透過找出「隱藏特徵」，能捕捉使用者和物品之間微妙的關係。
 *   雖然現在有更強的深度學習推薦模型 (如 Neural CF)，但矩陣分解依然是許多系統的基石。
 

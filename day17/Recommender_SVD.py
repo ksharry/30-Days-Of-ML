@@ -145,3 +145,32 @@ print("Latent space plot saved.")
 print("\nTop 20 Movies Coordinates (2D):")
 for i in top_movies_indices:
     print(f"{R_df.columns[i]}: ({V_subset[i, 0]:.4f}, {V_subset[i, 1]:.4f})")
+
+# --- 6. 模型驗證 (Evaluation: RMSE) ---
+# 為了知道模型準不準，我們計算 RMSE (均方根誤差)
+# 也就是比較「真實評分」和「預測評分」的差距
+# 注意：嚴謹的做法應該要切分 Train/Test，這裡我們計算的是「重建誤差 (Reconstruction Error)」
+
+# 只計算原本有評分的地方 (不計算原本是 0 的格子)
+prediction_flattened = preds_df.values.flatten()
+original_flattened = R_df.values.flatten()
+nonzero_index = original_flattened.nonzero() # 找出非 0 的位置
+
+original_nonzero = original_flattened[nonzero_index]
+prediction_nonzero = prediction_flattened[nonzero_index]
+
+from sklearn.metrics import mean_squared_error
+from math import sqrt
+rmse = sqrt(mean_squared_error(original_nonzero, prediction_nonzero))
+
+print(f"\nModel Evaluation (RMSE): {rmse:.4f}")
+print("這代表我們的預測評分平均誤差約為 {:.2f} 分。".format(rmse))
+
+# 舉個例子驗證
+u_id, m_title = 1, 'Cinema Paradiso (1988)' # User 1 給這部片 5 分
+real_rating = R_df.loc[u_id, m_title]
+pred_rating = preds_df.loc[u_id, m_title]
+print(f"\nExample Check for User {u_id}, Movie '{m_title}':")
+print(f"Real Rating: {real_rating}")
+print(f"Predicted:   {pred_rating:.2f}")
+print(f"Diff:        {abs(real_rating - pred_rating):.2f}")
