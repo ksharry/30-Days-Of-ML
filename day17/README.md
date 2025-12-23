@@ -49,10 +49,27 @@ $$R \approx U \Sigma V^T$$
 ### Python 程式碼實作
 完整程式連結：[Recommender_SVD.py](Recommender_SVD.py)
 
+#### 關鍵步驟：如何把檔案變成矩陣？
+原始資料 (`u.data`) 其實是一長串的「流水帳」 (Long Format)，像這樣：
+`User1, Matrix, 5分`
+`User1, Titanic, 3分`
+`User2, Matrix, 4分`
+
+我們使用 Pandas 的 `pivot_table` 指令，把它「轉置」成矩陣 (Wide Format)：
+*   **Index (列)** 變成 User
+*   **Columns (行)** 變成 Movie
+*   **Values (值)** 填入 Rating
+
+| | Matrix | Titanic |
+|---|---|---|
+| **User1** | 5 | 3 |
+| **User2** | 4 | 0 |
+
 ```python
 # 關鍵程式碼：SVD 矩陣分解
 
 # 1. 建立評分矩陣 (User-Item Matrix)
+# pivot_table 就是把「流水帳」轉成「棋盤格」的魔法指令
 R_df = df.pivot_table(index='user_id', columns='title', values='rating').fillna(0)
 R = R_df.values
 
@@ -101,7 +118,8 @@ predicted_ratings = np.dot(np.dot(U, sigma), Vt) + user_ratings_mean.reshape(-1,
 
 ## 6. 總結
 Day 17 我們學習了 **推薦系統**。
-*   這是機器學習最「變現」的應用之一。
+*   這是機器學習**最具商業價值 (變現能力最強)** 的應用之一。
+    *   **變現 (Monetization)**：意思是能直接把技術換成錢。推薦系統越準，使用者買越多東西 (Amazon) 或看越久廣告 (YouTube)，直接貢獻營收。
 *   **SVD** 透過找出「隱藏特徵」，能捕捉使用者和物品之間微妙的關係。
 *   雖然現在有更強的深度學習推薦模型 (如 Neural CF)，但矩陣分解依然是許多系統的基石。
 
