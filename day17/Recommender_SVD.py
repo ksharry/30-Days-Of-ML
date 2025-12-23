@@ -12,92 +12,130 @@ import os
 from scipy.sparse.linalg import svds
 
 # --- 1. 準備資料 (Data Preparation) ---
-# 為了演示方便，我們手動建立一個小型的電影評分矩陣
-# 真實世界通常使用 MovieLens 資料集
+# --- 1. 準備資料 (Data Preparation) ---
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(SCRIPT_DIR, 'ml-100k')
+ZIP_FILE = os.path.join(SCRIPT_DIR, 'ml-100k.zip')
 pic_dir = os.path.join(SCRIPT_DIR, 'pic')
 os.makedirs(pic_dir, exist_ok=True)
 
-# 評分數據：User 對 Movie 的評分 (1-5分，0代表沒看過)
-# 假設有 6 個使用者，5 部電影
-ratings_dict = {
-    'User': ['Alice', 'Alice', 'Alice', 'Bob', 'Bob', 'Charlie', 'Charlie', 'David', 'David', 'Eve', 'Frank'],
-    'Movie': ['Matrix', 'Titanic', 'Avengers', 'Matrix', 'Avengers', 'Titanic', 'Frozen', 'Matrix', 'Frozen', 'Avengers', 'Titanic'],
-    'Rating': [5, 3, 4, 5, 5, 2, 5, 4, 1, 3, 2]
-}
+# 下載 MovieLens 100k 資料集
+url = "https://files.grouplens.org/datasets/movielens/ml-100k.zip"
+if not os.path.exists(DATA_DIR):
+    print(f"Downloading MovieLens data from {url}...")
+    try:
+        import urllib.request
+        import zipfile
+        urllib.request.urlretrieve(url, ZIP_FILE)
+        with zipfile.ZipFile(ZIP_FILE, 'r') as zip_ref:
+            zip_ref.extractall(SCRIPT_DIR)
+        print("Download and extraction complete.")
+    except Exception as e:
+        print(f"Download failed: {e}")
+        exit()
 
-df = pd.DataFrame(ratings_dict)
-print("Raw Ratings Data:")
-print(df.head())
+# 讀取資料
+# u.data: User ID, Item ID, Rating, Timestamp
+ratings_cols = ['user_id', 'movie_id', 'rating', 'timestamp']
+ratings = pd.read_csv(os.path.join(DATA_DIR, 'u.data'), sep='\t', names=ratings_cols, encoding='latin-1')
+
+# u.item: Movie ID, Movie Title, ... (其他欄位忽略)
+movies_cols = ['movie_id', 'title', 'release_date', 'video_release_date', 'imdb_url']
+movies = pd.read_csv(os.path.join(DATA_DIR, 'u.item'), sep='|', names=movies_cols, usecols=range(5), encoding='latin-1')
+
+# 合併資料 (只取需要的欄位)
+df = pd.merge(ratings, movies, on='movie_id')
+print("MovieLens Data Loaded:")
+print(df[['user_id', 'title', 'rating']].head())
+print(f"Total Ratings: {len(df)}")
+print(f"Total Users: {df.user_id.nunique()}")
+print(f"Total Movies: {df.movie_id.nunique()}")
 
 # 轉成矩陣形式 (User-Item Matrix)
-# index=User, columns=Movie, values=Rating
-R_df = df.pivot(index='User', columns='Movie', values='Rating').fillna(0)
-print("\nUser-Item Matrix (R):")
-print(R_df)
+# 這裡會產生一個 943 x 1682 的大矩陣，很多格子是 0 (稀疏)
+R_df = df.pivot_table(index='user_id', columns='title', values='rating').fillna(0)
+print("\nUser-Item Matrix Shape:", R_df.shape)
 
-# 轉成 numpy array
+# 轉成 numpy array 並去中心化
 R = R_df.values
-user_ratings_mean = np.mean(R, axis=1) # 每個使用者的平均評分
-R_demeaned = R - user_ratings_mean.reshape(-1, 1) # 去中心化 (減去平均)
+user_ratings_mean = np.mean(R, axis=1)
+R_demeaned = R - user_ratings_mean.reshape(-1, 1)
 
 # --- 2. 矩陣分解 (Matrix Factorization via SVD) ---
-# 我們想把這個稀疏矩陣 R 分解成 U, Sigma, Vt
-# k=2 代表我們只取前 2 個潛在特徵 (Latent Features)
-# 例如：這 2 個特徵可能代表「動作片程度」和「愛情片程度」
-U, sigma, Vt = svds(R_demeaned, k=2)
+# 對於真實數據，k (潛在特徵數) 通常設大一點，例如 50
+k = 50
+U, sigma, Vt = svds(R_demeaned, k=k)
+sigma = np.diag(sigma)
 
-sigma = np.diag(sigma) # 轉成對角矩陣
-
-print(f"\nShape of U: {U.shape}")     # (Users, k)
-print(f"Shape of Sigma: {sigma.shape}") # (k, k)
-print(f"Shape of Vt: {Vt.shape}")    # (k, Movies)
+print(f"\nSVD Done. k={k}")
 
 # --- 3. 重建矩陣與預測 (Reconstruction & Prediction) ---
-# 預測評分 = U * Sigma * Vt + 平均分
 all_user_predicted_ratings = np.dot(np.dot(U, sigma), Vt) + user_ratings_mean.reshape(-1, 1)
-
 preds_df = pd.DataFrame(all_user_predicted_ratings, columns=R_df.columns, index=R_df.index)
-print("\nPredicted Ratings Matrix:")
-print(preds_df.round(2))
 
 # --- 4. 推薦電影 (Recommendation) ---
-# 讓我們看看要推薦什麼給 'David'
-user_name = 'David'
-user_row_number = R_df.index.get_loc(user_name)
-sorted_user_predictions = preds_df.iloc[user_row_number].sort_values(ascending=False)
+def recommend_movies(user_id, num_recommendations=5):
+    # 1. 取得該使用者的預測評分，並排序
+    # user_id 是 1-based，index 是 0-based，所以要減 1
+    user_row_number = user_id - 1 
+    sorted_user_predictions = preds_df.iloc[user_row_number].sort_values(ascending=False)
+    
+    # 2. 取得該使用者「已經看過」的電影
+    user_data = ratings[ratings.user_id == user_id]
+    user_full = (user_data.merge(movies, how = 'left', left_on = 'movie_id', right_on = 'movie_id').
+                     sort_values(['rating'], ascending=False)
+                 )
+    
+    print(f"\nUser {user_id} has already rated {len(user_full)} movies.")
+    print("Top 3 favorite movies (Rated 5):")
+    print(user_full[['title', 'rating']].head(3))
+    
+    # 3. 推薦「沒看過」且「預測分最高」的電影
+    # 先把預測結果轉成 DataFrame 並清楚命名
+    preds_df_user = pd.DataFrame(sorted_user_predictions).reset_index()
+    preds_df_user.columns = ['title', 'Predictions'] # 強制命名，避免 index 混淆
 
-# 找出他已經看過的電影
-user_data = df[df.User == user_name]
-print(f"\nUser {user_name} has already rated:")
-print(user_data)
+    recommendations = (movies[~movies['movie_id'].isin(user_full['movie_id'])].
+         merge(preds_df_user, how = 'left',
+               left_on = 'title',
+               right_on = 'title').
+         sort_values('Predictions', ascending = False).
+         iloc[:num_recommendations]
+        )
 
-print(f"\nRecommendations for {user_name}:")
-# 推薦他沒看過，且預測分數最高的電影
-recommendations = sorted_user_predictions.drop(user_data.Movie.tolist())
-print(recommendations.head(3))
+    return recommendations
+
+# 推薦給 User 1
+user_id_to_recommend = 1
+recs = recommend_movies(user_id_to_recommend)
+print(f"\nTop 5 Recommendations for User {user_id_to_recommend}:")
+print(recs[['title', 'Predictions']])
 
 # --- 5. 視覺化潛在特徵 (Visualizing Latent Features) ---
-# 我們把電影和使用者畫在同一個 2D 平面上
-# 看看誰跟誰比較近
-plt.figure(figsize=(10, 8))
+# 因為電影太多了 (1682部)，我們只畫「評分次數最多」的前 20 部電影
+# 這樣圖才不會密密麻麻
+movie_stats = ratings.groupby('movie_id').agg({'rating': [np.size, np.mean]})
+top_movies_ids = movie_stats['rating']['size'].nlargest(20).index
+top_movies_titles = movies[movies['movie_id'].isin(top_movies_ids)]['title'].values
 
-# 畫電影 (基於 Vt 的轉置，即 V)
-# Vt 是 (k, Movies)，所以 V 是 (Movies, k)
-V = Vt.T
-plt.scatter(V[:, 0], V[:, 1], c='red', marker='x', s=100, label='Movies')
-for i, txt in enumerate(R_df.columns):
-    plt.text(V[i, 0]+0.02, V[i, 1], txt, fontsize=12, color='red')
+# 我們只取前兩個維度來畫圖 (雖然模型用了 50 個)
+# 注意：這只是為了視覺化，實際上高維度的關係更複雜
+V_subset = Vt.T[:, :2] # 取前兩個特徵
+# 找出這 20 部電影在矩陣中的位置
+top_movies_indices = [R_df.columns.get_loc(t) for t in top_movies_titles]
 
-# 畫使用者 (基於 U)
-plt.scatter(U[:, 0], U[:, 1], c='blue', marker='o', s=100, label='Users')
-for i, txt in enumerate(R_df.index):
-    plt.text(U[i, 0]+0.02, U[i, 1], txt, fontsize=12, color='blue')
+plt.figure(figsize=(12, 10))
+plt.scatter(V_subset[top_movies_indices, 0], V_subset[top_movies_indices, 1], alpha=0.5)
 
-plt.title('Latent Space Visualization (SVD)')
+for i in top_movies_indices:
+    x = V_subset[i, 0]
+    y = V_subset[i, 1]
+    title = R_df.columns[i]
+    plt.text(x, y, title, fontsize=10)
+
+plt.title('Latent Space Visualization (Top 20 Movies)')
 plt.xlabel('Latent Feature 1')
 plt.ylabel('Latent Feature 2')
-plt.legend()
 plt.grid(True)
 plt.tight_layout()
 plt.savefig(os.path.join(pic_dir, '17-1_Latent_Space.png'))

@@ -4,14 +4,16 @@
 推薦系統的引爆點是 **Netflix Prize (2006-2009)**。Netflix 懸賞 100 萬美元，徵求能比他們現有系統準確度提升 10% 的算法。最終，BellKor's Pragmatic Chaos 團隊獲勝，而他們的核心武器之一就是 **矩陣分解 (Matrix Factorization)**，也就是我們今天用的 SVD 技術。這場比賽徹底改變了電商和串流媒體的生態。
 
 ## 1. 資料集來源
-### 資料集來源：[自製小型電影評分數據]
-> 備註：為了讓數學原理更清晰，我們手動建立了一個 6 位使用者 x 4 部電影的小型矩陣。真實世界通常使用 [MovieLens](https://grouplens.org/datasets/movielens/) 資料集。
+### 資料集來源：[MovieLens 100k Dataset](https://grouplens.org/datasets/movielens/100k/)
+> 備註：這是推薦系統領域最經典的資料集之一，由 GroupLens Research 實驗室提供。
 
 ### 資料集特色與欄位介紹:
-*   **User**: 使用者 (Alice, Bob, Charlie...)。
-*   **Movie**: 電影 (Matrix, Titanic, Avengers, Frozen)。
-*   **Rating**: 評分 (1-5 分，0 代表沒看過)。
-*   **目標**: 預測使用者會給「沒看過的電影」打幾分，並推薦分數最高的。
+*   **u.data**: 包含 100,000 筆評分 (943 位使用者對 1682 部電影)。
+    *   **user_id**: 使用者 ID。
+    *   **item_id**: 電影 ID。
+    *   **rating**: 評分 (1-5 分)。
+    *   **timestamp**: 時間戳記。
+*   **u.item**: 電影詳細資訊 (標題、發行日、類型等)。
 
 ## 2. 原理
 ### 核心概念：物以類聚，人以群分 (協同過濾)
@@ -42,35 +44,35 @@ $$R \approx U \Sigma V^T$$
 ```python
 # 關鍵程式碼：SVD 矩陣分解
 
-# 1. 建立評分矩陣
-R_df = df.pivot(index='User', columns='Movie', values='Rating').fillna(0)
+# 1. 建立評分矩陣 (User-Item Matrix)
+R_df = df.pivot_table(index='user_id', columns='title', values='rating').fillna(0)
 R = R_df.values
 
-# 2. 執行 SVD (k=2 代表取 2 個隱藏特徵)
+# 2. 執行 SVD (k=50 代表取 50 個隱藏特徵)
 from scipy.sparse.linalg import svds
-U, sigma, Vt = svds(R, k=2)
+U, sigma, Vt = svds(R_demeaned, k=50)
 sigma = np.diag(sigma)
 
 # 3. 預測評分 (乘回去)
-predicted_ratings = np.dot(np.dot(U, sigma), Vt)
+predicted_ratings = np.dot(np.dot(U, sigma), Vt) + user_ratings_mean.reshape(-1, 1)
 ```
 
 ## 4. 模型評估與視覺化
 ### 1. 潛在空間圖 (Latent Space)
 ![Latent Space](pic/17-1_Latent_Space.png)
-*   **觀察**：這張圖把使用者 (藍點) 和電影 (紅叉) 畫在同一個 2D 平面上。
+*   **觀察**：這張圖展示了 **評分次數最多的前 20 部電影** 在潛在空間中的位置。
 *   **解讀**：
-    *   **左上角**：**Alice, Bob** 和 **Matrix, Avengers** 靠很近。這群是「動作片愛好者」與「動作片」。
-    *   **右下角**：**Charlie** 和 **Frozen** 靠很近。這群可能是「動畫/家庭片」。
-    *   **距離越近**：代表該使用者越可能喜歡該電影。
-    *   **David** 在哪？他在中間偏左，離 Matrix 比較近，離 Frozen 比較遠，這跟他的評分 (Matrix=4, Frozen=1) 完全吻合！
+    *   可以看到 **Star Wars (星際大戰)**、**Return of the Jedi (絕地大反攻)** 和 **Empire Strikes Back** 靠得非常近。這完全合理，因為喜歡其中一部的人通常也會喜歡另外兩部。
+    *   **Fargo** 和 **Pulp Fiction** 這些經典劇情片也聚在一起。
+    *   這證明了 SVD 成功捕捉到了電影之間的「語義相似性」。
 
-### 2. 推薦結果 (David)
-*   **已知**：David 看過 Matrix (4分), Frozen (1分)。他喜歡動作片，討厭動畫片。
-*   **預測**：
-    *   Titanic: **0.23 分** (雖然低，但比 Avengers 高)
-    *   Avengers: **-0.09 分** (預測很低，可能因為他對 Frozen 的低分影響了整體偏好計算，或者模型認為他只愛 Matrix 這種硬派科幻，不愛超級英雄？)
-    *   *註：因為數據集太小且稀疏，預測值絕對大小不重要，重要的是**相對排序**。*
+### 2. 推薦結果 (User 1)
+*   **User 1 的喜好**：他給了 *Cinema Paradiso (新天堂樂園)* 和 *Brazil (巴西)* 5 分。這顯示他可能喜歡 **科幻、劇情、經典** 類型的電影。
+*   **系統推薦**：
+    1.  **E.T. the Extra-Terrestrial (E.T.外星人)**
+    2.  **Batman (蝙蝠俠)**
+    3.  **Dave (冒牌總統)**
+*   **分析**：推薦 *E.T.* 和 *Batman* 給喜歡 *Brazil* (科幻神作) 的人是非常合理的！系統成功抓住了他的口味。
 
 ## 5. 戰略總結: 非監督式學習的火箭發射之旅
 
