@@ -5,7 +5,7 @@
 
 ## 1. 資料集來源
 ### 資料集來源：[Mall Customer Segmentation Data (Kaggle)](https://www.kaggle.com/vjchoudhary7/customer-segmentation-tutorial-in-python)
-> 備註：由於原始 Kaggle 資料集下載受限，本範例使用 `sklearn.make_blobs` 生成模擬資料，其分佈特性模仿了真實商場客戶的「收入」與「消費分數」。
+> 備註：這是一個經典的市場區隔 (Market Segmentation) 資料集。
 
 ### 資料集特色與欄位介紹:
 我們擁有商場客戶的基本資料，目標是根據他們的「收入」和「消費習慣」將他們分群，以便制定行銷策略。
@@ -25,7 +25,17 @@
 *   **聚類 (Clustering)**：將相似的資料歸為同一類。
 
 #### 2.2 K-Means 演算法步驟
-這是一個**迭代 (Iterative)** 的過程，就像軍隊集合一樣：
+這是一個**迭代 (Iterative)** 的過程，目標是最小化所有點到其質心的距離平方和 (WCSS)。
+
+**數學公式 (Objective Function)**：
+$$J = \sum_{i=1}^{k} \sum_{x \in C_i} ||x - \mu_i||^2$$
+*   $J$: 總誤差 (Inertia / WCSS)。
+*   $k$: 群聚數量。
+*   $x$: 資料點。
+*   $\mu_i$: 第 $i$ 群的質心 (Centroid)。
+*   **目標**：找到一組質心 $\mu$，使得 $J$ 最小。
+
+**步驟詳解**：
 1.  **隨機選將軍 (Initialization)**：隨機選 $K$ 個點當作初始的「質心 (Centroids)」。
 2.  **小兵選邊站 (Assignment)**：每個資料點算出自己離哪個將軍最近，就加入那個將軍的隊伍 (Cluster)。
 3.  **將軍移動 (Update)**：隊伍集合完畢後，算出隊伍的「幾何中心」，將軍移動到那個中心點。
@@ -75,9 +85,9 @@ y_kmeans = kmeans.fit_predict(X)
 
     *透過 K-Means，我們能自動把這些人分開，針對不同族群發送不同的優惠券 (例如給「省錢型」發折扣碼，給「VIP」發新品通知)。*
 
-## 5. 戰略總結:模型訓練的火箭發射之旅
+## 5. 戰略總結: 非監督式學習的火箭發射之旅
 
-### (非監督式學習適用)
+### (K-Means 參數調整)
 雖然沒有 Bias/Variance，但我們可以用 **WCSS** 來類比：
 
 #### 5.1 流程一：推力不足 (Underfitting)
