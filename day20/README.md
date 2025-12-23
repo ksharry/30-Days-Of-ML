@@ -60,7 +60,6 @@ $$Obj \approx \text{const} + g_i f_t(x_i) + \frac{1}{2} h_i f_t^2(x_i)$$
     *   最後把所有人的分數加起來，就非常接近真實答案 1.0 了。
 
 > **核心精神**：每一棒都在預測 **「上一棒還沒做到的部分」** (殘差)，而不是從頭預測。
->
 
 **圖解：梯度提升過程 (Gradient Boosting Process)**
 ![Gradient Boosting Process](pic/20-4_Gradient_Boosting_Process.png)
@@ -78,12 +77,12 @@ $$Obj \approx \text{const} + g_i f_t(x_i) + \frac{1}{2} h_i f_t^2(x_i)$$
 from xgboost import XGBClassifier
 
 # 2. 訓練模型
-# n_estimators=100: 最多打 100 桿
-# learning_rate=0.1: 每一桿的力道 (太大力容易打過頭，太小力要打很久)
+# n_estimators=100: 最多修正 100 次殘差 (改 100 次考卷)
+# learning_rate=0.1: 每次修正的幅度 (太小學太慢，太大容易學過頭)
 model = XGBClassifier(n_estimators=100, learning_rate=0.1, max_depth=3)
 
 # 3. 邊訓練邊驗證 (Early Stopping)
-# 如果打了 10 桿發現球都沒有更靠近洞口，就提早結束，省力氣
+# 如果修正 10 次發現誤差都沒有變小，就提早結束，省力氣
 model.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=False)
 ```
 
@@ -91,6 +90,7 @@ model.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=False)
 ### 1. 混淆矩陣 (Confusion Matrix)
 ![Confusion Matrix](pic/20-1_Confusion_Matrix.png)
 *   **準確率 (Accuracy)**：約 **76.0%**。
+    *   **計算過程**：$$ \text{Accuracy} = \frac{\text{答對題數 (TP+TN)}}{\text{總題數 (Total)}} = \frac{117}{154} \approx 76.0\% $$
 *   **觀察**：
     *   對於沒有糖尿病 (0) 的預測較準 (Recall 0.80)。
     *   對於有糖尿病 (1) 的預測稍弱 (Recall 0.69)。這在醫療上是可以接受的起點，但通常我們希望 Recall 更高 (寧可誤判有病，也不要漏掉病人)。
