@@ -133,10 +133,10 @@ def draw_neural_net(ax, left, right, bottom, top, layer_sizes):
                                   [layer_top_a - m*v_spacing, layer_top_b - o*v_spacing], c='k', alpha=0.2)
                 ax.add_artist(line)
 
-fig = plt.figure(figsize=(8, 8))
+fig = plt.figure(figsize=(12, 6))
 ax = fig.gca()
 ax.axis('off')
-draw_neural_net(ax, .1, .9, .1, .9, [2, 8, 1])
-plt.title('MLP Architecture (2 Inputs -> 8 Hidden -> 1 Output)')
+draw_neural_net(ax, .1, .9, .1, .8, [2, 8, 1])
+plt.title('MLP Architecture (2 Inputs -> 8 Hidden -> 1 Output)', y=1.05)
 plt.savefig(os.path.join(pic_dir, '23-3_Network_Architecture.png'))
 print("Network Architecture plot saved.")
