@@ -255,27 +255,4 @@ def draw_cnn_architecture():
 
 draw_cnn_architecture()
 
-# 視覺化 6: 模型深度演進圖 (Model Depth Evolution)
-def plot_model_depth():
-    models = ['LeNet-5\n(1998)', 'AlexNet\n(2012)', 'VGG-19\n(2014)', 'ResNet-152\n(2015)']
-    depths = [5, 8, 19, 152]
-    colors = ['#FF9999', '#66B2FF', '#99FF99', '#FFCC99']
 
-    fig, ax = plt.subplots(figsize=(10, 6))
-    bars = ax.bar(models, depths, color=colors)
-
-    # Add text labels on top of bars
-    for bar in bars:
-        height = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2., height,
-                f'{height} Layers',
-                ha='center', va='bottom', fontweight='bold')
-
-    ax.set_ylabel('Number of Layers (Depth) - Log Scale')
-    ax.set_title('Evolution of CNN Depth (Source: Original Papers)')
-    ax.set_yscale('log') # Use log scale because ResNet is too deep
-    
-    plt.savefig(os.path.join(pic_dir, '25-6_Model_Depth_Evolution.png'))
-    print("Model Depth Evolution plot saved.")
-
-plot_model_depth()

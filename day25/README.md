@@ -7,8 +7,7 @@ CNN 的發展史就是一部 AI 變強的歷史：
 3.  **VGG (2014)**：證明了「越深越好」，結構非常規整，全部使用 3x3 卷積核 (16~19層)。
 4.  **ResNet (2015, Kaiming He)**：發明了「殘差連接 (Residual Connection)」，解決了梯度消失問題，讓網路可以深達 152 層甚至 1000 層，超越人類辨識能力。
 
-![Model Depth Evolution](pic/25-6_Model_Depth_Evolution.png)
-> **圖解**：從 5 層到 152 層，深度學習的「深度」真的變深了！(Y軸為對數座標)
+
 
 ## 1. 資料集來源
 ### 資料集來源：[CIFAR-10 Dataset](https://www.cs.toronto.edu/~kriz/cifar.html)
@@ -54,6 +53,7 @@ CNN 像人類的眼睛一樣，**用「掃描」的方式看圖片**，保留了
 ![CNN Architecture](pic/25-5_CNN_Architecture.png)
 *   **C-P-C-P-F-D 結構**：
     *   **Conv (橘色)**：圖片變厚了 (濾鏡變多)，但長寬變小一點。
+        *   *為什麼變小了？(32 -> 30)*：因為 3x3 濾鏡在邊緣無法置中，所以 **上下左右各被削掉一層皮** (Valid Padding)，這叫做 Valid Padding (不補零)。如果我們希望大小不變 (維持 32)，就需要 Same Padding (在外面補一圈 0)
     *   **Pool (藍色)**：圖片長寬直接砍半。
     *   **Flatten (灰色)**：最後把立體的特徵圖拉成一條線。
     *   **Dense (綠色)**：進行最後的分類。
