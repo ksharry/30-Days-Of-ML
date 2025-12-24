@@ -128,9 +128,8 @@ plt.savefig(os.path.join(pic_dir, '25-2_Predictions.png'))
 print("Predictions plot saved.")
 
 # 視覺化 3: 卷積運算示意圖 (Convolution Visualization)
-# 畫一個簡單的 5x5 矩陣和 3x3 濾鏡，展示卷積過程
 def plot_convolution_diagram():
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 5)) # Shorter height
     ax.axis('off')
     
     # Draw Input Matrix (5x5)
@@ -139,14 +138,14 @@ def plot_convolution_diagram():
             rect = plt.Rectangle((j, 4-i), 1, 1, fc='white', ec='black')
             ax.add_patch(rect)
             ax.text(j+0.5, 4-i+0.5, str(np.random.randint(0, 2)), ha='center', va='center')
-    ax.text(2.5, 5.5, "Input Image (5x5)", ha='center', fontsize=12, fontweight='bold')
+    ax.text(2.5, 5.2, "Input Image (5x5)", ha='center', fontsize=12, fontweight='bold') # Moved up
 
     # Draw Filter (3x3) - Highlighted
     for i in range(3):
         for j in range(3):
             rect = plt.Rectangle((j, 4-i), 1, 1, fc='yellow', alpha=0.3, ec='red', lw=2)
             ax.add_patch(rect)
-    ax.text(1.5, 6.5, "Filter (3x3)", ha='center', color='red', fontsize=10)
+    ax.text(1.5, 6.0, "Filter (3x3)", ha='center', color='red', fontsize=10) # Moved up
     
     # Draw Arrow
     ax.arrow(5.5, 2.5, 2, 0, head_width=0.2, head_length=0.3, fc='k', ec='k')
@@ -159,10 +158,99 @@ def plot_convolution_diagram():
             ax.add_patch(rect)
             if i==0 and j==0:
                 ax.text(8+j+0.5, 3-i+0.5, "?", ha='center', va='center', fontweight='bold')
-    ax.text(9.5, 4.5, "Feature Map (3x3)", ha='center', fontsize=12, fontweight='bold')
+    ax.text(9.5, 4.2, "Feature Map (3x3)", ha='center', fontsize=12, fontweight='bold') # Moved up
     
-    plt.title("How Convolution Works: Sliding Window", y=1.05)
+    plt.title("How Convolution Works: Sliding Window", y=1.1) # Moved title up
     plt.savefig(os.path.join(pic_dir, '25-3_Convolution_Diagram.png'))
     print("Convolution Diagram plot saved.")
 
 plot_convolution_diagram()
+
+# 視覺化 4: 池化運算示意圖 (Pooling Visualization)
+def plot_pooling_diagram():
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.axis('off')
+    
+    # Input 4x4
+    data = np.array([[1, 3, 2, 4],
+                     [5, 6, 1, 2],
+                     [8, 7, 3, 0],
+                     [2, 1, 5, 4]])
+    
+    colors = ['#FF9999', '#99FF99', '#9999FF', '#FFFF99'] # Red, Green, Blue, Yellow
+    
+    # Draw Input
+    for i in range(4):
+        for j in range(4):
+            # Determine color block
+            block_idx = (i // 2) * 2 + (j // 2)
+            rect = plt.Rectangle((j, 3-i), 1, 1, fc=colors[block_idx], alpha=0.3, ec='black')
+            ax.add_patch(rect)
+            ax.text(j+0.5, 3-i+0.5, str(data[i, j]), ha='center', va='center')
+    ax.text(2, 4.2, "Input (4x4)", ha='center', fontsize=12, fontweight='bold')
+
+    # Arrow
+    ax.arrow(4.5, 2, 2, 0, head_width=0.2, head_length=0.3, fc='k', ec='k')
+    ax.text(5.5, 2.5, "Max Pooling (2x2)", ha='center')
+
+    # Draw Output 2x2
+    output = np.array([[6, 4],
+                       [8, 5]])
+    
+    for i in range(2):
+        for j in range(2):
+            block_idx = i * 2 + j
+            rect = plt.Rectangle((7+j, 2.5-i), 1, 1, fc=colors[block_idx], alpha=0.5, ec='black')
+            ax.add_patch(rect)
+            ax.text(7+j+0.5, 2.5-i+0.5, str(output[i, j]), ha='center', va='center', fontweight='bold')
+    ax.text(8, 3.7, "Output (2x2)", ha='center', fontsize=12, fontweight='bold')
+    
+    plt.title("How Max Pooling Works: Pick the Winner", y=1.1)
+    plt.savefig(os.path.join(pic_dir, '25-4_Pooling_Diagram.png'))
+    print("Pooling Diagram plot saved.")
+
+plot_pooling_diagram()
+
+# 視覺化 5: CNN 架構圖 (Architecture Visualization)
+def draw_cnn_architecture():
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.axis('off')
+    
+    layers = [
+        ("Input", "32x32", 32, 'white'),
+        ("Conv1", "30x30", 30, '#FFCC99'), # Orange
+        ("Pool1", "15x15", 15, '#99CCFF'), # Blue
+        ("Conv2", "13x13", 13, '#FFCC99'),
+        ("Pool2", "6x6", 6, '#99CCFF'),
+        ("Flatten", "1D", 2, 'lightgray'),
+        ("Dense", "Class", 1, 'lightgreen')
+    ]
+    
+    x_pos = 0
+    spacing = 2.5
+    
+    for i, (name, dim, size, color) in enumerate(layers):
+        # Draw box
+        height = size / 5.0 # Scale height
+        width = 1.5
+        if name == "Flatten": height = 6 # Represent long vector
+        if name == "Dense": height = 1
+        
+        rect = plt.Rectangle((x_pos, 3 - height/2), width, height, fc=color, ec='black')
+        ax.add_patch(rect)
+        
+        # Label
+        ax.text(x_pos + width/2, 3 - height/2 - 0.5, name, ha='center', va='top', fontweight='bold')
+        ax.text(x_pos + width/2, 3 + height/2 + 0.2, dim, ha='center', va='bottom', fontsize=9)
+        
+        # Arrow to next
+        if i < len(layers) - 1:
+            ax.arrow(x_pos + width + 0.2, 3, 0.6, 0, head_width=0.1, head_length=0.1, fc='k', ec='k')
+        
+        x_pos += spacing
+
+    plt.title("CNN Architecture: C-P-C-P-F-D", y=1.05)
+    plt.savefig(os.path.join(pic_dir, '25-5_CNN_Architecture.png'))
+    print("CNN Architecture plot saved.")
+
+draw_cnn_architecture()

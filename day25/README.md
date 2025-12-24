@@ -1,8 +1,11 @@
 # Day 25: CNN (Convolutional Neural Network) - 貓狗圖片分類
 
 ## 0. 歷史小故事/核心貢獻者:
-**Yann LeCun (1989)** 發明了 **LeNet-5**，這是 CNN 的鼻祖，成功應用於美國郵局的手寫郵遞區號辨識。
-但 CNN 真正爆紅是在 **2012 年 (AlexNet)**，Hinton 的學生 Alex Krizhevsky 用更深的 CNN 在 ImageNet 大賽中以壓倒性優勢奪冠，從此開啟了深度學習的黃金時代。
+CNN 的發展史就是一部 AI 變強的歷史：
+1.  **LeNet-5 (1998, Yann LeCun)**：CNN 的鼻祖，用於辨識手寫數字 (MNIST)。結構簡單 (5層)。
+2.  **AlexNet (2012, Alex Krizhevsky)**：深度學習的引爆點！使用了 ReLU 和 GPU 加速，在 ImageNet 大賽中以壓倒性優勢奪冠 (8層)。
+3.  **VGG (2014)**：證明了「越深越好」，結構非常規整，全部使用 3x3 卷積核 (16~19層)。
+4.  **ResNet (2015, Kaiming He)**：發明了「殘差連接 (Residual Connection)」，解決了梯度消失問題，讓網路可以深達 152 層甚至 1000 層，超越人類辨識能力。
 
 ## 1. 資料集來源
 ### 資料集來源：[CIFAR-10 Dataset](https://www.cs.toronto.edu/~kriz/cifar.html)
@@ -29,12 +32,24 @@ CNN 像人類的眼睛一樣，**用「掃描」的方式看圖片**，保留了
     ![Convolution Diagram](pic/25-3_Convolution_Diagram.png)
     > 黃色框框就是濾鏡，它在圖片上滑動，把對應的像素值相乘再相加，得到右邊的特徵圖 (Feature Map)。
 
-#### 2.2 池化層 (Pooling Layer) - 重點整理
-*   **原理**：把圖片縮小 (Downsampling)。常用的 **Max Pooling** 是在一個區域內 (例如 2x2) 只取最大值。
+#### 2.2 池化層 (Pooling Layer) - 重點整理 (馬賽克)
+*   **原理**：把圖片縮小 (Downsampling)。就像把一張高畫質照片變成 **「縮圖」** 或打上 **「馬賽克」**。
+*   **Max Pooling**：在一個小區域 (例如 2x2) 內，**只選最大的那個數字** 代表這個區域。
+*   **圖解**：
+    ![Pooling Diagram](pic/25-4_Pooling_Diagram.png)
+    > 為什麼選最大值？因為最大值代表這個區域 **「特徵最強」** 的地方 (例如最亮的點、最明顯的邊緣)。其他的雜訊就被過濾掉了。
 *   **功能**：
-    1.  **減少運算量**：圖片變小了。
-    2.  **抗雜訊**：只保留最明顯的特徵 (例如貓耳朵的尖端)，忽略背景雜訊。
-    3.  **平移不變性**：貓稍微移位一點，最大值還是抓得到。
+    1.  **減少運算量**：圖片變小了 (4x4 -> 2x2，資料量剩下 1/4)。
+    2.  **抗雜訊**：只保留最明顯的特徵。
+    3.  **平移不變性**：就算貓稍微移位一點，最大值還是抓得到。
+
+#### 2.3 CNN 架構示意圖 (Architecture)
+![CNN Architecture](pic/25-5_CNN_Architecture.png)
+*   **C-P-C-P-F-D 結構**：
+    *   **Conv (橘色)**：圖片變厚了 (濾鏡變多)，但長寬變小一點。
+    *   **Pool (藍色)**：圖片長寬直接砍半。
+    *   **Flatten (灰色)**：最後把立體的特徵圖拉成一條線。
+    *   **Dense (綠色)**：進行最後的分類。
 
 ## 3. 實戰
 ### Python 程式碼實作
