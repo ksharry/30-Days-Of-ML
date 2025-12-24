@@ -129,47 +129,74 @@ def draw_neural_net_simplified(ax, left, right, bottom, top, layer_sizes, real_s
     for n, layer_size in enumerate(layer_sizes):
         layer_top = v_spacing*(layer_size - 1)/2. + (top + bottom)/2.
         for m in range(layer_size):
-            # Draw circle
             circle = plt.Circle((n*h_spacing + left, layer_top - m*v_spacing), v_spacing/4.,
                                 color='w', ec='k', zorder=4)
             ax.add_artist(circle)
             
-            # Add text for first, last, and middle nodes to imply "..."
-            if m == 0: 
-                text = "1"
-            elif m == layer_size - 1:
-                text = str(real_sizes[n])
-            elif m == layer_size // 2:
-                text = "..."
-            else:
-                text = ""
+            if m == 0: text = "1"
+            elif m == layer_size - 1: text = str(real_sizes[n])
+            elif m == layer_size // 2: text = "..."
+            else: text = ""
             
             if text:
                 ax.text(n*h_spacing + left, layer_top - m*v_spacing, text, ha='center', va='center', fontsize=8)
         
-        # Label the layer
+        # Label the layer (Adjusted position)
         if n == 0: layer_name = "Input\n(Flatten)\n784"
         elif n == 1: layer_name = "Hidden\n(ReLU)\n128"
         else: layer_name = "Output\n(Softmax)\n10"
-        ax.text(n*h_spacing + left, top + 0.05, layer_name, ha='center', va='bottom', fontsize=10, fontweight='bold')
+        # Move text slightly higher than the top node
+        ax.text(n*h_spacing + left, top + 0.08, layer_name, ha='center', va='bottom', fontsize=10, fontweight='bold')
 
-    # Edges (Draw only a few to avoid clutter)
+    # Edges
     for n, (layer_size_a, layer_size_b) in enumerate(zip(layer_sizes[:-1], layer_sizes[1:])):
         layer_top_a = v_spacing*(layer_size_a - 1)/2. + (top + bottom)/2.
         layer_top_b = v_spacing*(layer_size_b - 1)/2. + (top + bottom)/2.
         for m in range(layer_size_a):
             for o in range(layer_size_b):
-                # Only draw some lines
                 if m % 2 == 0 and o % 2 == 0:
                     line = plt.Line2D([n*h_spacing + left, (n + 1)*h_spacing + left],
                                       [layer_top_a - m*v_spacing, layer_top_b - o*v_spacing], c='k', alpha=0.1)
                     ax.add_artist(line)
 
-fig = plt.figure(figsize=(8, 8))
+# Change figsize to be wider and shorter to reduce bottom whitespace
+fig = plt.figure(figsize=(12, 6))
 ax = fig.gca()
 ax.axis('off')
-# Draw representative nodes: 10 inputs, 8 hidden, 10 outputs
-draw_neural_net_simplified(ax, .1, .9, .1, .9, [10, 8, 10], [784, 128, 10])
-plt.title('MLP Architecture for MNIST (Simplified View)')
+# Top is set to 0.8 to leave room for titles
+draw_neural_net_simplified(ax, .1, .9, .1, .8, [10, 8, 10], [784, 128, 10])
+plt.title('MLP Architecture for MNIST (Simplified View)', y=1.05) # Move title up
 plt.savefig(os.path.join(pic_dir, '24-3_Network_Architecture.png'))
 print("Network Architecture plot saved.")
+
+# 視覺化 4: 梯度下降示意圖 (Gradient Descent Visualization)
+x = np.linspace(-6, 6, 100)
+y = x**2
+
+plt.figure(figsize=(8, 6))
+plt.plot(x, y, 'b-', label='Loss Function (Error)')
+
+# Simulate Gradient Descent
+current_x = -5
+learning_rate = 0.2
+path_x = [current_x]
+path_y = [current_x**2]
+
+for _ in range(5):
+    gradient = 2 * current_x # derivative of x^2 is 2x
+    current_x = current_x - learning_rate * gradient
+    path_x.append(current_x)
+    path_y.append(current_x**2)
+
+plt.scatter(path_x, path_y, c='r', s=100, zorder=5, label='Steps')
+for i in range(len(path_x)-1):
+    plt.annotate('', xy=(path_x[i+1], path_y[i+1]), xytext=(path_x[i], path_y[i]),
+                 arrowprops=dict(arrowstyle='->', color='green', lw=2))
+
+plt.title('Gradient Descent: Rolling down the hill')
+plt.xlabel('Weight (Parameter)')
+plt.ylabel('Loss (Error)')
+plt.legend()
+plt.grid(True)
+plt.savefig(os.path.join(pic_dir, '24-4_Gradient_Descent.png'))
+print("Gradient Descent plot saved.")

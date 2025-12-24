@@ -44,6 +44,9 @@
     *   **公式 (Gradient Descent)**：`w_new = w_old - Learning_Rate * Gradient`
     *   **說明**：根據梯度，調整神經元的權重 (Weight) 和偏差 (Bias)。我們使用 **Adam** 優化器。
     *   *比喻：學生修正腦中的觀念，下次就不會再錯了。*
+    
+    ![Gradient Descent](pic/24-4_Gradient_Descent.png)
+    > **圖解**：想像 Loss Function 是一個山谷，我們的目標是走到谷底 (Loss 最小)。梯度 (Gradient) 就是坡度，告訴我們往哪邊走會下坡。Learning Rate 則是我們跨出的步伐大小。
 
 #### 2.1 圖片在電腦眼裡是什麼？ (Image Processing)
 *   **矩陣 (Matrix)**：一張 28x28 的灰階圖片，其實就是一個 28x28 的數字矩陣。每個格子 (Pixel) 的值介於 0 (白) ~ 255 (黑)。
