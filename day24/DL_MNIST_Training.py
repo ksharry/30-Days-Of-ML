@@ -119,3 +119,57 @@ for i in range(15):
 plt.tight_layout()
 plt.savefig(os.path.join(pic_dir, '24-2_Predictions.png'))
 print("Predictions plot saved.")
+
+# 視覺化 3: 神經網路架構示意圖 (Simplified Architecture)
+def draw_neural_net_simplified(ax, left, right, bottom, top, layer_sizes, real_sizes):
+    v_spacing = (top - bottom)/float(max(layer_sizes))
+    h_spacing = (right - left)/float(len(layer_sizes) - 1)
+    
+    # Nodes
+    for n, layer_size in enumerate(layer_sizes):
+        layer_top = v_spacing*(layer_size - 1)/2. + (top + bottom)/2.
+        for m in range(layer_size):
+            # Draw circle
+            circle = plt.Circle((n*h_spacing + left, layer_top - m*v_spacing), v_spacing/4.,
+                                color='w', ec='k', zorder=4)
+            ax.add_artist(circle)
+            
+            # Add text for first, last, and middle nodes to imply "..."
+            if m == 0: 
+                text = "1"
+            elif m == layer_size - 1:
+                text = str(real_sizes[n])
+            elif m == layer_size // 2:
+                text = "..."
+            else:
+                text = ""
+            
+            if text:
+                ax.text(n*h_spacing + left, layer_top - m*v_spacing, text, ha='center', va='center', fontsize=8)
+        
+        # Label the layer
+        if n == 0: layer_name = "Input\n(Flatten)\n784"
+        elif n == 1: layer_name = "Hidden\n(ReLU)\n128"
+        else: layer_name = "Output\n(Softmax)\n10"
+        ax.text(n*h_spacing + left, top + 0.05, layer_name, ha='center', va='bottom', fontsize=10, fontweight='bold')
+
+    # Edges (Draw only a few to avoid clutter)
+    for n, (layer_size_a, layer_size_b) in enumerate(zip(layer_sizes[:-1], layer_sizes[1:])):
+        layer_top_a = v_spacing*(layer_size_a - 1)/2. + (top + bottom)/2.
+        layer_top_b = v_spacing*(layer_size_b - 1)/2. + (top + bottom)/2.
+        for m in range(layer_size_a):
+            for o in range(layer_size_b):
+                # Only draw some lines
+                if m % 2 == 0 and o % 2 == 0:
+                    line = plt.Line2D([n*h_spacing + left, (n + 1)*h_spacing + left],
+                                      [layer_top_a - m*v_spacing, layer_top_b - o*v_spacing], c='k', alpha=0.1)
+                    ax.add_artist(line)
+
+fig = plt.figure(figsize=(8, 8))
+ax = fig.gca()
+ax.axis('off')
+# Draw representative nodes: 10 inputs, 8 hidden, 10 outputs
+draw_neural_net_simplified(ax, .1, .9, .1, .9, [10, 8, 10], [784, 128, 10])
+plt.title('MLP Architecture for MNIST (Simplified View)')
+plt.savefig(os.path.join(pic_dir, '24-3_Network_Architecture.png'))
+print("Network Architecture plot saved.")
