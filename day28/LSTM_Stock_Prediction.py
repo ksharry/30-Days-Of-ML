@@ -144,7 +144,7 @@ def plot_lstm_concept():
     rect_f = plt.Rectangle((2.5, 3), 1, 1, fc=layer_color, ec='black')
     ax.add_patch(rect_f)
     ax.text(3, 3.5, "$\\sigma$", fontsize=14, ha='center', va='center')
-    ax.text(3, 2.7, "Forget", fontsize=10, ha='center')
+    ax.text(3, 2.2, "Forget", fontsize=10, ha='center') # Moved down
     ax.arrow(3, 4, 0, 3.1, **arrow_params) # Up to Multiply
     
     # Input Gate (Sigmoid)
@@ -153,7 +153,7 @@ def plot_lstm_concept():
     rect_i = plt.Rectangle((4, 3), 1, 1, fc=layer_color, ec='black')
     ax.add_patch(rect_i)
     ax.text(4.5, 3.5, "$\\sigma$", fontsize=14, ha='center', va='center')
-    ax.text(4.5, 2.7, "Input", fontsize=10, ha='center')
+    ax.text(4.5, 2.2, "Input", fontsize=10, ha='center') # Moved down
     
     # Candidate Layer (Tanh)
     # Path: Bottom -> Tanh -> Multiply
@@ -161,7 +161,7 @@ def plot_lstm_concept():
     rect_c = plt.Rectangle((5, 3), 1, 1, fc=layer_color, ec='black')
     ax.add_patch(rect_c)
     ax.text(5.5, 3.5, "$\\tanh$", fontsize=12, ha='center', va='center')
-    ax.text(5.5, 2.7, "Cand.", fontsize=10, ha='center')
+    ax.text(5.5, 2.2, "Cand.", fontsize=10, ha='center') # Moved down
     
     # Merge Input & Candidate
     ax.arrow(4.5, 4, 0, 1.1, **arrow_params) # From Input Gate
@@ -185,27 +185,28 @@ def plot_lstm_concept():
     rect_o = plt.Rectangle((8, 3), 1, 1, fc=layer_color, ec='black')
     ax.add_patch(rect_o)
     ax.text(8.5, 3.5, "$\\sigma$", fontsize=14, ha='center', va='center')
-    ax.text(8.5, 2.7, "Output", fontsize=10, ha='center')
-    ax.arrow(8.5, 4, 0, 1.1, **arrow_params) # Up to Output Multiply
+    ax.text(8.5, 2.2, "Output", fontsize=10, ha='center') # Moved down
+    
+    # Output Gate Arrow to Multiply (Adjusted path)
+    # Go up, then right, then up to avoid overlap
+    ax.plot([8.5, 8.5], [4, 4.5], color='black') # Up
+    ax.arrow(8.5, 4.5, 0.6, 0, **arrow_params) # Right to Multiply
     
     # Output Tanh (on Cell State branch)
     # Branch from Top Rail
-    ax.plot([9.5, 9.5], [7.5, 6], color='black')
+    ax.plot([9.5, 9.5], [7.5, 6.5], color='black') # Down from top
     
-    # Tanh Op
-    circle_tanh = plt.Circle((9.5, 5.5), 0.5, fc=op_color, ec='black')
+    # Tanh Op (Moved up)
+    circle_tanh = plt.Circle((9.5, 6.0), 0.5, fc=op_color, ec='black')
     ax.add_patch(circle_tanh)
-    ax.text(9.5, 5.5, "$\\tanh$", fontsize=10, ha='center', va='center')
+    ax.text(9.5, 6.0, "$\\tanh$", fontsize=10, ha='center', va='center')
     
-    ax.arrow(9.5, 5, 0, -0.1, **arrow_params) # Down to Multiply
+    ax.arrow(9.5, 5.5, 0, -0.6, **arrow_params) # Down to Multiply (Longer arrow)
     
     # Output Multiply
     circle_mul3 = plt.Circle((9.5, 4.5), 0.4, fc=op_color, ec='black')
     ax.add_patch(circle_mul3)
     ax.text(9.5, 4.5, "$\\times$", fontsize=14, ha='center', va='center')
-    
-    # Connect Output Gate to Multiply
-    ax.arrow(8.5, 4.5, 0.6, 0, **arrow_params)
     
     # Final Output h_t
     ax.arrow(9.9, 4.5, 1.6, 0, **arrow_params)
