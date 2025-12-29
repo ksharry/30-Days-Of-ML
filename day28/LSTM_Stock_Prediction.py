@@ -111,19 +111,39 @@ def plot_lstm_concept():
     ax.text(0.5, 7.5, "$C_{t-1}$", fontsize=14, fontweight='bold', ha='center')
     ax.arrow(1, 7.5, 1.5, 0, **arrow_params) # To Multiply
     
+# 視覺化 2: LSTM 核心概念 (Colah Style)
+def plot_lstm_concept():
+    fig, ax = plt.subplots(figsize=(14, 8))
+    ax.axis('off')
+    ax.set_xlim(0, 14)
+    ax.set_ylim(0, 9)
+    
+    # Styles
+    layer_color = '#F7DC6F' # Yellow
+    op_color = '#F1948A'    # Pink
+    line_color = 'black'
+    arrow_params = dict(head_width=0.2, head_length=0.2, fc=line_color, ec=line_color, length_includes_head=True)
+
+    # --- 1. Top Rail (Cell State) ---
+    # C_{t-1} -> X -> + -> C_t
+    ax.text(0.5, 7.5, "$C_{t-1}$", fontsize=14, fontweight='bold', ha='center')
+    ax.arrow(1, 7.5, 1.5, 0, **arrow_params) # To Multiply
+    
     # Multiply Op (Forget)
     circle_mul1 = plt.Circle((3, 7.5), 0.4, fc=op_color, ec='black')
     ax.add_patch(circle_mul1)
     ax.text(3, 7.5, "$\\times$", fontsize=14, ha='center', va='center')
     
-    ax.arrow(3.4, 7.5, 2.6, 0, **arrow_params) # To Add
+    # Arrow from Multiply to Add (Shortened)
+    ax.arrow(3.4, 7.5, 1.2, 0, **arrow_params) # To Add
     
-    # Add Op (Update)
-    circle_add = plt.Circle((6.5, 7.5), 0.4, fc=op_color, ec='black')
+    # Add Op (Update) - Moved to x=5.0
+    circle_add = plt.Circle((5.0, 7.5), 0.4, fc=op_color, ec='black')
     ax.add_patch(circle_add)
-    ax.text(6.5, 7.5, "$+$", fontsize=14, ha='center', va='center')
+    ax.text(5.0, 7.5, "$+$", fontsize=14, ha='center', va='center')
     
-    ax.arrow(6.9, 7.5, 4, 0, **arrow_params) # To C_t
+    # Arrow from Add to C_t (Lengthened)
+    ax.arrow(5.4, 7.5, 5.5, 0, **arrow_params) # To C_t
     ax.text(11.5, 7.5, "$C_t$", fontsize=14, fontweight='bold', ha='center')
 
     # --- 2. Bottom Inputs ---
@@ -176,8 +196,45 @@ def plot_lstm_concept():
     ax.plot([4.5, 5.5], [5.1, 5.1], color='black') # Horizontal bar
     ax.arrow(5, 5.1, 0, 0.05, head_width=0, color='black') # Tiny connector
     
-    # Result to Top Add
-    ax.arrow(5, 5.9, 1.1, 1.2, **arrow_params) # To Add
+    # Result to Top Add (Now Vertical!)
+    ax.arrow(5, 5.9, 0, 1.2, **arrow_params) # To Add (Vertical)
+    
+    # Output Gate (Sigmoid)
+    # Path: Bottom -> Sigmoid -> Output Multiply
+    ax.arrow(8.5, 1.5, 0, 1.5, **arrow_params) # Up to layer
+    rect_o = plt.Rectangle((8, 3), 1, 1, fc=layer_color, ec='black')
+    ax.add_patch(rect_o)
+    ax.text(8.5, 3.5, "$\\sigma$", fontsize=14, ha='center', va='center')
+    ax.text(8.5, 2.2, "Output", fontsize=10, ha='center') # Moved down
+    
+    # Output Gate Arrow to Multiply (Adjusted path)
+    # Go up, then right, then up to avoid overlap
+    ax.plot([8.5, 8.5], [4, 4.5], color='black') # Up
+    ax.arrow(8.5, 4.5, 0.6, 0, **arrow_params) # Right to Multiply
+    
+    # Output Tanh (on Cell State branch)
+    # Branch from Top Rail
+    ax.plot([9.5, 9.5], [7.5, 6.5], color='black') # Down from top
+    
+    # Tanh Op (Moved up)
+    circle_tanh = plt.Circle((9.5, 6.0), 0.5, fc=op_color, ec='black')
+    ax.add_patch(circle_tanh)
+    ax.text(9.5, 6.0, "$\\tanh$", fontsize=10, ha='center', va='center')
+    
+    ax.arrow(9.5, 5.5, 0, -0.6, **arrow_params) # Down to Multiply (Longer arrow)
+    
+    # Output Multiply
+    circle_mul3 = plt.Circle((9.5, 4.5), 0.4, fc=op_color, ec='black')
+    ax.add_patch(circle_mul3)
+    ax.text(9.5, 4.5, "$\\times$", fontsize=14, ha='center', va='center')
+    
+    # Final Output h_t
+    ax.arrow(9.9, 4.5, 1.6, 0, **arrow_params)
+    ax.text(12, 4.5, "$h_t$", fontsize=14, fontweight='bold', ha='center')
+
+    plt.title("LSTM Structure (Standard View)", fontsize=16, y=1.02)
+    plt.savefig(os.path.join(pic_dir, '28-2_LSTM_Concept.png'))
+    print("LSTM Concept plot saved.")
     
     # Output Gate (Sigmoid)
     # Path: Bottom -> Sigmoid -> Output Multiply
