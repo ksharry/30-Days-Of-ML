@@ -93,62 +93,125 @@ plt.legend()
 plt.savefig(os.path.join(pic_dir, '28-1_Prediction_Result.png'))
 print("Prediction Result plot saved.")
 
-# 視覺化 2: LSTM 核心概念 (傳送帶與閘門)
+# 視覺化 2: LSTM 核心概念 (Colah Style)
 def plot_lstm_concept():
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(14, 8))
     ax.axis('off')
-    ax.set_xlim(0, 10)
-    ax.set_ylim(0, 6)
+    ax.set_xlim(0, 14)
+    ax.set_ylim(0, 9)
     
-    # Cell State (The Conveyor Belt) - Top Line
-    ax.arrow(1, 5, 8, 0, head_width=0.2, head_length=0.2, fc='black', ec='black', width=0.05)
-    ax.text(5, 5.3, "Cell State (Long-term Memory) $C_t$", ha='center', fontsize=12, fontweight='bold', color='blue')
-    
-    # Hidden State (Output) - Bottom Line
-    ax.arrow(1, 1, 8, 0, head_width=0.2, head_length=0.2, fc='black', ec='black', width=0.05)
-    ax.text(5, 0.5, "Hidden State (Short-term Memory) $h_t$", ha='center', fontsize=12, fontweight='bold', color='green')
+    # Styles
+    layer_color = '#F7DC6F' # Yellow
+    op_color = '#F1948A'    # Pink
+    line_color = 'black'
+    arrow_params = dict(head_width=0.2, head_length=0.2, fc=line_color, ec=line_color, length_includes_head=True)
 
-    # The Gates (Rectangles)
-    # Forget Gate
-    rect_f = plt.Rectangle((2, 2.5), 1, 1, fc='#FF9999', ec='black')
+    # --- 1. Top Rail (Cell State) ---
+    # C_{t-1} -> X -> + -> C_t
+    ax.text(0.5, 7.5, "$C_{t-1}$", fontsize=14, fontweight='bold', ha='center')
+    ax.arrow(1, 7.5, 1.5, 0, **arrow_params) # To Multiply
+    
+    # Multiply Op (Forget)
+    circle_mul1 = plt.Circle((3, 7.5), 0.4, fc=op_color, ec='black')
+    ax.add_patch(circle_mul1)
+    ax.text(3, 7.5, "$\\times$", fontsize=14, ha='center', va='center')
+    
+    ax.arrow(3.4, 7.5, 2.6, 0, **arrow_params) # To Add
+    
+    # Add Op (Update)
+    circle_add = plt.Circle((6.5, 7.5), 0.4, fc=op_color, ec='black')
+    ax.add_patch(circle_add)
+    ax.text(6.5, 7.5, "$+$", fontsize=14, ha='center', va='center')
+    
+    ax.arrow(6.9, 7.5, 4, 0, **arrow_params) # To C_t
+    ax.text(11.5, 7.5, "$C_t$", fontsize=14, fontweight='bold', ha='center')
+
+    # --- 2. Bottom Inputs ---
+    ax.text(0.5, 1.5, "$h_{t-1}$", fontsize=14, fontweight='bold', ha='center')
+    ax.arrow(1, 1.5, 0.5, 0, **arrow_params) # h_{t-1} in
+    
+    ax.text(1.5, 0.5, "$x_t$", fontsize=14, fontweight='bold', ha='center')
+    ax.arrow(1.5, 1, 0, 0.5, **arrow_params) # x_t in
+    
+    # Merge line going right
+    ax.plot([1.5, 8.5], [1.5, 1.5], color=line_color) 
+
+    # --- 3. Gates (Layers) ---
+    
+    # Forget Gate (Sigmoid)
+    # Path: Bottom -> Sigmoid -> Top Multiply
+    ax.arrow(3, 1.5, 0, 1.5, **arrow_params) # Up to layer
+    rect_f = plt.Rectangle((2.5, 3), 1, 1, fc=layer_color, ec='black')
     ax.add_patch(rect_f)
-    ax.text(2.5, 3, "Forget\nGate\n($f_t$)", ha='center', va='center', fontweight='bold')
-    ax.text(2.5, 2.2, "X", ha='center', va='center', fontsize=14, color='red', fontweight='bold') # Multiply
+    ax.text(3, 3.5, "$\\sigma$", fontsize=14, ha='center', va='center')
+    ax.text(3, 2.7, "Forget", fontsize=10, ha='center')
+    ax.arrow(3, 4, 0, 3.1, **arrow_params) # Up to Multiply
     
-    # Input Gate
-    rect_i = plt.Rectangle((4.5, 2.5), 1, 1, fc='#99FF99', ec='black')
+    # Input Gate (Sigmoid)
+    # Path: Bottom -> Sigmoid -> Multiply
+    ax.arrow(4.5, 1.5, 0, 1.5, **arrow_params) # Up to layer
+    rect_i = plt.Rectangle((4, 3), 1, 1, fc=layer_color, ec='black')
     ax.add_patch(rect_i)
-    ax.text(5, 3, "Input\nGate\n($i_t$)", ha='center', va='center', fontweight='bold')
-    ax.text(5, 2.2, "+", ha='center', va='center', fontsize=14, color='green', fontweight='bold') # Add
+    ax.text(4.5, 3.5, "$\\sigma$", fontsize=14, ha='center', va='center')
+    ax.text(4.5, 2.7, "Input", fontsize=10, ha='center')
     
-    # Output Gate
-    rect_o = plt.Rectangle((7, 2.5), 1, 1, fc='#99CCFF', ec='black')
+    # Candidate Layer (Tanh)
+    # Path: Bottom -> Tanh -> Multiply
+    ax.arrow(5.5, 1.5, 0, 1.5, **arrow_params) # Up to layer
+    rect_c = plt.Rectangle((5, 3), 1, 1, fc=layer_color, ec='black')
+    ax.add_patch(rect_c)
+    ax.text(5.5, 3.5, "$\\tanh$", fontsize=12, ha='center', va='center')
+    ax.text(5.5, 2.7, "Cand.", fontsize=10, ha='center')
+    
+    # Merge Input & Candidate
+    ax.arrow(4.5, 4, 0, 1.1, **arrow_params) # From Input Gate
+    ax.arrow(5.5, 4, 0, 1.1, **arrow_params) # From Candidate
+    
+    # Multiply Op (Input * Candidate)
+    circle_mul2 = plt.Circle((5, 5.5), 0.4, fc=op_color, ec='black')
+    ax.add_patch(circle_mul2)
+    ax.text(5, 5.5, "$\\times$", fontsize=14, ha='center', va='center')
+    
+    # Connect Merge to Multiply
+    ax.plot([4.5, 5.5], [5.1, 5.1], color='black') # Horizontal bar
+    ax.arrow(5, 5.1, 0, 0.05, head_width=0, color='black') # Tiny connector
+    
+    # Result to Top Add
+    ax.arrow(5, 5.9, 1.1, 1.2, **arrow_params) # To Add
+    
+    # Output Gate (Sigmoid)
+    # Path: Bottom -> Sigmoid -> Output Multiply
+    ax.arrow(8.5, 1.5, 0, 1.5, **arrow_params) # Up to layer
+    rect_o = plt.Rectangle((8, 3), 1, 1, fc=layer_color, ec='black')
     ax.add_patch(rect_o)
-    ax.text(7.5, 3, "Output\nGate\n($o_t$)", ha='center', va='center', fontweight='bold')
-
-    # Connections with Gaps
-    arrow_params = dict(head_width=0.1, length_includes_head=True)
-
-    # Inputs coming from bottom (Previous Hidden + Current Input)
-    # End at 2.46 (Gap from 2.5)
-    ax.arrow(2.5, 1.2, 0, 1.26, fc='gray', ec='gray', linestyle='--', **arrow_params)
-    ax.arrow(5, 1.2, 0, 1.26, fc='gray', ec='gray', linestyle='--', **arrow_params)
-    ax.arrow(7.5, 1.2, 0, 1.26, fc='gray', ec='gray', linestyle='--', **arrow_params)
+    ax.text(8.5, 3.5, "$\\sigma$", fontsize=14, ha='center', va='center')
+    ax.text(8.5, 2.7, "Output", fontsize=10, ha='center')
+    ax.arrow(8.5, 4, 0, 1.1, **arrow_params) # Up to Output Multiply
     
-    # Gates affecting Cell State
-    # Start at 3.54 (Gap from 3.5)
-    ax.arrow(2.5, 3.54, 0, 1.26, fc='red', ec='red', **arrow_params) # Forget
-    ax.arrow(5, 3.54, 0, 1.26, fc='green', ec='green', **arrow_params) # Input
+    # Output Tanh (on Cell State branch)
+    # Branch from Top Rail
+    ax.plot([9.5, 9.5], [7.5, 6], color='black')
     
-    # Cell State affecting Output
-    # End at 3.54 (Gap from 3.5)
-    ax.arrow(7.5, 4.8, 0, -1.26, fc='blue', ec='blue', **arrow_params) # From Cell to Output Gate
+    # Tanh Op
+    circle_tanh = plt.Circle((9.5, 5.5), 0.5, fc=op_color, ec='black')
+    ax.add_patch(circle_tanh)
+    ax.text(9.5, 5.5, "$\\tanh$", fontsize=10, ha='center', va='center')
     
-    # To Hidden State
-    # Start at 2.46 (Gap from 2.5)
-    ax.arrow(7.5, 2.46, 0, -1.26, fc='black', ec='black', **arrow_params) # To Hidden State
+    ax.arrow(9.5, 5, 0, -0.1, **arrow_params) # Down to Multiply
+    
+    # Output Multiply
+    circle_mul3 = plt.Circle((9.5, 4.5), 0.4, fc=op_color, ec='black')
+    ax.add_patch(circle_mul3)
+    ax.text(9.5, 4.5, "$\\times$", fontsize=14, ha='center', va='center')
+    
+    # Connect Output Gate to Multiply
+    ax.arrow(8.5, 4.5, 0.6, 0, **arrow_params)
+    
+    # Final Output h_t
+    ax.arrow(9.9, 4.5, 1.6, 0, **arrow_params)
+    ax.text(12, 4.5, "$h_t$", fontsize=14, fontweight='bold', ha='center')
 
-    plt.title("LSTM Internals: The Conveyor Belt & Three Gates", fontsize=14)
+    plt.title("LSTM Structure (Standard View)", fontsize=16, y=1.02)
     plt.savefig(os.path.join(pic_dir, '28-2_LSTM_Concept.png'))
     print("LSTM Concept plot saved.")
 
