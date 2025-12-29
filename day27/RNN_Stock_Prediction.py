@@ -139,19 +139,23 @@ def plot_rnn_concept():
         ax.text(x_offset, 4.0, f"Output\n$Y_{i}$", ha='center', va='center', fontweight='bold')
         
         # Arrows with Weights
+        # Use length_includes_head=True to make 'dx, dy' the exact tip of the arrow
         arrow_params = dict(head_width=0.15, head_length=0.15, fc='black', ec='black', length_includes_head=True)
         
         # X -> H (Weight W)
-        ax.arrow(x_offset, 0.4, 0, 1.1, **arrow_params, width=0.02)
+        # Start: 0.42 (Gap), End: 1.48 (Gap) -> Length = 1.06
+        ax.arrow(x_offset, 0.42, 0, 1.06, **arrow_params, width=0.02)
         ax.text(x_offset - 0.2, 1.0, "$W$", ha='right', va='center', fontsize=12, color='blue', fontweight='bold')
 
         # H -> Y (Weight V)
-        ax.arrow(x_offset, 2.5, 0, 1.1, **arrow_params, width=0.02)
+        # Start: 2.52 (Gap), End: 3.58 (Gap) -> Length = 1.06
+        ax.arrow(x_offset, 2.52, 0, 1.06, **arrow_params, width=0.02)
         ax.text(x_offset - 0.2, 3.0, "$V$", ha='right', va='center', fontsize=12, color='red', fontweight='bold')
         
         # Recurrent Arrow (H_i -> H_i+1) (Weight U)
         if i < 2:
-            ax.arrow(x_offset + 0.5, 2.0, 2.0, 0, **arrow_params, width=0.02)
+            # Start: x+0.52 (Gap), End: x+2.48 (Gap) -> Length = 1.96
+            ax.arrow(x_offset + 0.52, 2.0, 1.96, 0, **arrow_params, width=0.02)
             ax.text(x_offset + 1.5, 2.2, "$U$\n(Memory)", ha='center', va='bottom', fontsize=12, color='green', fontweight='bold')
 
     plt.title("RNN Unrolled: Weights (W, U, V) and Memory Flow", y=1.05, fontsize=14)

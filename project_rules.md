@@ -2,6 +2,8 @@
 
 > **CRITICAL RULE**: Do NOT automatically proceed to the next day's content without explicit user instruction. Always ask for confirmation before starting a new day.
 
+> **CRITICAL RULE**: py -3.10
+
 # 30天 AI/ML 演算法學習地圖 (Final Version)
 
 | Day | 類別 | 演算法/主題 | 資料集 | 學習重點 |
