@@ -114,40 +114,47 @@ print("Prediction Result plot saved.")
 
 # 視覺化 3: RNN 概念圖 (Unrolled RNN)
 def plot_rnn_concept():
-    fig, ax = plt.subplots(figsize=(10, 4))
+    fig, ax = plt.subplots(figsize=(12, 5))
     ax.axis('off')
+    ax.set_xlim(-1, 8)
+    ax.set_ylim(-0.5, 4.5)
     
     # Draw Time Steps
     for i in range(3):
         x_offset = i * 3
         
         # Input (X)
-        circle_x = plt.Circle((x_offset, 0), 0.4, fc='lightblue', ec='black')
+        circle_x = plt.Circle((x_offset, 0), 0.4, fc='#AEC6CF', ec='black', lw=2)
         ax.add_patch(circle_x)
-        ax.text(x_offset, 0, f"X_{i}", ha='center', va='center')
+        ax.text(x_offset, 0, f"Input\n$X_{i}$", ha='center', va='center', fontweight='bold')
         
         # Hidden State (H) - The Memory
-        rect_h = plt.Rectangle((x_offset - 0.4, 1.5), 0.8, 0.8, fc='lightgreen', ec='black')
+        rect_h = plt.Rectangle((x_offset - 0.5, 1.5), 1.0, 1.0, fc='#77DD77', ec='black', lw=2)
         ax.add_patch(rect_h)
-        ax.text(x_offset, 1.9, f"Memory\n(H_{i})", ha='center', va='center', fontsize=8)
+        ax.text(x_offset, 2.0, f"Memory\n$H_{i}$", ha='center', va='center', fontweight='bold')
         
-        # Output (Y) - Optional for intermediate steps, but let's draw it
-        circle_y = plt.Circle((x_offset, 3.5), 0.4, fc='salmon', ec='black')
+        # Output (Y)
+        circle_y = plt.Circle((x_offset, 4.0), 0.4, fc='#FF6961', ec='black', lw=2)
         ax.add_patch(circle_y)
-        ax.text(x_offset, 3.5, f"Y_{i}", ha='center', va='center')
+        ax.text(x_offset, 4.0, f"Output\n$Y_{i}$", ha='center', va='center', fontweight='bold')
         
-        # Arrows
-        # X -> H
-        ax.arrow(x_offset, 0.4, 0, 1.1, head_width=0.1, head_length=0.1, fc='k', ec='k')
-        # H -> Y
-        ax.arrow(x_offset, 2.3, 0, 0.8, head_width=0.1, head_length=0.1, fc='k', ec='k')
+        # Arrows with Weights
+        arrow_params = dict(head_width=0.15, head_length=0.15, fc='black', ec='black', length_includes_head=True)
         
-        # Recurrent Arrow (H_i -> H_i+1)
-        if i < 2:
-            ax.arrow(x_offset + 0.4, 1.9, 2.2, 0, head_width=0.1, head_length=0.1, fc='k', ec='k')
-            ax.text(x_offset + 1.5, 2.1, "Pass Memory", ha='center', fontsize=8)
+        # X -> H (Weight W)
+        ax.arrow(x_offset, 0.4, 0, 1.1, **arrow_params, width=0.02)
+        ax.text(x_offset - 0.2, 1.0, "$W$", ha='right', va='center', fontsize=12, color='blue', fontweight='bold')
 
-    plt.title("RNN Unrolled: Passing Memory Through Time", y=1.05)
+        # H -> Y (Weight V)
+        ax.arrow(x_offset, 2.5, 0, 1.1, **arrow_params, width=0.02)
+        ax.text(x_offset - 0.2, 3.0, "$V$", ha='right', va='center', fontsize=12, color='red', fontweight='bold')
+        
+        # Recurrent Arrow (H_i -> H_i+1) (Weight U)
+        if i < 2:
+            ax.arrow(x_offset + 0.5, 2.0, 2.0, 0, **arrow_params, width=0.02)
+            ax.text(x_offset + 1.5, 2.2, "$U$\n(Memory)", ha='center', va='bottom', fontsize=12, color='green', fontweight='bold')
+
+    plt.title("RNN Unrolled: Weights (W, U, V) and Memory Flow", y=1.05, fontsize=14)
     plt.savefig(os.path.join(pic_dir, '27-3_RNN_Concept.png'))
     print("RNN Concept plot saved.")
 
