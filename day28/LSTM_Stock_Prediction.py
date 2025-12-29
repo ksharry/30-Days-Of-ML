@@ -102,45 +102,51 @@ def plot_lstm_concept():
     
     # Cell State (The Conveyor Belt) - Top Line
     ax.arrow(1, 5, 8, 0, head_width=0.2, head_length=0.2, fc='black', ec='black', width=0.05)
-    ax.text(5, 5.2, "Cell State (Long-term Memory)", ha='center', fontsize=12, fontweight='bold', color='blue')
+    ax.text(5, 5.3, "Cell State (Long-term Memory) $C_t$", ha='center', fontsize=12, fontweight='bold', color='blue')
     
     # Hidden State (Output) - Bottom Line
     ax.arrow(1, 1, 8, 0, head_width=0.2, head_length=0.2, fc='black', ec='black', width=0.05)
-    ax.text(5, 0.5, "Hidden State (Short-term Memory)", ha='center', fontsize=12, fontweight='bold', color='green')
+    ax.text(5, 0.5, "Hidden State (Short-term Memory) $h_t$", ha='center', fontsize=12, fontweight='bold', color='green')
 
     # The Gates (Rectangles)
-    gate_y = 3
-    
     # Forget Gate
     rect_f = plt.Rectangle((2, 2.5), 1, 1, fc='#FF9999', ec='black')
     ax.add_patch(rect_f)
-    ax.text(2.5, 3, "Forget\nGate", ha='center', va='center', fontweight='bold')
+    ax.text(2.5, 3, "Forget\nGate\n($f_t$)", ha='center', va='center', fontweight='bold')
     ax.text(2.5, 2.2, "X", ha='center', va='center', fontsize=14, color='red', fontweight='bold') # Multiply
     
     # Input Gate
     rect_i = plt.Rectangle((4.5, 2.5), 1, 1, fc='#99FF99', ec='black')
     ax.add_patch(rect_i)
-    ax.text(5, 3, "Input\nGate", ha='center', va='center', fontweight='bold')
+    ax.text(5, 3, "Input\nGate\n($i_t$)", ha='center', va='center', fontweight='bold')
     ax.text(5, 2.2, "+", ha='center', va='center', fontsize=14, color='green', fontweight='bold') # Add
     
     # Output Gate
     rect_o = plt.Rectangle((7, 2.5), 1, 1, fc='#99CCFF', ec='black')
     ax.add_patch(rect_o)
-    ax.text(7.5, 3, "Output\nGate", ha='center', va='center', fontweight='bold')
+    ax.text(7.5, 3, "Output\nGate\n($o_t$)", ha='center', va='center', fontweight='bold')
 
-    # Connections
+    # Connections with Gaps
+    arrow_params = dict(head_width=0.1, length_includes_head=True)
+
     # Inputs coming from bottom (Previous Hidden + Current Input)
-    ax.arrow(2.5, 1.2, 0, 1.3, head_width=0.1, fc='gray', ec='gray', linestyle='--')
-    ax.arrow(5, 1.2, 0, 1.3, head_width=0.1, fc='gray', ec='gray', linestyle='--')
-    ax.arrow(7.5, 1.2, 0, 1.3, head_width=0.1, fc='gray', ec='gray', linestyle='--')
+    # End at 2.46 (Gap from 2.5)
+    ax.arrow(2.5, 1.2, 0, 1.26, fc='gray', ec='gray', linestyle='--', **arrow_params)
+    ax.arrow(5, 1.2, 0, 1.26, fc='gray', ec='gray', linestyle='--', **arrow_params)
+    ax.arrow(7.5, 1.2, 0, 1.26, fc='gray', ec='gray', linestyle='--', **arrow_params)
     
     # Gates affecting Cell State
-    ax.arrow(2.5, 3.5, 0, 1.3, head_width=0.1, fc='red', ec='red') # Forget
-    ax.arrow(5, 3.5, 0, 1.3, head_width=0.1, fc='green', ec='green') # Input
+    # Start at 3.54 (Gap from 3.5)
+    ax.arrow(2.5, 3.54, 0, 1.26, fc='red', ec='red', **arrow_params) # Forget
+    ax.arrow(5, 3.54, 0, 1.26, fc='green', ec='green', **arrow_params) # Input
     
     # Cell State affecting Output
-    ax.arrow(7.5, 4.8, 0, -1.3, head_width=0.1, fc='blue', ec='blue') # From Cell to Output Gate
-    ax.arrow(7.5, 2.5, 0, -1.3, head_width=0.1, fc='black', ec='black') # To Hidden State
+    # End at 3.54 (Gap from 3.5)
+    ax.arrow(7.5, 4.8, 0, -1.26, fc='blue', ec='blue', **arrow_params) # From Cell to Output Gate
+    
+    # To Hidden State
+    # Start at 2.46 (Gap from 2.5)
+    ax.arrow(7.5, 2.46, 0, -1.26, fc='black', ec='black', **arrow_params) # To Hidden State
 
     plt.title("LSTM Internals: The Conveyor Belt & Three Gates", fontsize=14)
     plt.savefig(os.path.join(pic_dir, '28-2_LSTM_Concept.png'))
