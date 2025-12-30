@@ -68,24 +68,19 @@
 *   **目標**：開發像 ChatGPT 這樣的應用。
 
 ## 4. 推薦資源
-*   **書籍**: *Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow* (聖經級好書)
-*   **課程**: Andrew Ng (吳恩達) 的 Deep Learning Specialization (Coursera)、李宏毅老師的 Machine Learning (YouTube 免費)
-
-## 5. 結語：我選擇挑戰 IPAS！
-> "The best way to predict the future is to invent it." - Alan Kay
-
-AI 是一個工具，而你現在已經掌握了這個工具。
-面對這麼多條路，**我選擇了一條最紮實的路：考取 IPAS 國家級證照。**
-這不僅是對自己實力的證明，更是進入 AI 產業的最佳敲門磚。
+*   **書籍**: [*Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow*](https://www.oreilly.com/library/view/hands-on-machine-learning/9781098125967/) (聖經級好書)
+*   **課程**:
+    *   [Andrew Ng (吳恩達) - Deep Learning Specialization](https://www.coursera.org/specializations/deep-learning) (Coursera)
+    *   [李宏毅老師 - Machine Learning 2023](https://www.youtube.com/watch?v=CXgbekl66jc&list=PLJV_el3uVTsPy9oCRY30oBPNLCo89yu49) (YouTube 免費)
 
 ---
 
-## 6. 下一站：IPAS AI 中級證照挑戰 🏆
-為了證明你的實力，我們決定追加 **IPAS AI 應用規劃師 (中級)** 的挑戰！
+## 5. 下一站：IPAS AI 中級證照挑戰 🏆
+為了證明實力，決定追加 **IPAS AI 應用規劃師 (中級)** 的挑戰！
 這是一張由經濟部發證的能力鑑定，是求職與加薪的加分條件。
 
-### 2.1 考試架構分析
-根據最新的考綱 (2024/2025)，我們鎖定 **科目三 (機器學習技術與應用)** 作為核心戰場。
+### 5.1 考試架構分析
+根據最新的考綱 (2024/2025)，科目一為必要考科，並鎖定 **科目三 (機器學習技術與應用)** 作為核心戰場。
 
 | 科目 | 名稱 | 關聯度 | 我們的覆蓋率 | 重點內容 |
 | :--- | :--- | :--- | :--- | :--- |
@@ -95,7 +90,7 @@ AI 是一個工具，而你現在已經掌握了這個工具。
 
 ### 2.2 考點盤點與落點分析 (Gap Analysis)
 
-#### ✅ 我們已經掌握的 (Strong Points)
+#### 已經掌握的 (Strong Points)
 這 30 天我們打下的基礎，足以應付以下考題：
 1.  **傳統機器學習**：回歸、分類 (SVM, KNN, Decision Tree)、分群 (K-Means, DBSCAN)、集成學習 (Random Forest, XGBoost)。
 2.  **深度學習基礎**：MLP, CNN (VGG16), RNN (LSTM)。
@@ -103,7 +98,7 @@ AI 是一個工具，而你現在已經掌握了這個工具。
 4.  **資料預處理**：缺失值處理、One-Hot Encoding、Feature Scaling (Standardization)。
 5.  **實作能力**：Python 語法、Pandas 資料處理、Scikit-Learn/TensorFlow API 使用。
 
-#### ⚠️ 我們需要補強的 (Weak Points)
+#### 需要補強的 (Weak Points)
 為了確保穩拿證照，我們需要針對以下「漏網之魚」進行特訓：
 
 1.  **進階 NLP 架構**：Transformer, BERT, GPT (Self-Attention 機制)。
@@ -112,7 +107,7 @@ AI 是一個工具，而你現在已經掌握了這個工具。
 4.  **AI 治理與可解釋性**：XAI (SHAP/LIME), AI 倫理與偏誤。
 
 ## 3. 隱藏關卡：衝刺課表 (Roadmap)
-針對上述缺口，我們規劃了接下來的衝刺內容：
+針對上述缺口，規劃了接下來的衝刺內容：
 
 *   **Day 31: Transformer 與 BERT (NLP 的王者)**
     *   搞懂 Self-Attention 機制，實作文本分類。
