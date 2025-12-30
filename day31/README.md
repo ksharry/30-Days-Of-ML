@@ -24,10 +24,15 @@ Transformer 把每個字都變成了三個向量：**Query (Q)**, **Key (K)**, *
 *   **Key (索引)**：每個字身上的「標籤」。(例如：「蘋果」的標籤是「食物/水果」)
 *   **Value (內容)**：這個字實際包含的「語意資訊」。(例如：「蘋果」的向量表示)
 
-**運作流程**：
-1.  **匹配 (Dot Product)**：拿目前的 $Q$ 去跟所有字的 $K$ 做內積。內積越大，代表關聯越強 (Attention Score 高)。
-2.  **正規化 (Softmax)**：將分數轉化為機率 (總和為 1)。
-3.  **加權總合 (Weighted Sum)**：根據機率，把所有相關字的 $V$ 加起來。
+**運作流程 (以「我愛蘋果」為例)**：
+1.  **匹配 (Dot Product)**：
+    *   計算「我」的 $Q$ 與「蘋果」的 $K$ 的內積。
+    *   如果內積很大，代表「我」跟「蘋果」關係很密切（例如主詞與受詞）。
+2.  **正規化 (Softmax)**：
+    *   將計算出的分數轉成機率（例如：「我」對「蘋果」的關注度是 0.8，「我」對「愛」的關注度是 0.2）。
+3.  **加權總合 (Weighted Sum)**：
+    *   最後的輸出向量 = $0.8 \times V_{蘋果} + 0.2 \times V_{愛}$。
+    *   這樣，「我」這個字的向量裡，就融合了「蘋果」的資訊！
 
 ### 1.3 QKV 架構圖 (Mermaid)
 ```mermaid
@@ -95,6 +100,17 @@ graph BT
     *   **Total Parameters**: 約 1.1 億 (110M) 參數
 *   **輸入限制**：最大序列長度通常為 512 tokens。
 
+**BERT 簡單範例 (克漏字填空)**：
+想像 BERT 是一個正在做英文克漏字測驗的學生。它能同時看見前後文，所以能精準猜出中間的字。
+```text
+輸入 (Input):  The capital of France is [MASK].
+               (它看到了 "France" 和 "capital")
+                    ↓
+BERT 模型:     思考... 法國的首都... 是巴黎！
+                    ↓
+輸出 (Output): The capital of France is Paris.
+```
+
 #### GPT (Decoder only, Unidirectional)
 ```mermaid
 graph BT
@@ -121,6 +137,22 @@ graph BT
     *   **Attention Heads**: 12 個頭
     *   **Total Parameters**: 約 1.17 億 (117M) 參數
 *   **演進**：GPT-3 擴大到了 1750 億參數 (96 層, 12288 維)，展現了湧現能力 (Emergent Abilities)。
+
+**GPT 簡單範例 (文字接龍)**：
+想像 GPT 是一個正在寫小說的作家。它只能根據已經寫好的內容，一個字一個字往下寫。
+```text
+輸入 (Input):  Once upon a
+                    ↓
+GPT 模型:      預測下一個字... 根據童話故事慣例... 是 "time"！
+                    ↓
+輸出 1:        Once upon a time
+                    ↓
+              (把 "time" 加進去，再預測下一個)
+                    ↓
+輸出 2:        Once upon a time there
+                    ↓
+輸出 3:        Once upon a time there was...
+```
 
 ## 3. 實戰：使用 Hugging Face Transformers
 我們不需要從頭刻 Transformer (那太痛苦了)。
