@@ -14,10 +14,28 @@
 3.  看到 AI 的辨識結果與信心條。
 
 ## 2. 原理
-### Streamlit 的魔法
-Streamlit 的運作原理是 **「腳本式執行 (Script Execution)」**。
-*   當使用者與網頁互動 (例如按按鈕) 時，Streamlit 會 **從頭到尾重新執行一次** 你的 Python 腳本。
-*   為了避免模型重複載入浪費時間，我們使用 `@st.cache_resource` 來快取模型。
+
+### 2.1 結果分析：為什麼 83% 算高？
+![Result Analysis](pic/29-1.png)
+*(上圖為使用者實測結果)*
+
+你可能會覺得 **83.43%** 的信心度好像不夠高，但在 ImageNet (1000 類別) 的挑戰中，這其實是非常好的表現！
+1.  **千中選一**：模型必須從 1000 種物體中選出正確的那一個，隨機猜對率只有 0.1%。
+2.  **相似物種干擾**：黃金獵犬 (Golden Retriever) 和 拉布拉多 (Labrador) 小時候長得很像。模型能有 83% 的把握，代表它捕捉到了關鍵特徵 (如毛髮長度)。
+3.  **輕量級模型**：我們使用的是 **MobileNetV2**，它是為了手機/網頁設計的「輕量級」模型。雖然準確度略低於巨型模型 (如 ResNet152)，但它的**速度快非常多**，非常適合 Web App。
+
+### 2.2 Streamlit 架構：為什麼不用寫 HTML？
+![Streamlit Architecture](pic/29-2_Streamlit_Architecture.png)
+
+這就是 Streamlit 最神奇的地方！它採用了 **「腳本式執行 (Script Execution)」** 模式：
+
+1.  **你寫 Python (Backend)**：你只需要寫 `st.button()` 或 `st.image()`。
+2.  **Streamlit 翻譯 (Middle)**：Streamlit Server 會把你的 Python 指令翻譯成前端看得懂的訊號 (JSON)。
+3.  **瀏覽器渲染 (Frontend)**：瀏覽器收到訊號後，自動畫出漂亮的按鈕和圖片 (這些是預先寫好的 React 元件)。
+
+**流程總結**：
+*   **互動即重跑**：當使用者按按鈕，Streamlit 會 **從頭到尾重新執行一次** 你的 Python 腳本。
+*   **快取魔法**：為了不讓模型每次都重載，我們使用 `@st.cache_resource` 來記住模型。
 
 ## 3. 實戰
 ### 3.1 安裝 Streamlit
