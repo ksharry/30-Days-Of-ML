@@ -29,8 +29,32 @@ Transformer 把每個字都變成了三個向量：**Query (Q)**, **Key (K)**, *
 2.  **正規化 (Softmax)**：將分數轉化為機率 (總和為 1)。
 3.  **加權總合 (Weighted Sum)**：根據機率，把所有相關字的 $V$ 加起來。
 
+### 1.3 QKV 架構圖 (Mermaid)
+```mermaid
+graph TD
+    subgraph Self-Attention Mechanism
+        X[Input Embedding] --> Q_W[Linear Q]
+        X --> K_W[Linear K]
+        X --> V_W[Linear V]
+        Q_W --> Q[Query (Q)]
+        K_W --> K[Key (K)]
+        V_W --> V[Value (V)]
+        Q & K --> Dot[MatMul (QK^T)]
+        Dot --> Scale[Scale (1/sqrt(d_k))]
+        Scale --> Softmax[Softmax]
+        Softmax --> Attn[Attention Weights]
+        Attn & V --> MatMul2[MatMul (Weights * V)]
+        MatMul2 --> Z[Output Z]
+    end
+```
+
 > **IPAS 考點公式**：
-> $$ Attention(Q, K, V) = softmax(\frac{QK^T}{\sqrt{d_k}})V $$
+
+>
+> $$
+> \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+> $$
+>
 > *   為什麼要除以 $\sqrt{d_k}$？ **為了避免內積數值過大，導致 Softmax 進入梯度消失區間 (Gradient Vanishing)。**
 
 ## 2. Transformer 的兩大護法：BERT vs GPT
@@ -43,6 +67,42 @@ Transformer 架構後來分裂成了兩大派系，這也是面試與考試的�
 | **訓練任務** | **克漏字 (Masked LM)** <br> "今天天氣 [MASK] 好" -> 猜 "真" | **文字接龍 (Next Token Prediction)** <br> "今天天氣" -> 猜 "真" |
 | **強項** | **理解 (Understanding)** <br> 文本分類、情緒分析、問答、實體辨識。 | **生成 (Generation)** <br> 寫文章、聊天、寫程式、創意發想。 |
 | **代表模型** | BERT, RoBERTa, DistilBERT | GPT-3, GPT-4, Claude, LLaMA |
+
+### 2.1 架構圖比較
+
+#### BERT (Encoder only, Bidirectional)
+```mermaid
+graph BT
+    subgraph BERT_Architecture
+        T1[T_1] --- E1[Encoder]
+        T2[T_2] --- E1
+        T3[T_3] --- E1
+        E1 --- E2[Encoder]
+        E2 --- O1[Output 1]
+        E2 --- O2[Output 2]
+        E2 --- O3[Output 3]
+    end
+    style BERT_Architecture fill:#ffe6e6,stroke:#333
+    desc[雙向可見：T1 能看見 T2, T3]
+```
+
+#### GPT (Decoder only, Unidirectional)
+```mermaid
+graph BT
+    subgraph GPT_Architecture
+        T1[T_1] --> D1[Decoder]
+        T2[T_2] --> D1
+        T3[T_3] --> D1
+        D1 --> D2[Decoder]
+        D2 --> O1[Output 1]
+        D2 --> O2[Output 2]
+        D2 --> O3[Output 3]
+        T1 -.-> T2
+        T2 -.-> T3
+    end
+    style GPT_Architecture fill:#e6f3ff,stroke:#333
+    desc2[單向可見：T2 只能看見 T1]
+```
 
 ## 3. 實戰：使用 Hugging Face Transformers
 我們不需要從頭刻 Transformer (那太痛苦了)。
@@ -71,6 +131,21 @@ result = classifier("IPAS certification is challenging but worth it.")
 print(result)
 # [{'label': 'POSITIVE', 'score': 0.9998}]
 ```
+
+### 3.3 執行結果說明 (Result Interpretation)
+當你執行 `Transformer_Sentiment.py` 後，會看到類似以下的輸出。這代表模型對每個句子的情緒判讀：
+
+1.  **Label (標籤)**：
+    *   `POSITIVE`：正面情緒。
+    *   `NEGATIVE`：負面情緒。
+2.  **Score (信心度)**：
+    *   介於 0 到 1 之間。數值越接近 1，代表模型越確定它的判斷是對的。
+
+**範例輸出解析**：
+*   `I love learning machine learning...` -> **POSITIVE** (信心度 0.9998) -> 模型非常確定這是好評。
+*   `I am very disappointed...` -> **NEGATIVE** (信心度 0.9991) -> 模型非常確定這是負評。
+*   `The food was okay, but...` -> **NEGATIVE** (信心度 0.99...) -> 雖然有 okay，但 but 後面的 noisy 權重較重，被判定為負面。
+
 
 ## 4. IPAS 考前重點複習
 1.  **Transformer 優於 RNN 的主因？**
