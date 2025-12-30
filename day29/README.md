@@ -121,36 +121,7 @@ streamlit run day29/Streamlit_App.py
 | **開發 (Dev)** | VS Code + Python Scripts | 模組化、重構程式碼、版本控制 (Git)。 |
 | **部署 (Prod)** | **Streamlit** / Flask / FastAPI | **使用者介面 (UI)**、API 服務、讓非技術人員也能使用。 |
 
-##  6. 如果未來想要正式推出？
-
-### 6.1 如何擁有自己的網址？(Streamlit Cloud)
-如果你想把這個 App 傳給朋友用，最簡單的方法是使用 **Streamlit Cloud** (完全免費)：
-1.  **上傳 GitHub**：把你的程式碼 (`Streamlit_App.py` 和 `requirements.txt`) 上傳到 GitHub。
-2.  **連結帳號**：去 [share.streamlit.io](https://share.streamlit.io/) 註冊並連結你的 GitHub。
-3.  **一鍵部署**：選擇你的 Repository，點擊 "Deploy"。
-4.  **獲得網址**：幾分鐘後，你就會獲得一個 `https://your-app.streamlit.app` 的網址，全世界都能訪問！
-
-### 6.2 邁向百萬用戶 (Production)
-Streamlit 非常適合做 Demo 或內部工具。但如果你想打造一個**百萬人使用的正式產品**，建議採取以下步驟：
-
-1.  **容器化 (Docker)**：
-    *   把你的 App 和環境打包成一個 Docker Image。這樣無論搬到哪台伺服器 (AWS, GCP, Azure)，都能保證 100% 正常運作，不會有 "在我的電腦可以跑" 的問題。
-2.  **前後端分離 (Separation of Concerns)**：
-    *   **後端 (Backend)**：改用 **FastAPI** 或 **Flask** 專門處理 AI 預測，提供 API 接口 (JSON)。
-    *   **前端 (Frontend)**：改用 **React**, **Vue** 或 **Next.js** 開發網頁，這樣介面可以更客製化、互動更流暢。
-3.  **雲端託管 (Cloud Hosting)**：
-    *   **初期**：使用 Streamlit Cloud 或 Hugging Face Spaces (免費/便宜)。
-    *   **正式**：使用 **AWS (EC2/Lambda)** 或 **GCP (Cloud Run)**，配合 Load Balancer 處理大量流量。
-4.  **模型優化 (Optimization)**：
-    *   **格式轉換 (ONNX / TFLite)**：
-        *   **比喻**：就像把 **Word** 轉成 **PDF**。
-        *   **ONNX** 是一種通用格式，讓模型可以在不同硬體上加速執行；**TFLite** 則是專為手機/IoT 設備設計的輕量格式。
-    *   **量化 (Quantization)**：
-        *   **原理**：把模型裡的數字從「高精確度小數 (float32)」變成「簡單整數 (int8)」。
-        *   **比喻**：原本記帳記到小數點後 10 位 (3.1415926535)，現在只記整數 (3)。
-        *   **效果**：模型體積直接 **縮小 4 倍**，運算速度 **快 10 倍**，但準確度幾乎不變！這對手機端應用至關重要。
-
-## 7. 總結
+## 6. 總結
 Day 29 我們學習了 **模型部署**。
 *   AI 不應該只活在 Notebook 裡。
 *   透過 **Streamlit**，我們能在幾分鐘內把模型變成產品。
