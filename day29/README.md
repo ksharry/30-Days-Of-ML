@@ -121,7 +121,7 @@ streamlit run day29/Streamlit_App.py
 | **開發 (Dev)** | VS Code + Python Scripts | 模組化、重構程式碼、版本控制 (Git)。 |
 | **部署 (Prod)** | **Streamlit** / Flask / FastAPI | **使用者介面 (UI)**、API 服務、讓非技術人員也能使用。 |
 
-####  如果未來想要正式推出？
+##  6. 如果未來想要正式推出？
 
 ### 6.1 如何擁有自己的網址？(Streamlit Cloud)
 如果你想把這個 App 傳給朋友用，最簡單的方法是使用 **Streamlit Cloud** (完全免費)：
