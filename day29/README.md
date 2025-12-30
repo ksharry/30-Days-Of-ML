@@ -96,7 +96,7 @@ streamlit run day29/Streamlit_App.py
 3.  **側邊欄**：你可以滑動側邊欄的 Slider 來過濾掉信心度太低的預測。
 
 ### 4.2 結果分析：83%的判斷率？
-![Result Analysis](pic/29-1.png)
+![Result Analysis](pic/29-1.jpg)
 *(上圖為使用者實測結果)*
 
 你可能會覺得 **83.43%** 的信心度好像不夠高，但在 ImageNet (1000 類別) 的挑戰中，這其實是非常好的表現！
@@ -105,7 +105,7 @@ streamlit run day29/Streamlit_App.py
 3.  **輕量級模型**：我們使用的是 **MobileNetV2**，它是為了手機/網頁設計的「輕量級」模型。雖然準確度略低於巨型模型 (如 ResNet152)，但它的**速度快非常多**，非常適合 Web App。
 
 ### 4.3 失敗案例分析：為什麼認不出蘋果？
-![Apple Fail](pic/29-3_Apple_Fail.png)
+![Apple Fail](pic/29-3_Apple_Fail.jpg)
 *(上圖：AI 把蘋果誤判為南瓜或石榴)*
 
 你可能會發現，上傳一顆又紅又大的蘋果，AI 竟然認不出來！
