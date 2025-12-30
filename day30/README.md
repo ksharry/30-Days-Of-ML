@@ -1,9 +1,9 @@
 # Day 30: 總結與 IPAS 證照攻略 (Summary & IPAS Strategy)
 
 ## 0. 恭喜完賽！🎉
-恭喜你完成了這趟為期 30 天的機器學習馬拉松！
-從最基礎的線性回歸，一路走到深度學習、電腦視覺、自然語言處理，最後甚至親手打造了一個 AI Web App。
-這不是終點，而是你成為 AI 工程師的起點。
+恭喜自己完成了這趟為期 30 天的機器學習馬拉松！
+從最基礎的線性回歸，一路走到深度學習、電腦視覺、自然語言處理，最後親手打造了一個 AI Web App。
+這不是終點，而是成為 AI 工程師的起點。
 
 ## 1. 旅程回顧 (The Journey)
 讓我們回頭看看這 30 天我們攻克了哪些山頭：
@@ -68,16 +68,14 @@
 *   **目標**：開發像 ChatGPT 這樣的應用。
 
 ## 4. 推薦資源
-*   **書籍**: [*Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow*](https://www.oreilly.com/library/view/hands-on-machine-learning/9781098125967/) (聖經級好書)
 *   **課程**:
     *   [Andrew Ng (吳恩達) - Deep Learning Specialization](https://www.coursera.org/specializations/deep-learning) (Coursera)
-    *   [李宏毅老師 - Machine Learning 2023](https://www.youtube.com/watch?v=CXgbekl66jc&list=PLJV_el3uVTsPy9oCRY30oBPNLCo89yu49) (YouTube 免費)
+    *   [李宏毅老師 - Machine Learning 2023](https://www.youtube.com/watch?v=CXgbekl66jc&list=PLJV_el3uVTsPy9oCRY30oBPNLCo89yu49) (YouTube)
 
 ---
 
 ## 5. 下一站：IPAS AI 中級證照挑戰 🏆
-為了證明實力，決定追加 **IPAS AI 應用規劃師 (中級)** 的挑戰！
-這是一張由經濟部發證的能力鑑定，是求職與加薪的加分條件。
+經歷30天仍有不足之處，追加 **IPAS AI 應用規劃師 (中級)** 後面天數的補充，簡單盤點所學與差距處。
 
 ### 5.1 考試架構分析
 根據最新的考綱 (2024/2025)，科目一為必要考科，並鎖定 **科目三 (機器學習技術與應用)** 作為核心戰場。
@@ -99,7 +97,7 @@
 5.  **實作能力**：Python 語法、Pandas 資料處理、Scikit-Learn/TensorFlow API 使用。
 
 #### 需要補強的 (Weak Points)
-為了確保穩拿證照，我們需要針對以下「漏網之魚」進行特訓：
+為了確保證照內容都有學習到，我們需要針對過往考題進行補充：
 
 1.  **進階 NLP 架構**：Transformer, BERT, GPT (Self-Attention 機制)。
 2.  **生成式 AI (GenAI)**：GAN, VAE 的原理。
@@ -120,4 +118,3 @@
 *   **Day 35: 模擬試題實戰**
     *   針對 IPAS 考題進行總複習。
 
-**準備好了嗎？讓我們前往 Day 31，挑戰 Transformer！** 🚀
