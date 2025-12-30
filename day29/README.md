@@ -121,7 +121,17 @@ streamlit run day29/Streamlit_App.py
 | **開發 (Dev)** | VS Code + Python Scripts | 模組化、重構程式碼、版本控制 (Git)。 |
 | **部署 (Prod)** | **Streamlit** / Flask / FastAPI | **使用者介面 (UI)**、API 服務、讓非技術人員也能使用。 |
 
-## 6. 總結
+## 6. 進階挑戰：如何獲得網址？(Hugging Face Spaces)
+如果你希望把這個 App 部署上線傳給朋友用，但 Streamlit Cloud 免費版跑不動 TensorFlow (記憶體不足)，我強烈推薦使用 **Hugging Face Spaces**。
+
+*   **優點**：免費版提供 **16GB RAM** (Streamlit Cloud 只有 1GB)，跑 TensorFlow 綽綽有餘。
+*   **步驟**：
+    1.  註冊 [Hugging Face](https://huggingface.co/) 帳號。
+    2.  點擊 "New Space"，SDK 選擇 **Streamlit**。
+    3.  將你的 `Streamlit_App.py` 和 `requirements.txt` 上傳上去。
+    4.  幾分鐘後，你就會獲得一個永久的免費網址！
+
+## 7. 總結
 Day 29 我們學習了 **模型部署**。
 *   AI 不應該只活在 Notebook 裡。
 *   透過 **Streamlit**，我們能在幾分鐘內把模型變成產品。
