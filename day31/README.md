@@ -199,8 +199,16 @@ GPT 怎麼知道下一個字接什麼？靠 Self-Attention 回頭看前面的線
 ```
 
 ## 3. 實戰：使用 Hugging Face Transformers
-我們不需要從頭刻 Transformer (那太痛苦了)。
-**Hugging Face** 是 AI 界的 GitHub，提供了數十萬個預訓練模型與 `transformers` 套件。
+你可能會疑惑：「BERT 只是會做克漏字填空 (Masked LM)，這對我們有什麼用？」
+
+其實，**「填空」只是手段，「理解」才是目的。**
+BERT 為了填對空格，被迫學會了人類的文法、詞性、甚至常識。一旦它學會了「理解語言」，我們就可以把它拿來做更實用的任務，例如 **情緒分析 (Sentiment Analysis)**。
+
+這就是 **遷移學習 (Transfer Learning)** 的威力：
+1.  **預訓練 (Pre-training)**：先讓 BERT 讀萬卷書 (做克漏字)，學會基本語言能力。
+2.  **微調 (Fine-tuning)**：再讓 BERT 判斷幾千條評論 (情緒分析)，它就能瞬間變成情緒專家。
+
+接下來，我們就直接使用 **Hugging Face** (AI 界的 GitHub) 提供的現成模型來體驗這個威力。
 
 ### 3.1 安裝
 ```bash
@@ -208,6 +216,12 @@ pip install transformers torch
 ```
 
 ### 3.2 程式碼實作：情緒分析
+**為什麼 NLP 第一課總是情緒分析？**
+這就像寫程式的 "Hello World"。因為它最直觀，商業價值也最高：
+*   **電商**：自動分析產品評論是好評還是差評。
+*   **客服**：即時偵測客戶是否生氣，趕快轉接真人安撫。
+*   **金融**：分析新聞對股價是利多還是利空。
+
 完整程式連結：[Transformer_Sentiment.py](Transformer_Sentiment.py)
 
 我們使用 `pipeline` API，這是最簡單的高階介面。它會自動幫我們做三件事：
