@@ -1,7 +1,7 @@
 # Day 31: NLP 王者 - Transformer 與 BERT (The Age of LLM)
 
 ## 0. 前言：NLP 的工業革命
-在 Day 27/28 我們學過了 RNN 和 LSTM。雖然它們能處理序列資料，但有兩個致命缺點，這也是 IPAS 考題中常問的「RNN 限制」：
+在 Day 27/28 我們學過了 RNN 和 LSTM。雖然它們能處理序列資料，但有兩個致命缺點，這也是面試常問的「RNN 限制」：
 1.  **無法平行運算 (Slow)**：必須等 $t-1$ 算完才能算 $t$，訓練速度慢，無法利用 GPU 的平行優勢。
 2.  **長距離遺忘 (Long-term Dependency)**：雖然 LSTM 有改善，但當句子太長 (例如 1000 字) 時，開頭的資訊還是會丟失。
 
@@ -10,7 +10,7 @@
 這就像是從「傳話遊戲 (RNN)」進化到了「視訊會議 (Transformer)」，所有人可以直接跟所有人溝通。
 
 ## 1. 核心概念：Self-Attention (自注意力機制)
-這是 IPAS 考試的**超級必考題**。你必須理解 Q, K, V 的物理意義。
+這是 Transformer 架構的**核心概念**。你必須理解 Q, K, V 的物理意義。
 
 ### 1.1 直觀理解
 想像你在讀這句話：「**蘋果**因為**它**很好吃所以被我吃了。」
@@ -36,19 +36,19 @@ graph TD
         X[Input Embedding] --> Q_W[Linear Q]
         X --> K_W[Linear K]
         X --> V_W[Linear V]
-        Q_W --> Q[Query (Q)]
-        K_W --> K[Key (K)]
-        V_W --> V[Value (V)]
-        Q & K --> Dot[MatMul (QK^T)]
-        Dot --> Scale[Scale (1/sqrt(d_k))]
+        Q_W --> Q["Query (Q)"]
+        K_W --> K["Key (K)"]
+        V_W --> V["Value (V)"]
+        Q & K --> Dot["MatMul (QK^T)"]
+        Dot --> Scale["Scale (1/sqrt(d_k))"]
         Scale --> Softmax[Softmax]
         Softmax --> Attn[Attention Weights]
-        Attn & V --> MatMul2[MatMul (Weights * V)]
+        Attn & V --> MatMul2["MatMul (Weights * V)"]
         MatMul2 --> Z[Output Z]
     end
 ```
 
-> **IPAS 考點公式**：
+> **核心公式**：
 
 >
 > $$
@@ -86,6 +86,15 @@ graph BT
     desc[雙向可見：T1 能看見 T2, T3]
 ```
 
+**BERT 架構說明與參數 (BERT-Base)**：
+*   **雙向性 (Bidirectional)**：BERT 的最大特點是「同時」看見上下文。例如在理解 "bank" (銀行/河岸) 時，它會同時參考前後文。
+*   **關鍵參數**：
+    *   **Layers (Transformer Blocks)**: 12 層
+    *   **Hidden Size ($d_{model}$)**: 768 維
+    *   **Attention Heads**: 12 個頭
+    *   **Total Parameters**: 約 1.1 億 (110M) 參數
+*   **輸入限制**：最大序列長度通常為 512 tokens。
+
 #### GPT (Decoder only, Unidirectional)
 ```mermaid
 graph BT
@@ -103,6 +112,15 @@ graph BT
     style GPT_Architecture fill:#e6f3ff,stroke:#333
     desc2[單向可見：T2 只能看見 T1]
 ```
+
+**GPT 架構說明與參數 (以 GPT-2 Small 為例)**：
+*   **單向性 (Unidirectional)**：GPT 是「自回歸 (Auto-regressive)」模型，只能看見左邊的字。這使它非常適合生成任務（預測下一個字）。
+*   **關鍵參數** (與 BERT-Base 對標)：
+    *   **Layers (Transformer Blocks)**: 12 層
+    *   **Hidden Size ($d_{model}$)**: 768 維
+    *   **Attention Heads**: 12 個頭
+    *   **Total Parameters**: 約 1.17 億 (117M) 參數
+*   **演進**：GPT-3 擴大到了 1750 億參數 (96 層, 12288 維)，展現了湧現能力 (Emergent Abilities)。
 
 ## 3. 實戰：使用 Hugging Face Transformers
 我們不需要從頭刻 Transformer (那太痛苦了)。
@@ -147,7 +165,7 @@ print(result)
 *   `The food was okay, but...` -> **NEGATIVE** (信心度 0.99...) -> 雖然有 okay，但 but 後面的 noisy 權重較重，被判定為負面。
 
 
-## 4. IPAS 考前重點複習
+## 4. 重點複習
 1.  **Transformer 優於 RNN 的主因？**
     *   可以**平行運算** (Parallelization)，訓練速度快。
     *   解決了**長距離依賴** (Long-term Dependency) 問題。
