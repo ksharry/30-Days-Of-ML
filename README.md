@@ -2,6 +2,7 @@
 
 1. py -3.10 xxx.py
 2. py -3.10 -m pip xxx
+29. py -3.10 -m streamlit run day29/Streamlit_App.py --server.port 8501 --server.headless true
 
 
 # 30天 AI/ML 演算法學習地圖 (Final Version)
