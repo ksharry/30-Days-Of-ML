@@ -38,6 +38,11 @@
 | **28** | Deep Learning | NLP 基礎 | 電影評論情感 | 文字轉數字：Word Embeddings (Word2Vec) 與 Tokenization。 |
 | **29** | 應用 | 模型部署 (Deployment) | *(任選一個模型)* | 落地應用：使用 Streamlit 打造你的第一個 ML Web App。 |
 | **30** | 總結 | AI 總結與未來 | *(無)* | 回顧與展望：技能樹總結、持續學習資源 (Paper/Kaggle)。 |
+| **31** | IPAS | Transformer 與 BERT | *(無)* | NLP 王者：Self-Attention 機制、BERT 實作情緒分析。 |
+| **32** | IPAS | 物件偵測 (YOLO) | *(無)* | 電腦視覺進階：從分類到偵測、YOLO 原理與實作。 |
+| **33** | IPAS | GenAI 與 LLM 應用 | *(無)* | 圖像生成 (GAN/Diffusion) 與 **文字生成 (RAG/Prompt Engineering)**。 |
+| **34** | IPAS | XAI 與 AI 治理 | *(無)* | 可解釋性 (SHAP)、**AI 倫理 (Bias/Privacy)、模型監控 (Drift)**。 |
+| **35** | IPAS | 模擬試題實戰 | *(無)* | 考前衝刺：IPAS 觀念題與程式邏輯題總複習。 |
 
 ## 1. Project Context
 這是一個為期 30 天的機器學習實戰挑戰專案，目標是從入門到落地。
