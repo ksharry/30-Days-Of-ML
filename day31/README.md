@@ -34,7 +34,9 @@ Transformer 把每個字都變成了三個向量：**Query (Q)**, **Key (K)**, *
     *   最後的輸出向量 = $0.8 \times V_{蘋果} + 0.2 \times V_{愛}$。
     *   這樣，「我」這個字的向量裡，就融合了「蘋果」的資訊！
 
-### 1.3 QKV 架構圖 (Mermaid)
+### 1.3 QKV 架構圖 (Encoder/Decoder 的核心零件)
+**這張圖展示的是「零件」**。無論是 BERT 用的 **Encoder** 還是 GPT 用的 **Decoder**，它們的內部都是由這個 Self-Attention 機制堆疊而成的。
+
 ```mermaid
 graph TD
     subgraph Self-Attention Mechanism
@@ -53,6 +55,25 @@ graph TD
     end
 ```
 
+**圖解翻譯 (雞尾酒派對版)**：
+如果這張圖太複雜，請想像你在參加一個**雞尾酒派對**：
+1.  **Input X (你)**：你走進派對。
+2.  **Query Q (你的興趣)**：你想找人聊「人工智慧」。
+3.  **Key K (別人的標籤)**：每個人身上都貼著標籤（例如：A是「廚師」、B是「AI工程師」、C是「司機」）。
+4.  **MatMul (配對)**：你拿著你的興趣 (Q) 去掃描大家的標籤 (K)。
+    *   跟廚師 (A) -> 沒興趣 (分數低)
+    *   跟 AI 工程師 (B) -> **超有興趣 (分數高)**
+5.  **Softmax (專注力)**：你決定花 90% 的注意力聽 B 說話，10% 聽其他人。
+6.  **Value V (說話內容 = 字的語意)**：在 NLP 中，這就是 B 這個字本身的**向量 (Vector)**。
+    *   例如「AI工程師」這個字的向量裡，可能包含了 [科技, 寫程式, 聰明...] 這些特徵。
+7.  **Weighted Sum (聽進去多少)**：這就是數學上的「加權」。
+    *   因為專注力是 90%，所以你把 B 說的話 ($V_B$) **乘上 0.9**，存進腦袋。
+    *   對於沒興趣的 A (專注力 近乎 0%)，你把 A 說的話 ($V_A$) **乘上 0**，等於左耳進右耳出。
+8.  **Output Z (最終收穫)**：你腦袋裡的新資訊 = $(0.9 \times V_B) + (0.0 \times V_A) + ...$。
+
+這就是 Self-Attention：**在茫茫字海中，找到對的字，聽它說話，吸收它的資訊。**
+
+
 > **核心公式**：
 
 >
@@ -62,8 +83,19 @@ graph TD
 >
 > *   為什麼要除以 $\sqrt{d_k}$？ **為了避免內積數值過大，導致 Softmax 進入梯度消失區間 (Gradient Vanishing)。**
 
-## 2. Transformer 的兩大護法：BERT vs GPT
-Transformer 架構後來分裂成了兩大派系，這也是面試與考試的熱門題。
+## 2. Transformer 的家族系譜：BERT vs GPT
+這是一個非常重要的觀念：**BERT 和 GPT 其實都是 Transformer 的一部分**。
+
+原始的 Transformer (2017) 是一個設計用來做「翻譯」的模型，它同時擁有：
+1.  **Encoder (編碼器)**：負責「聽懂」輸入的句子 (例如：聽懂中文)。
+2.  **Decoder (解碼器)**：負責「說出」翻譯後的句子 (例如：說出英文)。
+
+後來研究人員發現，這兩個部分拆開來各自有強大的功能：
+*   **只留 Encoder (聽懂)** $\rightarrow$ 變成了 **BERT** (擅長理解、閱讀測驗)。
+*   **只留 Decoder (說出)** $\rightarrow$ 變成了 **GPT** (擅長生成、寫作)。
+
+這就是為什麼它們都叫 Transformer，但功能卻大不相同。
+
 
 | 特性 | **BERT** (Bidirectional Encoder Representations from Transformers) | **GPT** (Generative Pre-trained Transformer) |
 | :--- | :--- | :--- |
@@ -101,14 +133,22 @@ graph BT
 *   **輸入限制**：最大序列長度通常為 512 tokens。
 
 **BERT 簡單範例 (克漏字填空)**：
-想像 BERT 是一個正在做英文克漏字測驗的學生。它能同時看見前後文，所以能精準猜出中間的字。
+BERT 為什麼能填空？全靠 Self-Attention 幫它「作弊」偷看答案。
 ```text
-輸入 (Input):  The capital of France is [MASK].
-               (它看到了 "France" 和 "capital")
-                    ↓
-BERT 模型:     思考... 法國的首都... 是巴黎！
-                    ↓
-輸出 (Output): The capital of France is Paris.
+題目: The capital of France is [MASK].
+
+1. Self-Attention 啟動：
+   [MASK] 這個字發出 Query (Q)："誰能告訴我我是什麼？"
+   
+2. 搜尋上下文 (Matching)：
+   它發現 "France" (法國) 和 "capital" (首都) 的 Key (K) 跟它最相關。
+
+3. 吸收資訊 (Weighted Sum)：
+   [MASK] 把 "France" 和 "capital" 的 Value (V) 吸收到自己身上。
+   現在 [MASK] 的向量變成了：{法國 + 首都} 的混合體。
+
+4. 最終預測：
+   BERT 看到 [MASK] 變成了 {法國 + 首都}，於是大喊：答案是 "Paris"！
 ```
 
 #### GPT (Decoder only, Unidirectional)
@@ -139,19 +179,23 @@ graph BT
 *   **演進**：GPT-3 擴大到了 1750 億參數 (96 層, 12288 維)，展現了湧現能力 (Emergent Abilities)。
 
 **GPT 簡單範例 (文字接龍)**：
-想像 GPT 是一個正在寫小說的作家。它只能根據已經寫好的內容，一個字一個字往下寫。
+GPT 怎麼知道下一個字接什麼？靠 Self-Attention 回頭看前面的線索。
 ```text
-輸入 (Input):  Once upon a
-                    ↓
-GPT 模型:      預測下一個字... 根據童話故事慣例... 是 "time"！
-                    ↓
-輸出 1:        Once upon a time
-                    ↓
-              (把 "time" 加進去，再預測下一個)
-                    ↓
-輸出 2:        Once upon a time there
-                    ↓
-輸出 3:        Once upon a time there was...
+題目: The apple is ... (要猜下一個字)
+
+1. Self-Attention 啟動：
+   "is" 這個字發出 Query (Q)："我的主詞是誰？我該接什麼形容詞？"
+
+2. 搜尋上文 (Matching)：
+   它回頭看，發現 "apple" (蘋果) 的 Key (K) 跟它最相關。
+   (注意：GPT 是單向的，它看不到後面的字，只能看前面)
+
+3. 吸收資訊 (Weighted Sum)：
+   "is" 吸收了 "apple" 的 Value (V)。
+   現在 "is" 的向量裡包含了 {蘋果, 紅色, 水果, 好吃} 的資訊。
+
+4. 最終預測：
+   GPT 根據 {蘋果...} 的資訊，預測下一個字機率最高的是 "red" 或 "delicious"。
 ```
 
 ## 3. 實戰：使用 Hugging Face Transformers
