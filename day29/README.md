@@ -121,15 +121,25 @@ streamlit run day29/Streamlit_App.py
 | **開發 (Dev)** | VS Code + Python Scripts | 模組化、重構程式碼、版本控制 (Git)。 |
 | **部署 (Prod)** | **Streamlit** / Flask / FastAPI | **使用者介面 (UI)**、API 服務、讓非技術人員也能使用。 |
 
-## 6. 進階挑戰：如何獲得網址？(Hugging Face Spaces)
-如果你希望把這個 App 部署上線傳給朋友用，但 Streamlit Cloud 免費版跑不動 TensorFlow (記憶體不足)，我強烈推薦使用 **Hugging Face Spaces**。
+## 6. 進階挑戰：如何獲得網址？(Hugging Face Spaces + Docker)
+如果你希望把這個 App 部署上線傳給朋友用，我強烈推薦使用 **Hugging Face Spaces**。
+它提供免費的 **16GB RAM**，跑 TensorFlow 綽綽有餘 (Streamlit Cloud 只有 1GB，容易安裝失敗)。
 
-*   **優點**：免費版提供 **16GB RAM** (Streamlit Cloud 只有 1GB)，跑 TensorFlow 綽綽有餘。
+*   **成功範例**：[https://huggingface.co/spaces/ksharry/30-Days-Of-ML](https://huggingface.co/spaces/ksharry/30-Days-Of-ML)
 *   **步驟**：
     1.  註冊 [Hugging Face](https://huggingface.co/) 帳號。
-    2.  點擊 "New Space"，SDK 選擇 **Streamlit**。
-    3.  將你的 `Streamlit_App.py` 和 `requirements.txt` 上傳上去。
-    4.  幾分鐘後，你就會獲得一個永久的免費網址！
+    2.  點擊 **New Space**，SDK 選擇 **Docker**，Template 選擇 **Blank** (空白模板)。
+    3.  **上傳檔案 (Files 分頁)**：
+        *   進入 Space 後，點擊上方的 **"Files"** 分頁。
+        *   點擊 "Add file" -> "Upload files"，將以下三個檔案拖曳上傳：
+            *   `Streamlit_App.py` (主程式)
+            *   `requirements.txt` (套件清單)
+            *   `Dockerfile` (部署設定，內容如下)
+        *   點擊 "Commit changes to main"。
+    4.  **查看結果 (App 分頁)**：
+        *   上傳後，Hugging Face 會自動開始 Building (建立環境)。
+        *   點擊上方的 **"App"** 分頁，等待幾分鐘 (狀態顯示 Running)，你就會看到你的 AI App 上線了！
+        *   這就是你的永久免費網址，可以分享給朋友使用。
 
 ## 7. 總結
 Day 29 我們學習了 **模型部署**。
