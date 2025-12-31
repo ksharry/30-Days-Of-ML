@@ -87,17 +87,26 @@ graph LR
     *   **Confidence**：是不是物件？(機率)
     *   **Class**：是什麼物件？(類別)
 5.  **Raw Output (原始輸出)**：這時候會產生**成千上萬個框**。因為一張圖切成幾千個格子，每個格子都在猜，所以會有大量重疊、信心度低的框。
-6.  **NMS (非極大值抑制)**：這是關鍵的過濾步驟。
-    *   刪除信心度太低 (例如 < 0.25) 的框。
-    *   刪除重疊太嚴重 (IoU 高) 的框，只保留信心度最高的那一個。
+
+6.  **NMS (非極大值抑制)與 IoU**：這是關鍵的過濾步驟。YOLO 常常會對同一個物件預測出好幾個框。 NMS 的作用就是「去蕪存菁」：
+    *   **IoU (Intersection over Union)**：用來判斷兩個框「重疊多少」。
+        $$ IoU = \frac{\text{Area of Overlap (交集面積)}}{\text{Area of Union (聯集面積)}} $$
+    *   **運作方式**：
+        1.  選出信心度 ($P_c$) 最高的框。
+        2.  計算它與其他框的 IoU。如果 IoU > 0.5 (代表重疊很高)，就視為重複預測，將其刪除。
+        3.  重複直到每個物件只剩下一個框。
+    
 7.  **Output (最終結果)**：只剩下最精準的幾個框，標示出物件位置與類別。
+
+8.  **Evaluation (效能評估 - mAP)**：
+    *   雖然單張圖跑完了，但我們怎麼知道模型整體準不準？這時就要看 **mAP (mean Average Precision)**。
+    *   它是物件偵測最權威的成績單，綜合考量了 **Precision (精確率)** 和 **Recall (召回率)**。
+    *   mAP 越高，代表模型越強。
 
 ### 1.3 輸出向量 (Output Vector)
 每個網格會預測一個向量，包含：
 
-$$
-[P_c, b_x, b_y, b_w, b_h, c_1, c_2, c_3...]
-$$
+$$ \text{Output} = [\underbrace{P_c}_{\text{有沒有東西?}}, \underbrace{b_x, b_y}_{\text{中心在哪?}}, \underbrace{b_w, b_h}_{\text{長寬多少?}}, \underbrace{c_1, c_2, ...}_{\text{是什麼?}}] $$
 
 *   $P_c$ (Confidence)：有沒有物件？(有=1, 無=0)
 *   $b_x, b_y$：中心點座標。
@@ -109,16 +118,15 @@ $$
 
 請想像每個網格 (Grid) 都有一個「多功能儀表板」向量，神經網路一次就把所有指針轉到對的位置：
 
-$$ \text{Output} = [\underbrace{P_c}_{\text{有沒有東西?}}, \underbrace{b_x, b_y}_{\text{中心在哪?}}, \underbrace{b_w, b_h}_{\text{長寬多少?}}, \underbrace{c_1, c_2, ...}_{\text{是什麼?}}] $$
-
 1.  **定位 (Localization) - $b_x, b_y, b_w, b_h$**：
     *   神經網路透過訓練，學會了預測「偏移量」。
     *   $b_x, b_y$：告訴你中心點相對於這個網格左上角的偏移 (例如 0.5 代表在網格正中間)。
     *   $b_w, b_h$：告訴你框框的大小是網格的幾倍 (或相對於 Anchor Box 的比例)。
     *   **底層原理**：這是一個數值預測問題。如果預測的框跟真實的框 IoU 很低，Loss Function 就會處罰網路，逼它下次修正規格。
 
-2.  **分類 (Classification) - $c_1, c_2...$**：
-    *   這部分跟一般的 CNN 一樣，輸出一個機率分佈 (例如：貓 80%, 狗 10%, 車 10%)。
+2.  **分類 (Classification) - $c_1, c_2...$ (一次測 80 種)**：
+    *   每個網格都會**同時算出 80 種物件的機率**。
+    *   它不是跑 80 次迴圈，而是直接輸出一個長向量 (例如 [Bus: 99%, Person: 0.1%, ...])。
     *   **關鍵連結**：YOLO 會把「信心度 $P_c$」跟「類別機率 $c_i$」乘在一起。
     
     $$
@@ -127,8 +135,16 @@ $$ \text{Output} = [\underbrace{P_c}_{\text{有沒有東西?}}, \underbrace{b_x,
     
     *   如果 $P_c$ 很低 (沒物件)，不管後面猜什麼貓狗，分數都會歸零。
 
+3.  **平行運算 (Parallel Grid Analysis)**：
+    *   整張圖的所有網格是**同時 (Simultaneously)** 在運作的。
+    *   負責「公車」的網格發現了公車特徵，信心度飆高。
+    *   負責「人」的網格也**在同一時間**發現了人，信心度也飆高。
+    *   這就是為什麼 YOLO 快！它不用看完公車再看人，而是一眼全看。
+
 **總結**：YOLO 的底層並沒有「抓向量最近單位」這種搜尋過程。它更像是一個**訓練有素的直覺反應**——看到圖像的某個特徵 (Texture/Shape)，神經網路的權重就會自動觸發，直接在輸出層「彈出」對應的座標和類別數值。
 
+### 1.5 YOLO 為什麼這麼快？
+這是面試常問的問題。
 *   **傳統方法 (Two-stage, 如 Faster R-CNN)**：
     1.  先用一個演算法找出「可能由物件的區域」(Region Proposals)。
     2.  再對每個區域做分類。
@@ -137,41 +153,16 @@ $$ \text{Output} = [\underbrace{P_c}_{\text{有沒有東西?}}, \underbrace{b_x,
     1.  直接把整張圖丟進去，同時預測「位置」和「類別」。
     2.  就像人類看照片一樣，一眼就看完，不用拿放大鏡慢慢掃描。
 
-## 2. 關鍵評估指標
-物件偵測的評估比分類複雜得多，以下三個名詞解釋：
-
-### 2.1 IoU (Intersection over Union, 交集聯集比)
-怎麼判斷機器畫的框 (Pred) 跟標準答案 (Truth) 準不準？
-我們計算兩個框的**重疊程度**。
-
-$$ IoU = \frac{\text{Area of Overlap (交集面積)}}{\text{Area of Union (聯集面積)}} $$
-
-*   **IoU = 1**：完全重疊 (完美)。
-*   **IoU = 0**：完全沒碰到。
-*   **IoU > 0.5**：通常視為「偵測正確」的門檻。
-
-### 2.2 NMS (Non-Maximum Suppression, 非極大值抑制)
-YOLO 常常會對同一個物件預測出好幾個框 (例如一隻狗身上有 3 個框)。
-**NMS 的作用就是「去蕪存菁」**：
-1.  選出信心度 ($P_c$) 最高的框。
-2.  把跟這個框 IoU 很高 (重疊很多) 的其他框通通刪掉。
-3.  重複上述步驟，直到每個物件只剩下一個框。
-
-### 2.3 mAP (mean Average Precision)
-這是物件偵測最權威的成績單。
-*   綜合考量了 **Precision (精確率)** 和 **Recall (召回率)**。
-*   mAP 越高，代表模型越強。
-
-## 3. 實戰：使用 YOLOv8 (Ultralytics)
+## 2. 實戰：使用 YOLOv8 (Ultralytics)
 現在最流行的版本是 **YOLOv8** (由 Ultralytics 維護)。它封裝得非常好，甚至比 Scikit-Learn 還簡單。
 
-### 3.1 安裝
+### 2.1 安裝
 ```bash
 pip install ultralytics opencv-python matplotlib
 ```
 *(注意：ultralytics 會自動安裝 PyTorch)*
 
-### 3.2 程式碼實作
+### 2.2 程式碼實作
 完整程式連結：[YOLO_demo.py](YOLO_demo.py)
 
 我們使用最輕量級的 `yolov8n.pt` (Nano版) 模型，它會自動從網路下載。
@@ -198,7 +189,8 @@ results = model('https://ultralytics.com/images/bus.jpg', save=True)
 | **yolov8m.pt** | **Medium** | 25.9M | 中 | 優 | **GPU Server**。適合需要較高準確度的商業應用。 |
 | **yolov8l.pt** | **Large** | 43.7M | 慢 | 特優 | **高階 GPU**。適合遠距離偵測或小物件偵測。 |
 | **yolov8x.pt** | **XLarge** | 68.2M | 極慢 | **最強** | **競賽、學術研究**。不計代價追求最高準確度。 |
-### 3.3 執行結果範例
+
+### 2.3 執行結果範例
 下圖是我們使用 `YOLO_demo.py` 執行的實際結果。
 YOLO 成功在圖片中偵測到了公車、多人以及一個不明顯的停車標誌，並精準地畫出了邊框。
 
@@ -209,25 +201,11 @@ YOLO 成功在圖片中偵測到了公車、多人以及一個不明顯的停車
 *   **Person (人)**：偵測到 4 位，信心度分別為 0.87, 0.85, 0.83, 0.26。
 *   **Stop Sign (停車標誌)**：信心度 0.26 (雖然比較遠，但還是抓到了)。
 
-**圖解：YOLO 是如何看到這台公車的？(簡易過程)**
-1.  **Input**：公車圖片進入模型。
-2.  **Grid Analysis (平行運算)**：整張圖的所有網格是**同時 (Simultaneously)** 在運作的。
-    *   負責「公車」的網格發現了公車特徵，信心度飆高。
-    *   負責「人」的網格也**在同一時間**發現了人，信心度也飆高。
-    *   這就是為什麼 YOLO 快！它不用看完公車再看人，而是一眼全看。
-3.  **Regression**：這些網格同時預測出公車的中心點 ($x, y$) 和大小 ($w, h$)。
-4.  **Classification (一次測 80 種)**：每個網格都會**同時算出 80 種物件的機率**。
-    *   它不是跑 80 次迴圈，而是直接輸出一個長向量 (例如 [Bus: 99%, Person: 0.1%, ...])。
-    *   Grid A 發現 Bus 分數最高 -> 判定為 Bus。
-    *   Grid B 發現 Person 分數最高 -> 判定為 Person。
-5.  **NMS**：雖然有多個網格都看到了公車 (產生多個重疊框)，但 NMS 演算法介入，只保留了信心度最高 (0.87) 的那個紅框。
-6.  **Output**：最終畫出紅框，並標示 "Bus 0.87"。
+*(註：這個結果完美展示了 Section 1.4 提到的平行運算能力，模型一次性地抓出了所有不同類別的物件。)*
 
-## 4. 進階補充 (Advanced Supplements)
+## 3. 進階補充 (Advanced Supplements)
 
-
-
-### 4.3 YOLO 的應用場景 (Why YOLO?)
+### 3.1 YOLO 的應用場景 (Why YOLO?)
 為什麼 YOLO 這麼受歡迎？因為它在 **速度 (Speed)** 與 **準確度 (Accuracy)** 之間取得了完美的平衡。
 這讓它非常適合 **Real-time (即時)** 的應用：
 1.  **自駕車 (Autonomous Driving)**：必須在毫秒內偵測到行人、紅綠燈、車輛，慢 0.1 秒都可能出車禍。
@@ -235,7 +213,7 @@ YOLO 成功在圖片中偵測到了公車、多人以及一個不明顯的停車
 3.  **工業瑕疵檢測 (Defect Detection)**：在產線上快速掃描產品是否有裂痕或瑕疵。
 4.  **運動分析 (Sports Analytics)**：即時追蹤球員與球的位置，分析戰術。
 
-### 4.4 攝影機部署建議 (Camera Deployment)
+### 3.2 攝影機部署建議 (Camera Deployment)
 如果要將這套系統部署到實際場景 (如工廠、路口)，建議如下：
 
 **程式碼 (Webcam)**：
@@ -251,7 +229,7 @@ results = model.predict(source="0", show=True)
 | **運算主機** | **筆電 (含 GPU)** <br> 方便攜帶與展示。 | **Edge Device (Jetson Orin)** <br> 體積小、耐高溫、低功耗，適合掛在電線桿或機台旁。 |
 | **軟體優化** | **Python + PyTorch** <br> 開發速度快，但效能普通。 | **C++ + TensorRT** <br> 為了達到 30 FPS 以上的即時速度，通常會將模型轉為 TensorRT 引擎，並用 C++ 呼叫。 |
 
-### 4.5 常見問答 (FAQ)
+### 3.3 常見問答 (FAQ)
 **Q1: 如果是影片，多久丟一張圖進去？**
 這取決於你的**硬體效能**與**需求**：
 *   **理想狀況**：每一幀都丟 (Frame-by-Frame)。標準影片是 30 FPS (每秒 30 張)，如果你的 GPU 夠強 (如 RTX 3090)，YOLOv8n 可以輕鬆跑到 100+ FPS，所以全丟沒問題。
@@ -265,7 +243,7 @@ results = model.predict(source="0", show=True)
 *   **生活用品**：Backpack, Umbrella, Handbag, Tie, Suitcase...
 *   **電子產品**：Laptop, Mouse, Remote, Keyboard, Cell phone...
 
-## 5. 重點複習
+## 4. 重點複習
 1.  **物件偵測 vs 影像分類**：
     *   分類：這張圖是什麼？
     *   偵測：這張圖有什麼？在哪裡？
@@ -276,7 +254,7 @@ results = model.predict(source="0", show=True)
 4.  **NMS (非極大值抑制)**：
     *   用來「刪除重複的框」，只保留最好的一個。
 
-## 6. 下一關預告
+## 5. 下一關預告
 Day 33 我們將進入 **生成式 AI (Generative AI)** 的世界。
 除了讓 AI 判斷 (Discriminative)，我們還要讓 AI **創造**！
 我們將從最經典的 **GAN (生成對抗網路)** 開始，看兩個神經網路如何互相博弈，創造出以假亂真的圖片。
