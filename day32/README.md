@@ -41,6 +41,20 @@ graph LR
     NMS --> Output["最終輸出結果"]
 ```
 
+**流程步驟詳解**：
+1.  **Input (輸入)**：將原始圖片 (例如 $640 \times 640$) 丟入模型。
+2.  **Backbone (骨幹網路)**：這是一個強大的 CNN (如 CSPDarknet)，負責從圖片中提取特徵 (Feature Maps)。它能「看懂」圖片裡的線條、形狀、紋理。
+3.  **Grid (網格切分)**：邏輯上將圖片切分成 $S \times S$ 個格子。每個格子負責偵測「中心點」落在該格內的物件。
+4.  **Predict (預測)**：每個格子同時預測三件事：
+    *   **Box**：物件在哪？(座標 $x, y, w, h$)
+    *   **Confidence**：是不是物件？(機率)
+    *   **Class**：是什麼物件？(類別)
+5.  **Raw Output (原始輸出)**：這時候會產生**成千上萬個框**。因為一張圖切成幾千個格子，每個格子都在猜，所以會有大量重疊、信心度低的框。
+6.  **NMS (非極大值抑制)**：這是關鍵的過濾步驟。
+    *   刪除信心度太低 (例如 < 0.25) 的框。
+    *   刪除重疊太嚴重 (IoU 高) 的框，只保留信心度最高的那一個。
+7.  **Output (最終結果)**：只剩下最精準的幾個框，標示出物件位置與類別。
+
 ### 1.3 網格系統 (Grid System)
 YOLO 把圖片切成 $S \times S$ 的網格 (例如 $7 \times 7$)。
 *   **規則**：如果一個物件的**中心點 (Center)** 落在哪個網格裡，那個網格就負責偵測這個物件。
@@ -75,8 +89,29 @@ $$
     1.  直接把整張圖丟進去，同時預測「位置」和「類別」。
     2.  就像人類看照片一樣，一眼就看完，不用拿放大鏡慢慢掃描。
 
+### 1.6 模型到底能認得哪些東西？(COCO Dataset)**
+我們使用的 `yolov8n.pt` 是預先在 **COCO 資料集** 上訓練好的。
+它認得 **80 種** 常見物件，包括：
+*   **人與交通**：Person, Bicycle, Car, Motorbike, Bus, Train, Truck...
+*   **動物**：Bird, Cat, Dog, Horse, Sheep, Cow, Elephant, Bear...
+*   **生活用品**：Backpack, Umbrella, Handbag, Tie, Suitcase...
+*   **電子產品**：Laptop, Mouse, Remote, Keyboard, Cell phone...
+
+如果你想偵測這 80 種以外的東西 (例如：偵測工廠裡的瑕疵)，就需要自己收集照片來 **Fine-tune (微調)** 模型。
+
+### 1.7 YOLOv8 模型家族選擇
+除了最快的 `yolov8n.pt`，YOLOv8 還提供了一系列不同大小的模型，讓你根據需求做選擇：
+
+| 模型代號 | 名稱 | 參數 (Params) | 速度 (Speed) | 準確度 (mAP) | 建議場景 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **yolov8n.pt** | **Nano** | 3.2M | **極快** | 普通 | **手機、樹莓派**、即時性要求極高的場景。 |
+| **yolov8s.pt** | **Small** | 11.2M | 快 | 佳 | **筆電 CPU**、一般 PC。CP 值最高的選擇。 |
+| **yolov8m.pt** | **Medium** | 25.9M | 中 | 優 | **GPU Server**。適合需要較高準確度的商業應用。 |
+| **yolov8l.pt** | **Large** | 43.7M | 慢 | 特優 | **高階 GPU**。適合遠距離偵測或小物件偵測。 |
+| **yolov8x.pt** | **XLarge** | 68.2M | 極慢 | **最強** | **競賽、學術研究**。不計代價追求最高準確度。 |
+
 ## 2. 關鍵評估指標
-物件偵測的評估比分類複雜得多，以下三個名詞是面試必考：
+物件偵測的評估比分類複雜得多，以下三個名詞解釋：
 
 ### 2.1 IoU (Intersection over Union, 交集聯集比)
 怎麼判斷機器畫的框 (Pred) 跟標準答案 (Truth) 準不準？
@@ -162,31 +197,6 @@ results = model.predict(source="0", show=True)
 *   **理想狀況**：每一幀都丟 (Frame-by-Frame)。標準影片是 30 FPS (每秒 30 張)，如果你的 GPU 夠強 (如 RTX 3090)，YOLOv8n 可以輕鬆跑到 100+ FPS，所以全丟沒問題。
 *   **硬體不夠強**：跳幀處理 (Frame Skipping)。例如每 5 張圖只測 1 張 (每秒測 6 次)，中間的畫面就假設物件位置沒變，或是用簡單的演算法(Tracking)去補。
 
-**Q2: 模型到底能認得哪些東西？(COCO Dataset)**
-我們使用的 `yolov8n.pt` 是預先在 **COCO 資料集** 上訓練好的。
-它認得 **80 種** 常見物件，包括：
-*   **人與交通**：Person, Bicycle, Car, Motorbike, Bus, Train, Truck...
-*   **動物**：Bird, Cat, Dog, Horse, Sheep, Cow, Elephant, Bear...
-*   **生活用品**：Backpack, Umbrella, Handbag, Tie, Suitcase...
-*   **電子產品**：Laptop, Mouse, Remote, Keyboard, Cell phone...
-
-如果你想偵測這 80 種以外的東西 (例如：偵測工廠裡的瑕疵)，就需要自己收集照片來 **Fine-tune (微調)** 模型。
-
-### 3.7 YOLOv8 模型家族選擇
-除了最快的 `yolov8n.pt`，YOLOv8 還提供了一系列不同大小的模型，讓你根據需求做選擇：
-
-| 模型代號 | 名稱 | 參數 (Params) | 速度 (Speed) | 準確度 (mAP) | 建議場景 |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **yolov8n.pt** | **Nano** | 3.2M | **極快** | 普通 | **手機、樹莓派**、即時性要求極高的場景。 |
-| **yolov8s.pt** | **Small** | 11.2M | 快 | 佳 | **筆電 CPU**、一般 PC。CP 值最高的選擇。 |
-| **yolov8m.pt** | **Medium** | 25.9M | 中 | 優 | **GPU Server**。適合需要較高準確度的商業應用。 |
-| **yolov8l.pt** | **Large** | 43.7M | 慢 | 特優 | **高階 GPU**。適合遠距離偵測或小物件偵測。 |
-| **yolov8x.pt** | **XLarge** | 68.2M | 極慢 | **最強** | **競賽、學術研究**。不計代價追求最高準確度。 |
-
-*   **切換方式**：只需要更改載入名稱即可。
-    ```python
-    model = YOLO('yolov8m.pt') # 改用 Medium 版本
-    ```
 
 ## 4. 重點複習
 1.  **物件偵測 vs 影像分類**：
