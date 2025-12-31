@@ -33,12 +33,12 @@ YOLO 的核心精神就是「端對端 (End-to-End)」的預測。
 
 ```mermaid
 graph LR
-    Input[輸入圖片] --> CNN[CNN 特徵提取 (Backbone)]
-    CNN --> Grid[切分網格 (Grid S x S)]
-    Grid --> Predict[每個網格預測 Bounding Box + 類別]
-    Predict --> Raw[大量候選框]
-    Raw --> NMS[NMS 非極大值抑制]
-    NMS --> Output[最終輸出結果]
+    Input["輸入圖片"] --> CNN["CNN 特徵提取 (Backbone)"]
+    CNN --> Grid["切分網格 (Grid S x S)"]
+    Grid --> Predict["每個網格預測 Bounding Box + 類別"]
+    Predict --> Raw["大量候選框"]
+    Raw --> NMS["NMS 非極大值抑制"]
+    NMS --> Output["最終輸出結果"]
 ```
 
 ### 1.3 網格系統 (Grid System)
@@ -56,6 +56,14 @@ $$
 *   $b_x, b_y$：中心點座標。
 *   $b_w, b_h$：寬度與高度。
 *   $c_1, c_2...$：是貓？是狗？是車？(類別機率)
+
+### 1.5 YOLO 的應用場景 (Why YOLO?)
+為什麼 YOLO 這麼受歡迎？因為它在 **速度 (Speed)** 與 **準確度 (Accuracy)** 之間取得了完美的平衡。
+這讓它非常適合 **Real-time (即時)** 的應用：
+1.  **自駕車 (Autonomous Driving)**：必須在毫秒內偵測到行人、紅綠燈、車輛，慢 0.1 秒都可能出車禍。
+2.  **智慧監控 (Smart Surveillance)**：即時偵測入侵者、計算人流、偵測是否戴口罩/安全帽。
+3.  **工業瑕疵檢測 (Defect Detection)**：在產線上快速掃描產品是否有裂痕或瑕疵。
+4.  **運動分析 (Sports Analytics)**：即時追蹤球員與球的位置，分析戰術。
 
 ## 2. 關鍵評估指標
 物件偵測的評估比分類複雜得多，以下三個名詞是面試必考：
@@ -119,6 +127,24 @@ YOLO 成功在圖片中偵測到了公車、多人以及一個不明顯的停車
 *   **Bus (公車)**：信心度 0.87 (非常確定)。
 *   **Person (人)**：偵測到 4 位，信心度分別為 0.87, 0.85, 0.83, 0.26。
 *   **Stop Sign (停車標誌)**：信心度 0.26 (雖然比較遠，但還是抓到了)。
+
+### 3.4 進階實戰：使用攝影機即時偵測 (Webcam)
+如果你想用筆電的鏡頭做即時偵測，只需要改一行程式碼：
+
+```python
+# source=0 代表使用第一個攝影機 (Webcam)
+# show=True 代表直接彈出視窗顯示結果
+results = model.predict(source="0", show=True)
+```
+
+### 3.5 攝影機部署建議 (Camera Deployment)
+如果要將這套系統部署到實際場景 (如工廠、路口)，建議如下：
+
+| 項目 | **測試階段 (POC)** | **正式部署 (Production)** |
+| :--- | :--- | :--- |
+| **攝影機硬體** | **USB Webcam** (羅技 C920 等) <br> 便宜、隨插即用，適合快速驗證。 | **IP Camera (RTSP)** <br> 透過網路傳輸，適合遠距離佈線。YOLO 支援直接讀取 RTSP 串流 (`source="rtsp://..."`)。 |
+| **運算主機** | **筆電 (含 GPU)** <br> 方便攜帶與展示。 | **Edge Device (Jetson Orin)** <br> 體積小、耐高溫、低功耗，適合掛在電線桿或機台旁。 |
+| **軟體優化** | **Python + PyTorch** <br> 開發速度快，但效能普通。 | **C++ + TensorRT** <br> 為了達到 30 FPS 以上的即時速度，通常會將模型轉為 TensorRT 引擎，並用 C++ 呼叫。 |
 
 ## 4. 重點複習
 1.  **物件偵測 vs 影像分類**：
