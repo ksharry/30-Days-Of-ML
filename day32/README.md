@@ -65,6 +65,16 @@ $$
 3.  **工業瑕疵檢測 (Defect Detection)**：在產線上快速掃描產品是否有裂痕或瑕疵。
 4.  **運動分析 (Sports Analytics)**：即時追蹤球員與球的位置，分析戰術。
 
+### 1.6 YOLO 為什麼這麼快？
+這是面試常問的問題。
+*   **傳統方法 (Two-stage, 如 Faster R-CNN)**：
+    1.  先用一個演算法找出「可能由物件的區域」(Region Proposals)。
+    2.  再對每個區域做分類。
+    *   缺點：要做兩次工，速度慢。
+*   **YOLO (One-stage)**：
+    1.  直接把整張圖丟進去，同時預測「位置」和「類別」。
+    2.  就像人類看照片一樣，一眼就看完，不用拿放大鏡慢慢掃描。
+
 ## 2. 關鍵評估指標
 物件偵測的評估比分類複雜得多，以下三個名詞是面試必考：
 
@@ -145,6 +155,38 @@ results = model.predict(source="0", show=True)
 | **攝影機硬體** | **USB Webcam** (羅技 C920 等) <br> 便宜、隨插即用，適合快速驗證。 | **IP Camera (RTSP)** <br> 透過網路傳輸，適合遠距離佈線。YOLO 支援直接讀取 RTSP 串流 (`source="rtsp://..."`)。 |
 | **運算主機** | **筆電 (含 GPU)** <br> 方便攜帶與展示。 | **Edge Device (Jetson Orin)** <br> 體積小、耐高溫、低功耗，適合掛在電線桿或機台旁。 |
 | **軟體優化** | **Python + PyTorch** <br> 開發速度快，但效能普通。 | **C++ + TensorRT** <br> 為了達到 30 FPS 以上的即時速度，通常會將模型轉為 TensorRT 引擎，並用 C++ 呼叫。 |
+
+### 3.6 常見問答 (FAQ)
+**Q1: 如果是影片，多久丟一張圖進去？**
+這取決於你的**硬體效能**與**需求**：
+*   **理想狀況**：每一幀都丟 (Frame-by-Frame)。標準影片是 30 FPS (每秒 30 張)，如果你的 GPU 夠強 (如 RTX 3090)，YOLOv8n 可以輕鬆跑到 100+ FPS，所以全丟沒問題。
+*   **硬體不夠強**：跳幀處理 (Frame Skipping)。例如每 5 張圖只測 1 張 (每秒測 6 次)，中間的畫面就假設物件位置沒變，或是用簡單的演算法(Tracking)去補。
+
+**Q2: 模型到底能認得哪些東西？(COCO Dataset)**
+我們使用的 `yolov8n.pt` 是預先在 **COCO 資料集** 上訓練好的。
+它認得 **80 種** 常見物件，包括：
+*   **人與交通**：Person, Bicycle, Car, Motorbike, Bus, Train, Truck...
+*   **動物**：Bird, Cat, Dog, Horse, Sheep, Cow, Elephant, Bear...
+*   **生活用品**：Backpack, Umbrella, Handbag, Tie, Suitcase...
+*   **電子產品**：Laptop, Mouse, Remote, Keyboard, Cell phone...
+
+如果你想偵測這 80 種以外的東西 (例如：偵測工廠裡的瑕疵)，就需要自己收集照片來 **Fine-tune (微調)** 模型。
+
+### 3.7 YOLOv8 模型家族選擇
+除了最快的 `yolov8n.pt`，YOLOv8 還提供了一系列不同大小的模型，讓你根據需求做選擇：
+
+| 模型代號 | 名稱 | 參數 (Params) | 速度 (Speed) | 準確度 (mAP) | 建議場景 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **yolov8n.pt** | **Nano** | 3.2M | **極快** | 普通 | **手機、樹莓派**、即時性要求極高的場景。 |
+| **yolov8s.pt** | **Small** | 11.2M | 快 | 佳 | **筆電 CPU**、一般 PC。CP 值最高的選擇。 |
+| **yolov8m.pt** | **Medium** | 25.9M | 中 | 優 | **GPU Server**。適合需要較高準確度的商業應用。 |
+| **yolov8l.pt** | **Large** | 43.7M | 慢 | 特優 | **高階 GPU**。適合遠距離偵測或小物件偵測。 |
+| **yolov8x.pt** | **XLarge** | 68.2M | 極慢 | **最強** | **競賽、學術研究**。不計代價追求最高準確度。 |
+
+*   **切換方式**：只需要更改載入名稱即可。
+    ```python
+    model = YOLO('yolov8m.pt') # 改用 Medium 版本
+    ```
 
 ## 4. 重點複習
 1.  **物件偵測 vs 影像分類**：
