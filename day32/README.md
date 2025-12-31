@@ -102,7 +102,9 @@ graph LR
     
 7.  **Output (最終結果)**：只剩下最精準的幾個框，標示出物件位置與類別，每個網格會預測一個向量，這就是 YOLO 最神奇的地方。它不是「先找位置、再認東西」，而是**把所有問題變成一個數學回歸問題 (Regression Problem)**，請想像每個網格 (Grid) 都有一個「多功能儀表板」向量，神經網路一次就把所有指針轉到對的位置：
 
-    $$ \text{Output} = [\underbrace{P_c}_{\text{有沒有東西?}}, \underbrace{b_x, b_y}_{\text{中心在哪?}}, \underbrace{b_w, b_h}_{\text{長寬多少?}}, \underbrace{c_1, c_2, ...}_{\text{是什麼?}}] $$
+$$
+\text{Output} = [\underbrace{P_c}_{\text{有沒有東西?}}, \underbrace{b_x, b_y}_{\text{中心在哪?}}, \underbrace{b_w, b_h}_{\text{長寬多少?}}, \underbrace{c_1, c_2, ...}_{\text{是什麼?}}]
+$$
 
     *   $P_c$ (Confidence)：有沒有物件？(有=1, 無=0)
     *   **定位 (Localization) - $b_x, b_y, b_w, b_h$**：
@@ -115,9 +117,9 @@ graph LR
         *   它不是跑 80 次迴圈，而是直接輸出一個長向量 (例如 [Bus: 99%, Person: 0.1%, ...])。
         *   **關鍵連結**：YOLO 會把「信心度 $P_c$」跟「類別機率 $c_i$」乘在一起。
 
-        $$
-        \text{最終分數} = P(\text{有物件}) \times P(\text{是貓}|\text{有物件})
-        $$
+$$
+\text{最終分數} = P(\text{有物件}) \times P(\text{是貓}|\text{有物件})
+$$
 
         *   如果 $P_c$ 很低 (沒物件)，不管後面猜什麼貓狗，分數都會歸零。
 
