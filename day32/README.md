@@ -33,7 +33,11 @@ YOLO 將整張圖一次丟進神經網路，直接輸出所有物件的位置和
 
 **1. 損失函數 (Loss Function)**
 YOLO 訓練時就是不斷縮小這個 Loss：
-$$ Loss = \lambda_{box} Loss_{box} + \lambda_{obj} Loss_{obj} + \lambda_{cls} Loss_{cls} $$
+
+$$
+Loss = \lambda_{box} Loss_{box} + \lambda_{obj} Loss_{obj} + \lambda_{cls} Loss_{cls}
+$$
+
 *   **$Loss_{box}$ (位置誤差)**：預測框跟真實框的差距 (YOLOv8 使用 CIoU Loss + DFL)。
 *   **$Loss_{obj}$ (信心度誤差)**：
     *   有物件時：希望 $P_c \approx 1$。
@@ -42,14 +46,20 @@ $$ Loss = \lambda_{box} Loss_{box} + \lambda_{obj} Loss_{obj} + \lambda_{cls} Lo
 
 **2. 邊框解碼 (Bounding Box Decoding)**
 神經網路輸出的其實是 $t_x, t_y, t_w, t_h$ (轉換前的數值)，需要透過公式轉回真實座標 $b_x, b_y, b_w, b_h$：
+
 $$
-\begin{aligned}
-b_x &= 2\sigma(t_x) - 0.5 + c_x \\
-b_y &= 2\sigma(t_y) - 0.5 + c_y \\
-b_w &= p_w (2\sigma(t_w))^2 \\
-b_h &= p_h (2\sigma(t_h))^2
-\end{aligned}
+b_x = 2\sigma(t_x) - 0.5 + c_x
 $$
+$$
+b_y = 2\sigma(t_y) - 0.5 + c_y
+$$
+$$
+b_w = p_w (2\sigma(t_w))^2
+$$
+$$
+b_h = p_h (2\sigma(t_h))^2
+$$
+
 *(註：這是 YOLOv4/v5 常用的消除網格敏感度公式，v8 改用 Anchor-Free 但概念類似)*
 *   $\sigma$ (Sigmoid)：把數值壓縮到 0~1 之間。
 *   $c_x, c_y$：網格左上角的座標 (Grid Offset)。
@@ -82,11 +92,7 @@ graph LR
     *   刪除重疊太嚴重 (IoU 高) 的框，只保留信心度最高的那一個。
 7.  **Output (最終結果)**：只剩下最精準的幾個框，標示出物件位置與類別。
 
-### 1.3 網格系統 (Grid System)
-YOLO 把圖片切成 $S \times S$ 的網格 (例如 $7 \times 7$)。
-*   **規則**：如果一個物件的**中心點 (Center)** 落在哪個網格裡，那個網格就負責偵測這個物件。
-
-### 1.4 輸出向量 (Output Vector)
+### 1.3 輸出向量 (Output Vector)
 每個網格會預測一個向量，包含：
 
 $$
@@ -98,7 +104,7 @@ $$
 *   $b_w, b_h$：寬度與高度。
 *   $c_1, c_2...$：是貓？是狗？是車？(類別機率)
 
-### 1.5 深入解密：YOLO 如何「同時」做到這一切？
+### 1.4 深入解密：YOLO 如何「同時」做到這一切？
 這就是 YOLO 最神奇的地方。它不是「先找位置、再認東西」，而是**把所有問題變成一個數學回歸問題 (Regression Problem)**。
 
 請想像每個網格 (Grid) 都有一個「多功能儀表板」向量，神經網路一次就把所有指針轉到對的位置：
@@ -114,13 +120,15 @@ $$ \text{Output} = [\underbrace{P_c}_{\text{有沒有東西?}}, \underbrace{b_x,
 2.  **分類 (Classification) - $c_1, c_2...$**：
     *   這部分跟一般的 CNN 一樣，輸出一個機率分佈 (例如：貓 80%, 狗 10%, 車 10%)。
     *   **關鍵連結**：YOLO 會把「信心度 $P_c$」跟「類別機率 $c_i$」乘在一起。
-    *   $$ \text{最終分數} = P(\text{有物件}) \times P(\text{是貓}|\text{有物件}) $$
+    
+    $$
+    \text{最終分數} = P(\text{有物件}) \times P(\text{是貓}|\text{有物件})
+    $$
+    
     *   如果 $P_c$ 很低 (沒物件)，不管後面猜什麼貓狗，分數都會歸零。
 
 **總結**：YOLO 的底層並沒有「抓向量最近單位」這種搜尋過程。它更像是一個**訓練有素的直覺反應**——看到圖像的某個特徵 (Texture/Shape)，神經網路的權重就會自動觸發，直接在輸出層「彈出」對應的座標和類別數值。
 
-### 1.6 YOLO 為什麼這麼快？
-這是面試常問的問題。
 *   **傳統方法 (Two-stage, 如 Faster R-CNN)**：
     1.  先用一個演算法找出「可能由物件的區域」(Region Proposals)。
     2.  再對每個區域做分類。
@@ -203,9 +211,15 @@ YOLO 成功在圖片中偵測到了公車、多人以及一個不明顯的停車
 
 **圖解：YOLO 是如何看到這台公車的？(簡易過程)**
 1.  **Input**：公車圖片進入模型。
-2.  **Grid Analysis**：覆蓋在公車位置的那些網格 (Grid Cells) 發現了特徵，信心度 (Confidence) 飆高。
+2.  **Grid Analysis (平行運算)**：整張圖的所有網格是**同時 (Simultaneously)** 在運作的。
+    *   負責「公車」的網格發現了公車特徵，信心度飆高。
+    *   負責「人」的網格也**在同一時間**發現了人，信心度也飆高。
+    *   這就是為什麼 YOLO 快！它不用看完公車再看人，而是一眼全看。
 3.  **Regression**：這些網格同時預測出公車的中心點 ($x, y$) 和大小 ($w, h$)。
-4.  **Classification**：它們同時大喊「這是 Bus！」。
+4.  **Classification (一次測 80 種)**：每個網格都會**同時算出 80 種物件的機率**。
+    *   它不是跑 80 次迴圈，而是直接輸出一個長向量 (例如 [Bus: 99%, Person: 0.1%, ...])。
+    *   Grid A 發現 Bus 分數最高 -> 判定為 Bus。
+    *   Grid B 發現 Person 分數最高 -> 判定為 Person。
 5.  **NMS**：雖然有多個網格都看到了公車 (產生多個重疊框)，但 NMS 演算法介入，只保留了信心度最高 (0.87) 的那個紅框。
 6.  **Output**：最終畫出紅框，並標示 "Bus 0.87"。
 
