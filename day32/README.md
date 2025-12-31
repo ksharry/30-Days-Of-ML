@@ -65,17 +65,31 @@ $$
 *   $c_x, c_y$：網格左上角的座標 (Grid Offset)。
 *   $p_w, p_h$：預設框 (Anchor Box) 的寬高。
 
+> **💡 公式白話文 (In Simple Terms)**：
+> *   **Loss Function**：就像老師改考卷。
+>     *   框歪了？扣分 (Loss_box)。
+>     *   沒看到東西？扣分 (Loss_obj)。
+>     *   認錯成狗？扣分 (Loss_cls)。
+>     *   模型為了拿高分 (Low Loss)，就會拼命修正參數，直到框得準、認得對。
+> *   **Decoding**：就像校正準星。
+>     *   神經網路預測的不是「絕對座標」，而是「準星要往左移一點、框框要放大一點」這種**微調量**。
+>     *   上面的公式就是把這些「微調量」轉成真正的「圖片座標」。
+
 ### 1.2 運作流程圖 (Mermaid)
-YOLO 的核心精神就是「端對端 (End-to-End)」的預測。
+YOLO 的核心精神就是「**端對端 (End-to-End)**」的預測。
+
+> **什麼是 End-to-End？**
+> *   **傳統方法**：像接力賽。先做影像處理 (二值化) -> 再切特徵 -> 再丟分類器。中間只要一棒掉棒 (參數設錯)，後面全倒。
+> *   **End-to-End (YOLO)**：像一個黑盒子。左邊丟原圖，右邊直接吐結果。中間的特徵提取、候選框生成、分類，全部在一個神經網路裡**一次完成**，模型自己學會所有中間過程。
 
 ```mermaid
 graph LR
-    Input["輸入圖片"] --> CNN["CNN 特徵提取 (Backbone)"]
-    CNN --> Grid["切分網格 (Grid S x S)"]
-    Grid --> Predict["每個網格預測 Bounding Box + 類別"]
-    Predict --> Raw["大量候選框"]
-    Raw --> NMS["NMS 非極大值抑制"]
-    NMS --> Output["最終輸出結果"]
+    Input["1.輸入圖片"] --> CNN["2.CNN 特徵提取 (Backbone)"]
+    CNN --> Grid["3.切分網格 (Grid S x S)"]
+    Grid --> Predict["4.每個網格預測 Bounding Box + 類別"]
+    Predict --> Raw["5.大量候選框"]
+    Raw --> NMS["6.NMS 非極大值抑制"]
+    NMS --> Output["7.最終輸出結果"]
 ```
 
 **流程步驟詳解**：
@@ -86,7 +100,7 @@ graph LR
     *   **Box**：物件在哪？(座標 $x, y, w, h$)
     *   **Confidence**：是不是物件？(機率)
     *   **Class**：是什麼物件？(類別)
-5.  **Raw Output (原始輸出)**：這時候會產生**成千上萬個框**。因為一張圖切成幾千個格子，每個格子都在猜，所以會有大量重疊、信心度低的框。
+5.  **Raw Output (原始輸出候選框)**：這時候會產生**成千上萬個框**。因為一張圖切成幾千個格子，每個格子都在猜，所以會有大量重疊、信心度低的框。
 
 6.  **NMS (非極大值抑制)與 IoU**：這是關鍵的過濾步驟。YOLO 常常會對同一個物件預測出好幾個框。 NMS 的作用就是「去蕪存菁」：
     *   **IoU (Intersection over Union)**：用來判斷兩個框「重疊多少」。
@@ -163,6 +177,14 @@ results = model('https://ultralytics.com/images/bus.jpg', save=True)
 # 3. 查看結果
 # 結果會自動儲存在 runs/detect/predict/ 資料夾下
 ```
+### 模型到底能認得哪些東西？(yolov8n.pt)
+我們使用的 `yolov8n.pt` 是預先在 **COCO 資料集** 上訓練好的。
+它認得 **80 種** 常見物件，包括：
+*   **人與交通**：Person, Bicycle, Car, Motorbike, Bus, Train, Truck...
+*   **動物**：Bird, Cat, Dog, Horse, Sheep, Cow, Elephant, Bear...
+*   **生活用品**：Backpack, Umbrella, Handbag, Tie, Suitcase...
+*   **電子產品**：Laptop, Mouse, Remote, Keyboard, Cell phone...
+
 ###  YOLOv8 模型家族選擇
 除了最快的 `yolov8n.pt`，YOLOv8 還提供了一系列不同大小的模型，讓你根據需求做選擇：
 
@@ -187,8 +209,13 @@ YOLO 成功在圖片中偵測到了公車、多人以及一個不明顯的停車
 
 *(註：這個結果完美展示了 Section 1.4 提到的平行運算能力，模型一次性地抓出了所有不同類別的物件。)*
 
-## 3. 進階補充 (Advanced Supplements)
+> **關於 mAP 的補充**：
+> 在這個範例中，我們**不會**看到 mAP 分數。
+> *   **mAP (mean Average Precision)** 是需要**標準答案 (Ground Truth)** 才能計算的「考試成績」。
+> *   我們現在是拿一張沒看過的圖給模型「應用 (Inference)」，所以它只能告訴你信心度 (Confidence)，無法計算 mAP (因為沒有正確答案可以對)。
+> *   若要計算 mAP，需要準備驗證集資料 (Validation Set) 並執行 `model.val()`。
 
+## 3. 進階補充 (Advanced Supplements)
 ### 3.1 YOLO 的應用場景 (Why YOLO?)
 為什麼 YOLO 這麼受歡迎？因為它在 **速度 (Speed)** 與 **準確度 (Accuracy)** 之間取得了完美的平衡。
 這讓它非常適合 **Real-time (即時)** 的應用：
@@ -197,21 +224,15 @@ YOLO 成功在圖片中偵測到了公車、多人以及一個不明顯的停車
 3.  **工業瑕疵檢測 (Defect Detection)**：在產線上快速掃描產品是否有裂痕或瑕疵。
 4.  **運動分析 (Sports Analytics)**：即時追蹤球員與球的位置，分析戰術。
 
-### 3.2 攝影機部署建議 (Camera Deployment)
-如果要將這套系統部署到實際場景 (如工廠、路口)，建議如下：
+### 3.2 YOLO vs 傳統 AOI (自動光學檢測)
+這是製造業最常問的問題：「我的產線該用傳統 AOI 還是 AI (YOLO)？」
 
-**程式碼 (Webcam)**：
-```python
-# source=0 代表使用第一個攝影機 (Webcam)
-results = model.predict(source="0", show=True)
-```
-
-**硬體與軟體建議**：
-| 項目 | **測試階段 (POC)** | **正式部署 (Production)** |
+| 特性 | 傳統 AOI (Rule-based) | AI 物件偵測 (YOLO) |
 | :--- | :--- | :--- |
-| **攝影機硬體** | **USB Webcam** (羅技 C920 等) <br> 便宜、隨插即用，適合快速驗證。 | **IP Camera (RTSP)** <br> 透過網路傳輸，適合遠距離佈線。YOLO 支援直接讀取 RTSP 串流 (`source="rtsp://..."`)。 |
-| **運算主機** | **筆電 (含 GPU)** <br> 方便攜帶與展示。 | **Edge Device (Jetson Orin)** <br> 體積小、耐高溫、低功耗，適合掛在電線桿或機台旁。 |
-| **軟體優化** | **Python + PyTorch** <br> 開發速度快，但效能普通。 | **C++ + TensorRT** <br> 為了達到 30 FPS 以上的即時速度，通常會將模型轉為 TensorRT 引擎，並用 C++ 呼叫。 |
+| **運作原理** | **寫死規則**。設定閥值、對比度、幾何匹配 (Template Matching)。 | **學習特徵**。給它看幾千張瑕疵圖，讓它自己學「瑕疵長怎樣」。 |
+| **優點** | **精確度極高** (Pixel級)、速度極快、邏輯可解釋。 | **適應性強**。背景雜亂、光線變化、瑕疵形狀不固定都能抓。 |
+| **缺點** | **過殺率 (Overkill) 高**。只要光線一變、產品稍微歪掉，就誤判。 | 需要大量標註資料 (Labeling)、需要 GPU 算力。 |
+| **適用場景** | 測量尺寸、檢查有無缺件、PCB 線路檢查 (環境固定)。 | 表面刮痕、農產品分類、異物偵測 (變異性大)。 |
 
 ### 3.3 常見問答 (FAQ)
 **Q1: 如果是影片，多久丟一張圖進去？**
@@ -219,26 +240,7 @@ results = model.predict(source="0", show=True)
 *   **理想狀況**：每一幀都丟 (Frame-by-Frame)。標準影片是 30 FPS (每秒 30 張)，如果你的 GPU 夠強 (如 RTX 3090)，YOLOv8n 可以輕鬆跑到 100+ FPS，所以全丟沒問題。
 *   **硬體不夠強**：跳幀處理 (Frame Skipping)。例如每 5 張圖只測 1 張 (每秒測 6 次)，中間的畫面就假設物件位置沒變，或是用簡單的演算法(Tracking)去補。
 
-**Q2: 模型到底能認得哪些東西？(COCO Dataset)**
-我們使用的 `yolov8n.pt` 是預先在 **COCO 資料集** 上訓練好的。
-它認得 **80 種** 常見物件，包括：
-*   **人與交通**：Person, Bicycle, Car, Motorbike, Bus, Train, Truck...
-*   **動物**：Bird, Cat, Dog, Horse, Sheep, Cow, Elephant, Bear...
-*   **生活用品**：Backpack, Umbrella, Handbag, Tie, Suitcase...
-*   **電子產品**：Laptop, Mouse, Remote, Keyboard, Cell phone...
-
-## 4. 重點複習
-1.  **物件偵測 vs 影像分類**：
-    *   分類：這張圖是什麼？
-    *   偵測：這張圖有什麼？在哪裡？
-2.  **YOLO 的核心精神**：
-    *   **One-stage**：看一次就解決，速度快，適合即時系統 (如監視器、自駕車)。
-3.  **IoU (交集聯集比)**：
-    *   用來衡量「框得準不準」。公式：交集 / 聯集。
-4.  **NMS (非極大值抑制)**：
-    *   用來「刪除重複的框」，只保留最好的一個。
-
-## 5. 下一關預告
+## 4. 下一關預告
 Day 33 我們將進入 **生成式 AI (Generative AI)** 的世界。
 除了讓 AI 判斷 (Discriminative)，我們還要讓 AI **創造**！
 我們將從最經典的 **GAN (生成對抗網路)** 開始，看兩個神經網路如何互相博弈，創造出以假亂真的圖片。
