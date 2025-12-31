@@ -10,6 +10,19 @@
 
 今天的主角是目前業界最流行、速度最快的模型：**YOLO (You Only Look Once)**。
 
+### YOLO 演進史 (v1 - v8)
+YOLO 的發展非常迅速，每一代都有顯著的進步：
+
+| 版本 | 年份 | 主要特色 |
+| :--- | :--- | :--- |
+| **YOLOv1** | 2015 | **開山始祖**。將偵測視為回歸問題，速度極快 (45 FPS)，但對小物件偵測效果差。 |
+| **YOLOv2** | 2016 | **Better, Faster, Stronger**。引入 Anchor Boxes (錨點框) 與 Batch Normalization，提升準確度。 |
+| **YOLOv3** | 2018 | **集大成者**。引入 FPN (Feature Pyramid Networks) 多尺度偵測，大幅改善小物件偵測能力。 |
+| **YOLOv4** | 2020 | **最佳化組合**。由 Alexey Bochkovskiy 接手，整合了大量 Bag of Freebies (BoF) 與 Bag of Specials (BoS) 技巧。 |
+| **YOLOv5** | 2020 | **工程化落地**。Ultralytics 發布 (非論文)，改用 PyTorch 實作，極易使用，部署方便，生態系強大。 |
+| **YOLOv7** | 2022 | **架構創新**。在速度與準確度上再次取得 SOTA (State-of-the-Art)，專注於模型架構的最佳化 (E-ELAN)。 |
+| **YOLOv8** | 2023 | **全面升級**。Ultralytics 最新力作。改用 Anchor-Free 機制，整合了分類、偵測、分割 (Segmentation) 等多種任務。 |
+
 ## 1. 核心概念：YOLO (You Only Look Once)
 YOLO 的名字非常霸氣：「你只需要看一次」。
 早期的物件偵測 (如 R-CNN) 需要看圖片好幾千次 (提取大量候選框)，速度非常慢。
@@ -30,10 +43,12 @@ $$ Loss = \lambda_{box} Loss_{box} + \lambda_{obj} Loss_{obj} + \lambda_{cls} Lo
 **2. 邊框解碼 (Bounding Box Decoding)**
 神經網路輸出的其實是 $t_x, t_y, t_w, t_h$ (轉換前的數值)，需要透過公式轉回真實座標 $b_x, b_y, b_w, b_h$：
 $$
-b_x = 2\sigma(t_x) - 0.5 + c_x \\
-b_y = 2\sigma(t_y) - 0.5 + c_y \\
-b_w = p_w (2\sigma(t_w))^2 \\
-b_h = p_h (2\sigma(t_h))^2
+\begin{aligned}
+b_x &= 2\sigma(t_x) - 0.5 + c_x \\
+b_y &= 2\sigma(t_y) - 0.5 + c_y \\
+b_w &= p_w (2\sigma(t_w))^2 \\
+b_h &= p_h (2\sigma(t_h))^2
+\end{aligned}
 $$
 *(註：這是 YOLOv4/v5 常用的消除網格敏感度公式，v8 改用 Anchor-Free 但概念類似)*
 *   $\sigma$ (Sigmoid)：把數值壓縮到 0~1 之間。
@@ -165,7 +180,16 @@ results = model('https://ultralytics.com/images/bus.jpg', save=True)
 # 3. 查看結果
 # 結果會自動儲存在 runs/detect/predict/ 資料夾下
 ```
+###  YOLOv8 模型家族選擇
+除了最快的 `yolov8n.pt`，YOLOv8 還提供了一系列不同大小的模型，讓你根據需求做選擇：
 
+| 模型代號 | 名稱 | 參數 (Params) | 速度 (Speed) | 準確度 (mAP) | 建議場景 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **yolov8n.pt** | **Nano** | 3.2M | **極快** | 普通 | **手機、樹莓派**、即時性要求極高的場景。 |
+| **yolov8s.pt** | **Small** | 11.2M | 快 | 佳 | **筆電 CPU**、一般 PC。CP 值最高的選擇。 |
+| **yolov8m.pt** | **Medium** | 25.9M | 中 | 優 | **GPU Server**。適合需要較高準確度的商業應用。 |
+| **yolov8l.pt** | **Large** | 43.7M | 慢 | 特優 | **高階 GPU**。適合遠距離偵測或小物件偵測。 |
+| **yolov8x.pt** | **XLarge** | 68.2M | 極慢 | **最強** | **競賽、學術研究**。不計代價追求最高準確度。 |
 ### 3.3 執行結果範例
 下圖是我們使用 `YOLO_demo.py` 執行的實際結果。
 YOLO 成功在圖片中偵測到了公車、多人以及一個不明顯的停車標誌，並精準地畫出了邊框。
@@ -187,29 +211,7 @@ YOLO 成功在圖片中偵測到了公車、多人以及一個不明顯的停車
 
 ## 4. 進階補充 (Advanced Supplements)
 
-### 4.1 YOLO 演進史 (v1 - v8)
-YOLO 的發展非常迅速，每一代都有顯著的進步：
 
-| 版本 | 年份 | 主要特色 |
-| :--- | :--- | :--- |
-| **YOLOv1** | 2015 | **開山始祖**。將偵測視為回歸問題，速度極快 (45 FPS)，但對小物件偵測效果差。 |
-| **YOLOv2** | 2016 | **Better, Faster, Stronger**。引入 Anchor Boxes (錨點框) 與 Batch Normalization，提升準確度。 |
-| **YOLOv3** | 2018 | **集大成者**。引入 FPN (Feature Pyramid Networks) 多尺度偵測，大幅改善小物件偵測能力。 |
-| **YOLOv4** | 2020 | **最佳化組合**。由 Alexey Bochkovskiy 接手，整合了大量 Bag of Freebies (BoF) 與 Bag of Specials (BoS) 技巧。 |
-| **YOLOv5** | 2020 | **工程化落地**。Ultralytics 發布 (非論文)，改用 PyTorch 實作，極易使用，部署方便，生態系強大。 |
-| **YOLOv7** | 2022 | **架構創新**。在速度與準確度上再次取得 SOTA (State-of-the-Art)，專注於模型架構的最佳化 (E-ELAN)。 |
-| **YOLOv8** | 2023 | **全面升級**。Ultralytics 最新力作。改用 Anchor-Free 機制，整合了分類、偵測、分割 (Segmentation) 等多種任務。 |
-
-### 4.2 YOLOv8 模型家族選擇
-除了最快的 `yolov8n.pt`，YOLOv8 還提供了一系列不同大小的模型，讓你根據需求做選擇：
-
-| 模型代號 | 名稱 | 參數 (Params) | 速度 (Speed) | 準確度 (mAP) | 建議場景 |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **yolov8n.pt** | **Nano** | 3.2M | **極快** | 普通 | **手機、樹莓派**、即時性要求極高的場景。 |
-| **yolov8s.pt** | **Small** | 11.2M | 快 | 佳 | **筆電 CPU**、一般 PC。CP 值最高的選擇。 |
-| **yolov8m.pt** | **Medium** | 25.9M | 中 | 優 | **GPU Server**。適合需要較高準確度的商業應用。 |
-| **yolov8l.pt** | **Large** | 43.7M | 慢 | 特優 | **高階 GPU**。適合遠距離偵測或小物件偵測。 |
-| **yolov8x.pt** | **XLarge** | 68.2M | 極慢 | **最強** | **競賽、學術研究**。不計代價追求最高準確度。 |
 
 ### 4.3 YOLO 的應用場景 (Why YOLO?)
 為什麼 YOLO 這麼受歡迎？因為它在 **速度 (Speed)** 與 **準確度 (Accuracy)** 之間取得了完美的平衡。
