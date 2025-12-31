@@ -110,6 +110,52 @@ $$
 | **yolov8l.pt** | **Large** | 43.7M | 慢 | 特優 | **高階 GPU**。適合遠距離偵測或小物件偵測。 |
 | **yolov8x.pt** | **XLarge** | 68.2M | 極慢 | **最強** | **競賽、學術研究**。不計代價追求最高準確度。 |
 
+### 1.8 深入解密：YOLO 如何「同時」做到這一切？
+這就是 YOLO 最神奇的地方。它不是「先找位置、再認東西」，而是**把所有問題變成一個數學回歸問題 (Regression Problem)**。
+
+請想像每個網格 (Grid) 都有一個「多功能儀表板」向量，神經網路一次就把所有指針轉到對的位置：
+
+$$ \text{Output} = [\underbrace{P_c}_{\text{有沒有東西?}}, \underbrace{b_x, b_y}_{\text{中心在哪?}}, \underbrace{b_w, b_h}_{\text{長寬多少?}}, \underbrace{c_1, c_2, ...}_{\text{是什麼?}}] $$
+
+1.  **定位 (Localization) - $b_x, b_y, b_w, b_h$**：
+    *   神經網路透過訓練，學會了預測「偏移量」。
+    *   $b_x, b_y$：告訴你中心點相對於這個網格左上角的偏移 (例如 0.5 代表在網格正中間)。
+    *   $b_w, b_h$：告訴你框框的大小是網格的幾倍 (或相對於 Anchor Box 的比例)。
+    *   **底層原理**：這是一個數值預測問題。如果預測的框跟真實的框 IoU 很低，Loss Function 就會處罰網路，逼它下次修正規格。
+
+2.  **分類 (Classification) - $c_1, c_2...$**：
+    *   這部分跟一般的 CNN 一樣，輸出一個機率分佈 (例如：貓 80%, 狗 10%, 車 10%)。
+    *   **關鍵連結**：YOLO 會把「信心度 $P_c$」跟「類別機率 $c_i$」乘在一起。
+    *   $$ \text{最終分數} = P(\text{有物件}) \times P(\text{是貓}|\text{有物件}) $$
+    *   如果 $P_c$ 很低 (沒物件)，不管後面猜什麼貓狗，分數都會歸零。
+
+**總結**：YOLO 的底層並沒有「抓向量最近單位」這種搜尋過程。它更像是一個**訓練有素的直覺反應**——看到圖像的某個特徵 (Texture/Shape)，神經網路的權重就會自動觸發，直接在輸出層「彈出」對應的座標和類別數值。
+
+### 1.9 核心公式 (Core Formulas)
+如果要看懂 YOLO 的數學靈魂，主要有兩個部分：
+
+**1. 損失函數 (Loss Function)**
+YOLO 訓練時就是不斷縮小這個 Loss：
+$$ Loss = \lambda_{box} Loss_{box} + \lambda_{obj} Loss_{obj} + \lambda_{cls} Loss_{cls} $$
+*   **$Loss_{box}$ (位置誤差)**：預測框跟真實框的差距 (YOLOv8 使用 CIoU Loss + DFL)。
+*   **$Loss_{obj}$ (信心度誤差)**：
+    *   有物件時：希望 $P_c \approx 1$。
+    *   沒物件時：希望 $P_c \approx 0$ (這部分權重 $\lambda$ 通常較低，因為背景太多)。
+*   **$Loss_{cls}$ (類別誤差)**：分類準不準 (BCE Loss)。
+
+**2. 邊框解碼 (Bounding Box Decoding)**
+神經網路輸出的其實是 $t_x, t_y, t_w, t_h$ (轉換前的數值)，需要透過公式轉回真實座標 $b_x, b_y, b_w, b_h$：
+$$
+b_x = 2\sigma(t_x) - 0.5 + c_x \\
+b_y = 2\sigma(t_y) - 0.5 + c_y \\
+b_w = p_w (2\sigma(t_w))^2 \\
+b_h = p_h (2\sigma(t_h))^2
+$$
+*(註：這是 YOLOv4/v5 常用的消除網格敏感度公式，v8 改用 Anchor-Free 但概念類似)*
+*   $\sigma$ (Sigmoid)：把數值壓縮到 0~1 之間。
+*   $c_x, c_y$：網格左上角的座標 (Grid Offset)。
+*   $p_w, p_h$：預設框 (Anchor Box) 的寬高。
+
 ## 2. 關鍵評估指標
 物件偵測的評估比分類複雜得多，以下三個名詞解釋：
 
