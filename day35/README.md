@@ -27,16 +27,20 @@ Diffusion 的靈感來自物理學的「擴散現象」(例如一滴墨水滴入
 Diffusion 的數學看起來很嚇人，但其實就這兩個核心：
 
 1.  **前向加噪 (Forward)**：
-    $$ q(x_t | x_{t-1}) = N(x_t; \sqrt{1-\beta_t} x_{t-1}, \beta_t I) $$
+    $$
+    q(x_t | x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t} x_{t-1}, \beta_t I)
+    $$
     *   **白話文**：今天的圖 ($x_t$) = 昨天的圖 ($x_{t-1}$) 乘上一點點衰減 + 一點點新的雜訊 ($\beta_t$)。
     *   這是一個**固定過程** (沒有 AI 參與)，我們只是不斷加雜訊。
 
 2.  **逆向去噪 (Reverse)**：
-    $$ p_\theta(x_{t-1} | x_t) = N(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(x_t, t)) $$
+    $$
+    p_\theta(x_{t-1} | x_t) = \mathcal{N}(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(x_t, t))
+    $$
     *   **白話文**：AI ($\theta$) 的任務是看著今天的雜訊圖 ($x_t$)，預測出昨天的圖 ($x_{t-1}$) 長怎樣 (預測平均值 $\mu$ 和變異數 $\Sigma$)。
     *   這就是我們要訓練 **U-Net** 做的事。
 
-### 2.2 架構圖
+### 2.3 架構圖
 ```mermaid
 graph LR
     x0["Input Image (x0)"] --"加噪 (Forward)"--> x1["x1"]
@@ -89,6 +93,12 @@ graph LR
 > *   **原因 1：訓練時間太短**。Diffusion 模型非常難訓練。標準的 MNIST 訓練可能需要跑 **200~500 個 Epoch** (數小時)，但為了示範，我們只跑了 **3 個 Epoch** (幾分鐘)。
 > *   **原因 2：模型還在「瞎猜」**。因為 AI 還沒學會如何精準預測雜訊，所以它去噪去得不乾淨，留下了很多殘影。
 > *   **這很正常**：這證明了 Diffusion 是一個「慢工出細活」的模型。只要給它足夠的時間，它能畫出比 GAN 更細緻的圖。
+>
+> **👀 看看別人訓練 500 Epoch 的結果**：
+> 如果你有足夠的算力跑完訓練，結果會像這樣：
+> ![DDPM MNIST 500 Epochs](https://raw.githubusercontent.com/w86763777/pytorch-ddpm/master/assets/mnist_sample.png)
+> *(圖片來源：GitHub - pytorch-ddpm)*
+> *   **特點**：背景完全乾淨 (沒有 GAN 的噪點)，數字筆畫非常紮實 (沒有 VAE 的模糊)。
 
 ### 4.3 為什麼比 VAE (壓縮) 好？
 你可能會問：「VAE 也是還原圖片，為什麼 Diffusion 會變成霸主？」
