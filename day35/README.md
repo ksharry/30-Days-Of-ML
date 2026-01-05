@@ -27,16 +27,20 @@ Diffusion 的靈感來自物理學的「擴散現象」(例如一滴墨水滴入
 Diffusion 的數學看起來很嚇人，但其實就這兩個核心：
 
 1.  **前向加噪 (Forward)**：
-    $$
-    q(x_t | x_{t-1}) = N(x_t; \sqrt{1-\beta_t} x_{t-1}, \beta_t I)
-    $$
+
+$$
+q(x_t | x_{t-1}) = N(x_t; \sqrt{1-\beta_t} x_{t-1}, \beta_t I)
+$$
+
     *   **白話文**：今天的圖 ($x_t$) = 昨天的圖 ($x_{t-1}$) 乘上一點點衰減 + 一點點新的雜訊 ($\beta_t$)。
     *   這是一個**固定過程** (沒有 AI 參與)，我們只是不斷加雜訊。
 
 2.  **逆向去噪 (Reverse)**：
-    $$
-    p_\theta(x_{t-1} | x_t) = N(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(x_t, t))
-    $$
+
+$$
+p_\theta(x_{t-1} | x_t) = N(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(x_t, t))
+$$
+
     *   **白話文**：AI ($\theta$) 的任務是看著今天的雜訊圖 ($x_t$)，預測出昨天的圖 ($x_{t-1}$) 長怎樣 (預測平均值 $\mu$ 和變異數 $\Sigma$)。
     *   這就是我們要訓練 **U-Net** 做的事。
 
