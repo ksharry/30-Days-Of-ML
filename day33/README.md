@@ -126,21 +126,21 @@ pip install torch torchvision matplotlib
 我們將訓練過程生成的圖片存放在 `pic/` 資料夾中，你可以看到模型是如何「從無到有」學會寫字的：
 
 #### **初期 (Epoch 1)**
-![Epoch 1](pic/epoch_1.png)
+![Epoch 1](pic/comparison_epoch_1.png)
 *   **標準答案 (Real)**：清晰的手寫數字 (如 0, 1, 2...)。
 *   **目前猜測 (Fake)**：一堆雜訊 (雪花屏)。
 *   **警察反應**：「這 100% 是假的！」(Score $\approx$ 0)。
 *   **原因**：生成器 $G$ 還沒學到任何特徵，只是隨機亂畫。判別器 $D$ 也很笨，還在亂猜。
 
 #### **中期 (Epoch 20)**
-![Epoch 20](pic/epoch_20.png)
+![Epoch 20](pic/comparison_epoch_20.png)
 *   **標準答案 (Real)**：清晰的手寫數字。
 *   **目前猜測 (Fake)**：模糊的黑白團塊，隱約有形狀。
 *   **警察反應**：「嗯...這有 30% 像真的。」(Score $\approx$ 0.3)。
 *   **原因**： $G$ 發現只要畫出「中間白、旁邊黑」的圖案，比較容易騙過 $D$ ，開始掌握筆畫結構。
 
 #### **後期 (Epoch 50)**
-![Epoch 50](pic/epoch_50.png)
+![Epoch 30](pic/comparison_epoch_50.png)
 *   **標準答案 (Real)**：清晰的手寫數字。
 *   **目前猜測 (Fake)**：清晰的 "0", "1", "5", "9"。
 *   **警察反應**：「我分不出來了... 50% 是真的吧？」(Score $\approx$ 0.5)。
