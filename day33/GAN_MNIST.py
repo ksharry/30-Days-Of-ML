@@ -20,7 +20,7 @@ Z_DIM = 100          # 雜訊向量的維度 (Latent Dimension)
 IMAGE_DIM = 28 * 28  # MNIST 圖片大小 (784)
 
 # 建立結果資料夾
-os.makedirs("gan_images", exist_ok=True)
+os.makedirs("day33/pic", exist_ok=True)
 
 print(f"使用裝置: {DEVICE}")
 
@@ -136,7 +136,7 @@ for epoch in range(EPOCHS):
                 ax.axis('off')
             
             plt.suptitle(f"Generated Images at Epoch {epoch+1}")
-            save_path = f"gan_images/epoch_{epoch+1}.png"
+            save_path = f"day33/pic/epoch_{epoch+1}.png"
             plt.savefig(save_path)
             plt.close()
             print(f"已儲存生成圖片: {save_path}")
