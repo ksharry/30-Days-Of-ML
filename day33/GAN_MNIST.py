@@ -123,22 +123,34 @@ for epoch in range(EPOCHS):
                 f"Loss D: {loss_disc:.4f}, Loss G: {loss_gen:.4f}"
             )
 
-    # 每個 Epoch 結束後，儲存生成的圖片
+    # 每個 Epoch 結束後，儲存生成的圖片 (Real vs Fake)
     if (epoch + 1) % 10 == 0 or epoch == 0:
         with torch.no_grad():
-            fake_images = gen(fixed_noise).reshape(-1, 1, 28, 28)
-            fake_images = fake_images.cpu()
+            # 1. 產生假圖 (Guess)
+            fake_images = gen(fixed_noise).reshape(-1, 1, 28, 28).cpu()
             
-            # 畫圖
-            fig, axes = plt.subplots(4, 4, figsize=(6, 6))
-            for i, ax in enumerate(axes.flat):
-                ax.imshow(fake_images[i][0], cmap='gray')
-                ax.axis('off')
+            # 2. 取得真圖 (Answer) - 拿最後一個 batch 的前 16 張
+            real_images = real[:16].reshape(-1, 1, 28, 28).cpu()
             
-            plt.suptitle(f"Generated Images at Epoch {epoch+1}")
-            save_path = f"day33/pic/epoch_{epoch+1}.png"
+            # 3. 畫圖 (上排: 真圖/標準答案, 下排: 假圖/目前猜測)
+            fig, axes = plt.subplots(2, 8, figsize=(12, 4)) # 2列8行
+            
+            # 上排：真圖 (Real)
+            for i in range(8):
+                axes[0, i].imshow(real_images[i][0], cmap='gray')
+                axes[0, i].axis('off')
+                if i == 0: axes[0, i].set_title("Real (Answer)", fontsize=10)
+            
+            # 下排：假圖 (Fake)
+            for i in range(8):
+                axes[1, i].imshow(fake_images[i][0], cmap='gray')
+                axes[1, i].axis('off')
+                if i == 0: axes[1, i].set_title("Fake (Guess)", fontsize=10)
+            
+            plt.suptitle(f"Epoch {epoch+1}: Real (Top) vs Fake (Bottom)")
+            save_path = f"day33/pic/comparison_epoch_{epoch+1}.png"
             plt.savefig(save_path)
             plt.close()
-            print(f"已儲存生成圖片: {save_path}")
+            print(f"已儲存比較圖片: {save_path}")
 
 print("訓練完成！")
