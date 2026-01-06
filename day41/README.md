@@ -13,12 +13,12 @@
 
 | 題目 (關鍵字) | 答案 | 對應天數 (Day) |
 | :--- | :--- | :--- |
-| **1. 情感分析目的** | (B) 判斷文本中所表達的情感傾向 | Day 28 (NLP) |
+| **1. 情感分析目的** | (B) 判斷文本中所表達的情感傾向 | Day 31 (NLP) |
 | **2. Transformer 優勢** | (A) 透過 **自注意力機制** 捕捉長距離依賴 | Day 31 (Transformer) |
 | **3. BERT MLM 策略** | (B) 隨機遮罩部分詞語並預測 | Day 31 (BERT) |
-| **4. GloVe vs Word2Vec** | (C) Word2Vec 基於預測，GloVe 基於共現 | Day 28 (Embeddings) |
+| **4. GloVe vs Word2Vec** | (C) Word2Vec 基於預測，GloVe 基於共現 | Day 31 (NLP) |
 | **5. TF-IDF 長文本問題** | (A) 常見詞權重被過度放大 | Day 08 (Naive Bayes) |
-| **6. N-gram 限制** | (B) 難以捕捉長距離依賴關係 | Day 28 (NLP) |
+| **6. N-gram 限制** | (B) 難以捕捉長距離依賴關係 | Day 31 (NLP) |
 | **7. mAP 高 IoU 意義** | (A) 預測框與真實框重疊度高，越精準 | Day 32 (YOLO) |
 | **8. Softmax vs Max-Pooling** | (C) Softmax 用於分類，Max-Pooling 用於降維 | Day 25 (CNN) |
 | **9. 資料增強效能下降** | (B) 增強後特徵分佈不一致 | Day 25 (CNN) |
@@ -31,7 +31,7 @@
 | **16. Seq2Seq 應用** | (D) 自動翻譯或摘要生成 | Day 27 (RNN) |
 | **17. RAG 檢索挑戰** | (D) 避免結果僅具語意相似但無實質關聯 | Day 40 (RAG) |
 | **18. Attention Collapse 改善** | (D) 施加 **稀疏化約束 (Sparsity Constraint)** | Day 31 (Transformer) |
-| **19. 低資源語言訓練** | (B) 採用反向翻譯 (Back-Translation) | Day 28 (NLP) |
+| **19. 低資源語言訓練** | (B) 採用反向翻譯 (Back-Translation) | Day 31 (NLP) |
 | **20. GAN Mode Collapse** | (B) 採用 Wasserstein 距離 (WGAN) | Day 33 (GAN) |
 | **21. 多模態缺失處理** | (B) 訓練具備模態缺失感知能力的模型 | Day 33 (GenAI) |
 | **22. 資料漂移偵測** | (D) 計算 KL 散度 (KL Divergence) | Day 34 (Monitoring) |
@@ -45,7 +45,7 @@
 | **30. 不可否認性** | (A) 記錄雜湊值並簽署數位簽章 | Day 34 (Governance) |
 | **31. 高流量架構** | (B) 容器化部署並水平擴展 (Auto Scaling) | Day 29 (Deployment) |
 | **32. 效能衰退預警** | (D) 輸入特徵分佈的 PSI 指數 | Day 34 (Monitoring) |
-| **33. 罕見詞訓練 (Word2Vec)** | (C) Skip-gram 模型 | Day 28 (Embeddings) |
+| **33. 罕見詞訓練 (Word2Vec)** | (C) Skip-gram 模型 | Day 31 (NLP) |
 | **34. 個體識別** | (C) 實例分割 (Instance Segmentation) | Day 32 (CV) |
 | **35. CLIP 特性** | (A) 圖文對比學習，零樣本分類 | Day 33 (GenAI) |
 | **36. 系統化參數測試** | (B) 網格搜尋 (Grid Search) | Day 22 (Tuning) |
@@ -76,7 +76,7 @@
 | **4. DBSCAN 孤立點** | (B) 雜訊點 (Noise Point) | Day 15 (DBSCAN) |
 | **5. CNN 第一層功能** | (A) **提取局部特徵** (如邊緣、紋理) | Day 25 (CNN) |
 | **6. CNN vs FCNN** | (C) 區域感知與參數共享降低複雜度 | Day 25 (CNN) |
-| **7. LSTM 應用** | (A) 預測電力需求趨勢 (時間序列) | Day 27 (RNN) |
+| **7. LSTM 應用** | (A) 預測電力需求趨勢 (時間序列) | Day 28 (LSTM) |
 | **8. 資訊增益應用** | (D) 決策樹模型 | Day 09 (Decision Tree) |
 | **9. 距離模型前處理** | (A) 特徵縮放 (Feature Scaling) | Day 07 (KNN) |
 | **10. AutoML 適用情境** | (C) 行銷部門需快速比較多種模型 | Day 22 (Tuning) |
