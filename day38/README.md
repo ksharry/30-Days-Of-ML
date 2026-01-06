@@ -35,10 +35,45 @@ $$
 
 ## 3. 實戰：登陸月球 (LunarLander)
 我們要挑戰比 CartPole 更難的遊戲：**LunarLander-v2**。
+
+![LunarLander](https://gymnasium.farama.org/_images/lunar_lander.gif)
+*(圖片來源：Gymnasium 官網)*
+
 *   **目標**：控制登月小艇，安全降落在兩個旗幟中間。
-*   **狀態 (8 維)**：位置、速度、角度、腳是否有接觸地面等。
-*   **動作 (4 種)**：什麼都不做、主引擎噴射、左引擎噴射、右引擎噴射。
+*   **狀態 (8 維)**：
+    1.  **X 座標** (水平位置)
+    2.  **Y 座標** (垂直高度)
+    3.  **X 速度** (水平飛多快)
+    4.  **Y 速度** (下降多快)
+    5.  **角度** (小艇歪了嗎)
+    6.  **角速度** (轉動多快)
+    7.  **左腳觸地** (是/否)
+    8.  **右腳觸地** (是/否)
+*   **動作 (4 種)**：
+    0.  **什麼都不做** (Do nothing)
+    1.  **主引擎噴射** (Fire main engine) - 往上推
+    2.  **左引擎噴射** (Fire left engine) - 往右推
+    3.  **右引擎噴射** (Fire right engine) - 往左推
 *   **獎勵**：安全著陸 +100，墜毀 -100，噴射引擎會扣一點分 (節省燃料)。
+
+> **Q: 這跟 LLM (ChatGPT) 有什麼關係？**
+> 關係非常大！現代 LLM 的訓練最後一步叫 **RLHF (Reinforcement Learning from Human Feedback)**。
+> *   **ChatGPT 也是一個 Policy Network**：
+>     *   **輸入 (State)**：你問的問題 (Prompt)。
+>     *   **輸出 (Action)**：它回答的下一個字 (Token Probability)。
+> *   **訓練目標**：讓人類覺得好 (Reward 高)。
+> *   **Policy Gradient** 就是用來調整 LLM 講話機率的核心演算法 (PPO 是它的進階版)。
+
+### 3.1 架構圖與公式
+**Policy Network 架構圖**：
+```mermaid
+graph LR
+    State["State (8維數值)"] --> NN["Neural Network <br> (Policy Net)"]
+    NN --> Probs["Action Probabilities <br> (4個動作的機率)"]
+    Probs --> Action["Action <br> (隨機抽樣)"]
+    
+    style NN fill:#f9f,stroke:#333,stroke-width:2px
+```
 
 ### 3.1 程式碼架構 (`PG_LunarLander.py`)
 1.  **PolicyNetwork**：輸入狀態 (8)，輸出動作機率 (4)。(注意最後用 `Softmax`)。
@@ -51,6 +86,18 @@ $$
 *   **一開始**：小艇會亂噴氣，然後墜毀 (Score ~ -200)。
 *   **訓練後**：小艇學會了「平穩下降」，並瞄準旗幟中間。
 *   **最終**：安全著陸 (Score > 200)。
+
+### 4.1 結果圖解說 (38-1)
+執行程式後，你會得到這張分數變化圖 (`pg_score.png`)：
+
+![PG Score](pic/pg_score.png)
+
+*   **X 軸 (Episode)**：訓練的回合數。
+*   **Y 軸 (Score)**：每回合的總得分。
+*   **趨勢解讀**：
+    *   **前期 (震盪)**：分數忽高忽低，因為 Policy Gradient 是「隨機抽樣」動作，運氣好就高分，運氣差就墜毀。
+    *   **後期 (上升)**：隨著訓練，Agent 發現「平穩下降」的機率能帶來高分，於是它越來越傾向做正確的動作，分數逐漸穩定上升。
+    *   *(註：如果你看到分數突然飆到 500，那是因為我們在程式碼中用了 CartPole 作為備案，CartPole 滿分就是 500)*。
 
 ## 5. 下一關預告
 Policy Gradient 雖然強大，但訓練很慢 (因為要玩完一整場才能更新一次)。
