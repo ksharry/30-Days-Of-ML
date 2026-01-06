@@ -96,7 +96,7 @@ Answer: Oreo
 *   這證明了 **RAG 的威力**：即使 GPT-2 原本不知道 Harry 是誰，但只要我們給它資料，它就能回答正確。
 
 ## 5. 進階 RAG 架構 (Production RAG)
-這是我們以前製作的完整 RAG 架構圖，展示了企業級應用是怎麼做的：
+這是以前近期參加AI應用規劃師課程中，指定製作的專題來解決企業問題的解決方案，主題是專利文件的知識庫製作，使用RAG的整體架構圖，底層為LangChain，並製作網頁能進行對話與使用者進行互動:
 
 ![RAG Architecture](pic/architecture.png)
 
