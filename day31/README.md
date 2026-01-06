@@ -271,3 +271,18 @@ print(result)
 Day 32 我們將進入電腦視覺的進階領域：**物件偵測 (Object Detection)**。
 我們要從「這張圖是什麼 (Classification)」進化到「這東西在哪裡 (Detection)」。
 主角是速度極快的 **YOLO (You Only Look Once)**！
+
+## 6. IPAS 考題補充 (NLP 相關)
+以下彙整了 114 年 IPAS 中級能力鑑定中與 NLP 相關的考題，供複習參考：
+
+| 題目 (關鍵字) | 答案 | 解析 |
+| :--- | :--- | :--- |
+| **1. 情感分析目的** | (B) 判斷文本中所表達的情感傾向 | 這是 NLP 最經典的應用之一 (Day 31 實作)。 |
+| **2. Transformer 優勢** | (A) 透過 **自注意力機制** 捕捉長距離依賴 | 解決了 RNN/LSTM 長距離遺忘的問題。 |
+| **3. BERT MLM 策略** | (B) 隨機遮罩部分詞語並預測 | Masked Language Model 是 BERT 的核心預訓練任務。 |
+| **4. GloVe vs Word2Vec** | (C) Word2Vec 基於預測，GloVe 基於共現 | Word2Vec 預測上下文 (Predictive)，GloVe 統計共現矩陣 (Count-based)。 |
+| **6. N-gram 限制** | (B) 難以捕捉長距離依賴關係 | N-gram 只看前後 N 個字，無法理解整句語意。 |
+| **18. Attention Collapse 改善** | (D) 施加 **稀疏化約束 (Sparsity Constraint)** | 防止注意力機制退化成單純的平均分佈。 |
+| **19. 低資源語言訓練** | (B) 採用反向翻譯 (Back-Translation) | 資料增強技巧：A翻B，再B翻回A，增加訓練資料。 |
+| **33. 罕見詞訓練 (Word2Vec)** | (C) Skip-gram 模型 | Skip-gram 在處理罕見詞 (Rare Words) 上效果通常優於 CBOW。 |
+| **(第三科) 21. 多頭注意力優點** | (C) 從不同子空間捕捉多樣化關聯 | Multi-Head 讓模型能同時關注語法、語意等多種特徵。 |

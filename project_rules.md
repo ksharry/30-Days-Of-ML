@@ -32,20 +32,6 @@
 | **22** | 集成 | 模型調參 (Tuning) | *(沿用 XGBoost)* | Grid Search vs Random Search、貝葉斯優化觀念。 |
 | **23** | Deep Learning | 感知機與 MLP | XOR 邏輯閘 | 神經元結構、全連接層 (Dense)、激活函數 (ReLU/Sigmoid)。 |
 | **24** | Deep Learning | 神經網路訓練 | MNIST 手寫數字 | 反向傳播 (Backpropagation)、優化器 (Adam)。 |
-| **25** | Deep Learning | CNN (卷積神經網路) | 貓狗圖片分類 | 卷積層 (特徵提取)、池化層 (降維)、Flatten。 |
-| **26** | Deep Learning | 遷移學習 (Transfer) | 花卉分類 | 站在巨人肩膀上：使用 VGG16/ResNet 預訓練模型。 |
-| **27** | Deep Learning | RNN/LSTM | 國際航班乘客數 | 時間序列：處理序列數據、長短期記憶網絡、解決梯度消失。 |
-| **28** | Deep Learning | NLP 基礎 | 電影評論情感 | 文字轉數字：Word Embeddings (Word2Vec) 與 Tokenization。 |
-| **29** | 應用 | 模型部署 (Deployment) | *(任選一個模型)* | 落地應用：使用 Streamlit 打造你的第一個 ML Web App。 |
-| **30** | 總結 | AI 總結與未來 | *(無)* | 回顧與展望：技能樹總結、持續學習資源 (Paper/Kaggle)。 |
-| **31** | IPAS | Transformer 與 BERT | *(無)* | NLP 王者：Self-Attention 機制、BERT 實作情緒分析。 |
-| **32** | IPAS | 物件偵測 (YOLO) | *(無)* | 電腦視覺進階：從分類到偵測、YOLO 原理與實作。 |
-| **33** | IPAS | 生成式 AI (GAN) | 手寫數字 (MNIST) | 對抗生成網路：Generator vs Discriminator 的博弈。 |
-| **34** | IPAS | 生成式 AI (VAE) | 手寫數字 (MNIST) | 變分自編碼器：Latent Space 的機率分佈與重構。 |
-| **35** | IPAS | 生成式 AI (Diffusion) | 手寫數字 (MNIST) | 擴散模型：從雜訊中還原圖像 (Denoising)。 |
-| **36** | RL | 強化學習 (Q-Learning) | 尋寶遊戲 | 價值基礎 (Value-Based)：Q-Table、Epsilon-Greedy 策略。 |
-| **37** | RL | 強化學習 (DQN) | 倒立擺 (CartPole) | 深度 Q 網路：Experience Replay、Target Network。 |
-| **38** | RL | 強化學習 (Policy Gradient) | 登陸月球 (LunarLander) | 策略基礎 (Policy-Based)：直接學習動作機率 (REINFORCE)。 |
 | **39** | XAI | 可解釋 AI (XAI) | 房價預測 | 打開黑盒子：SHAP 值 (賽局理論)、LIME (局部解釋)。 |
 | **40** | RAG | 檢索增強生成 (RAG) | 私有知識庫 | 讓 AI 讀懂資料：Embedding、Vector Search、LLM 生成。 |
 
