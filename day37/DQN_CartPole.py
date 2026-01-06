@@ -7,11 +7,11 @@ from collections import deque
 import matplotlib.pyplot as plt
 import os
 
-# 嘗試匯入 gym，如果沒有則提示安裝
+# 嘗試匯入 gymnasium，如果沒有則提示安裝
 try:
-    import gym
+    import gymnasium as gym
 except ImportError:
-    print("請先安裝 gym: pip install gym")
+    print("請先安裝 gymnasium: pip install gymnasium[classic_control]")
     exit()
 
 # === 1. 超參數設定 ===
