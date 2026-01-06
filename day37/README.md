@@ -67,9 +67,7 @@ graph LR
 **DQN 核心公式 (Loss Function)**：
 我們希望神經網路預測的 Q 值，越接近真實目標越好。
 
-$$
-Loss = ( (R + \gamma \max Q_{target}(S', A')) - Q_{policy}(S, A) )^2
-$$
+$ Loss = ( (R + \gamma \max Q_{target}(S', A')) - Q_{policy}(S, A) )^2 $
 *(註：左邊是**老師算的目標 (Target)**，右邊是**學生猜的分數 (Prediction)**)*
 *   這其實就是 **MSE Loss** (均方誤差)。
 
