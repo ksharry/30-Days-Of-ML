@@ -30,7 +30,7 @@ transform = transforms.Compose([
     transforms.Normalize((0.5,), (0.5,)) # 將數值正規化到 [-1, 1] 之間，配合 Tanh
 ])
 
-dataset = torchvision.datasets.MNIST(root="dataset/", train=True, transform=transform, download=True)
+dataset = torchvision.datasets.MNIST(root="day33/dataset/", train=True, transform=transform, download=True)
 loader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
 
 # === 3. 定義模型 (Generator & Discriminator) ===

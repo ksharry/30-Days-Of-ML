@@ -26,7 +26,7 @@ os.makedirs("day34/pic", exist_ok=True)
 print(f"使用裝置: {DEVICE}")
 
 # === 2. 準備資料集 ===
-dataset = torchvision.datasets.MNIST(root="dataset/", train=True, transform=transforms.ToTensor(), download=True)
+dataset = torchvision.datasets.MNIST(root="day34/dataset/", train=True, transform=transforms.ToTensor(), download=True)
 loader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
 
 # === 3. 定義 VAE 模型 ===

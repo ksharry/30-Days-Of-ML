@@ -30,7 +30,7 @@ transform = transforms.Compose([
     transforms.Lambda(lambda x: (x - 0.5) * 2) # 正規化到 [-1, 1]
 ])
 
-dataset = torchvision.datasets.MNIST(root="dataset/", train=True, transform=transform, download=True)
+dataset = torchvision.datasets.MNIST(root="day35/dataset/", train=True, transform=transform, download=True)
 loader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
 
 # === 3. 定義 Diffusion 核心組件 ===
