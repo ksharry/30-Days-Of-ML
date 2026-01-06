@@ -34,9 +34,10 @@
 | **24** | Deep Learning | 神經網路訓練 | MNIST 手寫數字 | 反向傳播 (Backpropagation)、優化器 (Adam)。 |
 | **39** | XAI | 可解釋 AI (XAI) | 房價預測 | 打開黑盒子：SHAP 值 (賽局理論)、LIME (局部解釋)。 |
 | **40** | RAG | 檢索增強生成 (RAG) | 私有知識庫 | 讓 AI 讀懂資料：Embedding、Vector Search、LLM 生成。 |
-| **41** | MLOps | MLOps 進階 | 模擬日誌資料 | Kubernetes, Drift Detection, CI/CD。 |
-| **42** | Security | AI 安全與隱私 | *(無)* | 對抗式攻擊, 同態加密, 聯邦學習。 |
-| **43** | Stats | 經典統計與時間序列 | 模擬銷售數據 | ARIMA, 統計檢定, 實驗設計。 |
+| **41** | IPAS | IPAS 考前總複習 | 114年試題 | 考題分佈索引與綜合觀念解析。 |
+| **42** | MLOps | MLOps 進階 | 模擬日誌資料 | Kubernetes, Drift Detection, CI/CD。 |
+| **43** | Security | AI 安全與隱私 | *(無)* | 對抗式攻擊, 同態加密, 聯邦學習。 |
+| **44** | Stats | 經典統計與時間序列 | 模擬銷售數據 | ARIMA, 統計檢定, 實驗設計。 |
 
 ## 1. Project Context
 這是一個為期 30 天的機器學習實戰挑戰專案，目標是從入門到落地。
