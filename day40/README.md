@@ -32,7 +32,7 @@ LLM (如 ChatGPT) 很強，但有兩個致命傷：
 graph TD
     User["User Question <br> (Harry 的貓叫什麼?)"] --> Embed_Q["Embedding Model <br> (轉成向量)"]
     
-    subgraph Knowledge Base (私有資料庫)
+    subgraph KB ["Knowledge Base (私有資料庫)"]
         Doc1["Doc: Harry 的貓叫 Oreo"] --> Embed_D["Embedding Model"]
         Embed_D --> VectorDB[("Vector Database <br> 向量資料庫")]
     end
@@ -62,8 +62,17 @@ graph TD
 我們不依賴複雜的框架 (如 LangChain)，直接用 Python 從頭刻一個 RAG，讓你徹底理解原理。
 
 ### 3.1 程式碼架構 (`RAG_Demo.py`)
-1.  **資料準備**：我們準備一些關於 "30-Days-Of-ML" 的虛構私有資料。
-2.  **Embedding 模型**：使用 `sentence-transformers` (輕量級 BERT) 來將文字轉向量。
+1.  **資料準備**：我們準備一些關於 "30-Days-Of-ML" 的虛構私有資料 (為了配合 GPT-2，我們使用英文)。
+    ```python
+    documents = [
+        "30-Days-Of-ML is a machine learning challenge initiated by Harry.",
+        "In Day 37, we learned the DQN algorithm to play the CartPole game.",
+        "The topic of Day 39 was XAI (Explainable AI), using the SHAP library.",
+        "Harry's cat is named 'Oreo', and it loves sleeping on the keyboard.",
+        "The ultimate goal of this project is to build a RAG system."
+    ]
+    ```
+2.  **Embedding 模型**：使用 `sentence-transformers` (all-MiniLM-L6-v2) 來將文字轉向量。
 3.  **向量搜尋**：使用 `numpy` 計算 **餘弦相似度 (Cosine Similarity)**，找出最相關的資料。
 4.  **生成回答**：使用 `transformers` (GPT-2) 根據找到的資料回答問題。
 
@@ -71,21 +80,20 @@ graph TD
 執行程式後，你會看到類似以下的輸出：
 
 ### 4.1 檢索成功 (Retrieval Works!)
-當我們問 **「Harry 的貓叫什麼名字？」** 時：
+當我們問 **"What is the name of Harry's cat?"** 時：
 ```text
 【檢索到的相關資料】 :
-1. Harry 的貓叫做 'Oreo'，牠喜歡睡在鍵盤上。 (相似度: 17.1354)
+1. Harry's cat is named 'Oreo', and it loves sleeping on the keyboard. (相似度: 0.8234)
 ```
-*   **分析**：系統成功從知識庫中找到了 **"Oreo"** 這條資訊，證明 Embedding 和向量搜尋是運作正常的。
+*   **分析**：系統成功從知識庫中找到了 **"Oreo"** 這條資訊。
 
-### 4.2 生成結果 (Generation Limitations)
+### 4.2 生成結果 (Generation)
 ```text
-Question: Harry 的貓叫什麼名字？
-Answer: This was the name of the King's residence... (胡言亂語)
+Question: What is the name of Harry's cat?
+Answer: Oreo
 ```
-*   **分析**：你可能會發現 AI 回答得很奇怪 (或是講英文)。
-*   **原因**：為了讓大家在個人電腦 (CPU) 也能跑，我們使用的是最迷你的 **GPT-2** 模型。它主要懂英文，且邏輯能力有限。
-*   **解決方案**：在真實產品中，我們會把這一段換成 **OpenAI API (GPT-4)** 或 **Llama 3**，那樣回答就會非常完美：「根據資料，Harry 的貓叫 Oreo。」
+*   **分析**：這次因為我們使用了英文資料和英文問題，GPT-2 終於能看懂 Context 並正確回答了！
+*   這證明了 **RAG 的威力**：即使 GPT-2 原本不知道 Harry 是誰，但只要我們給它資料，它就能回答正確。
 
 ## 5. 進階 RAG 架構 (Production RAG)
 這是我們以前製作的完整 RAG 架構圖，展示了企業級應用是怎麼做的：

@@ -7,21 +7,21 @@ set_seed(42)
 
 # === 1. 準備私有知識庫 (Knowledge Base) ===
 # 假設這是我們公司內部的文檔，ChatGPT 訓練資料裡絕對沒有
+# 我們將資料改為英文，以配合 GPT-2 的生成能力
 documents = [
-    "30-Days-Of-ML 是一個由 Harry 發起的機器學習挑戰計畫。",
-    "在 Day 37 中，我們學習了 DQN 演算法來玩 CartPole 遊戲。",
-    "Day 39 的主題是 XAI (可解釋 AI)，使用了 SHAP 套件。",
-    "Harry 的貓叫做 'Oreo'，牠喜歡睡在鍵盤上。",
-    "這個專案的最終目標是建立一個 RAG 系統。"
+    "30-Days-Of-ML is a machine learning challenge initiated by Harry.",
+    "In Day 37, we learned the DQN algorithm to play the CartPole game.",
+    "The topic of Day 39 was XAI (Explainable AI), using the SHAP library.",
+    "Harry's cat is named 'Oreo', and it loves sleeping on the keyboard.",
+    "The ultimate goal of this project is to build a RAG system."
 ]
 
 print(f"知識庫載入完成，共有 {len(documents)} 筆資料。")
 
 # === 2. 向量化 (Embedding) ===
-# 載入一個輕量級的中文/多語言 Embedding 模型
-# 'paraphrase-multilingual-MiniLM-L12-v2' 支援中文，且速度快
+# 使用標準的英文 Embedding 模型，效果比多語言版本更精準
 print("正在載入 Embedding 模型 (sentence-transformers)...")
-embedder = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+embedder = SentenceTransformer('all-MiniLM-L6-v2')
 
 # 把所有文檔變成向量
 doc_embeddings = embedder.encode(documents)
@@ -66,18 +66,20 @@ def rag_pipeline(query):
     
     # Step 2: 生成 (Generate)
     # 組合 Prompt
-    # 注意: 因為 GPT-2 是英文模型，我們這裡用英文 Prompt 格式演示結構
     prompt = f"Context: {context}\nQuestion: {query}\nAnswer:"
     
     print("-" * 30)
     print("【AI 生成中...】")
-    # 這裡生成的品質取決於模型大小，GPT-2 對中文支援極差，主要看它是否能參考 Context
-    output = generator(prompt, max_length=150, num_return_sequences=1, truncation=True)
-    print(output[0]['generated_text'])
+    # 設定 max_new_tokens 避免生成過短或過長
+    output = generator(prompt, max_new_tokens=50, num_return_sequences=1, truncation=True)
+    
+    # 只顯示生成的回答部分 (去掉 Prompt)
+    generated_text = output[0]['generated_text']
+    print(generated_text.replace(prompt, "").strip())
 
 # === 5. 測試 ===
-# 測試 1: 問專案內容
-rag_pipeline("Harry 的貓叫什麼名字？")
+# 測試 1: 問專案內容 (英文提問)
+rag_pipeline("What is the name of Harry's cat?")
 
-# 測試 2: 問技術細節
-rag_pipeline("Day 39 教了什麼？")
+# 測試 2: 問技術細節 (英文提問)
+rag_pipeline("What did we learn in Day 39?")
