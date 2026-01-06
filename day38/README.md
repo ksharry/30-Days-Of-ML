@@ -114,6 +114,7 @@ graph LR
     *   *(註：如果你看到分數突然飆到 500，那是因為我們在程式碼中用了 CartPole 作為備案，CartPole 滿分就是 500)*。
 
 ## 5. 下一關預告
-Policy Gradient 雖然強大，但訓練很慢 (因為要玩完一整場才能更新一次)。
-Day 39 我們將介紹 **Actor-Critic (演員-評論家)**。
-結合 DQN (Value-Based) 和 Policy Gradient (Policy-Based) 的優點，讓訓練更有效率！
+Policy Gradient 雖然強大，但訓練很慢。
+Day 39 我們將探討 **XAI (可解釋 AI)**。
+為什麼 AI 會這樣判斷？我們該如何監管它？
+這是邁向 AI 資深工程師的必修課。
