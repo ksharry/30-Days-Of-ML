@@ -33,5 +33,15 @@
 | **29** | 應用 | 模型部署 (Deployment) | *(任選一個模型)* | 落地應用：使用 Streamlit 打造你的第一個 ML Web App。 |
 | **30** | 總結 | AI 總結與未來 | *(無)* | 回顧與展望：技能樹總結、持續學習資源 (Paper/Kaggle)。 |
 | **31** | NLP | Transformer 與 BERT | *(無)* | NLP 王者：Self-Attention 機制、BERT 實作情緒分析。 |
-2. py -3.10 -m pip xxx
-29. py -3.10 -m streamlit run day29/Streamlit_App.py --server.port 8501 --server.headless true
+| **32** | CV | 物件偵測 (YOLO) | *(無)* | 電腦視覺進階：從分類到偵測、YOLO 原理與實作。 |
+| **33** | GenAI | 生成式 AI (GAN) | 手寫數字 (MNIST) | 對抗生成網路：Generator vs Discriminator 的博弈。 |
+| **34** | GenAI | 生成式 AI (VAE) | 手寫數字 (MNIST) | 變分自編碼器：Latent Space 的機率分佈與重構。 |
+| **35** | GenAI | 生成式 AI (Diffusion) | 手寫數字 (MNIST) | 擴散模型：從雜訊中還原圖像 (Denoising)。 |
+| **36** | RL | 強化學習 (Q-Learning) | 尋寶遊戲 | 價值基礎 (Value-Based)：Q-Table、Epsilon-Greedy 策略。 |
+| **37** | RL | 強化學習 (DQN) | 倒立擺 (CartPole) | 深度 Q 網路：Experience Replay、Target Network。 |
+| **38** | RL | 強化學習 (Policy Gradient) | 登陸月球 (LunarLander) | 策略基礎 (Policy-Based)：直接學習動作機率 (REINFORCE)。 |
+| **39** | XAI | 可解釋 AI (XAI) | 房價預測 | 打開黑盒子：SHAP 值 (賽局理論)、LIME (局部解釋)。 |
+| **40** | RAG | 檢索增強生成 (RAG) | 私有知識庫 | 讓 AI 讀懂資料：Embedding、Vector Search、LLM 生成。 |
+| **41** | MLOps | MLOps 進階 | 模擬日誌資料 | Kubernetes, Drift Detection, CI/CD。 |
+| **42** | Security | AI 安全與隱私 | *(無)* | 對抗式攻擊, 同態加密, 聯邦學習。 |
+| **43** | Stats | 經典統計與時間序列 | 模擬銷售數據 | ARIMA, 統計檢定, 實驗設計。 |
