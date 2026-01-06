@@ -1,7 +1,5 @@
 # Day 40: 讓 AI 讀懂你的資料 - RAG (檢索增強生成)
 
-## 1. 畢業專題：AI 的最後一塊拼圖
-恭喜你來到第 40 天！
 我們從最基礎的線性回歸，一路學到了深度學習、Transformer、強化學習，最後是 XAI。
 今天，我們要挑戰目前業界最熱門的技術：**RAG (Retrieval-Augmented Generation)**。
 
@@ -27,6 +25,39 @@ LLM (如 ChatGPT) 很強，但有兩個致命傷：
     *   把「找到的規定」+「使用者的問題」組合成 Prompt。
     *   丟給 LLM 生成最終答案。
 
+### 2.1 RAG 架構圖
+這張圖展示了 RAG 如何讓 AI 變得「有腦袋」：
+
+```mermaid
+graph TD
+    User[User Question <br> (Harry 的貓叫什麼?)] --> Embed_Q[Embedding Model <br> (轉成向量)]
+    
+    subgraph Knowledge Base (私有資料庫)
+        Doc1[Doc: Harry 的貓叫 Oreo] --> Embed_D[Embedding Model]
+        Embed_D --> VectorDB[(Vector Database <br> 向量資料庫)]
+    end
+    
+    Embed_Q --> Search{Vector Search <br> (找最像的)}
+    VectorDB --> Search
+    
+    Search --> Context[Retrieved Context <br> (找到: 貓叫 Oreo)]
+    
+    Context --> Prompt[Prompt <br> (Context + Question)]
+    User --> Prompt
+    
+    Prompt --> LLM[LLM <br> (ChatGPT/GPT-2)]
+    LLM --> Answer[Answer <br> (Harry 的貓叫 Oreo)]
+    
+    style VectorDB fill:#f9f,stroke:#333,stroke-width:2px
+    style LLM fill:#bbf,stroke:#333,stroke-width:2px
+```
+
+> **圖解說明**：
+> 1.  **右邊 (Knowledge Base)**：我們先把私有資料 (貓的名字) 轉成向量存起來。
+> 2.  **左邊 (User)**：使用者問問題，也轉成向量。
+> 3.  **中間 (Search)**：用向量比對，找出最相關的資料 (Context)。
+> 4.  **下方 (LLM)**：把「問題」和「找到的答案」一起餵給 LLM，讓它用人話講出來。
+
 ## 3. 實戰：打造一個 Mini RAG
 我們不依賴複雜的框架 (如 LangChain)，直接用 Python 從頭刻一個 RAG，讓你徹底理解原理。
 
@@ -41,9 +72,7 @@ LLM (如 ChatGPT) 很強，但有兩個致命傷：
 *   **檢索結果**：系統會精準找出我們寫在資料裡的定義。
 *   **AI 回答**：AI 會參考這些資料，生成一段介紹。
 
-## 5. 畢業感言
-這 40 天的旅程，我們從 `y = ax + b` 開始，最後做出了能讀懂資料的 AI。
-機器學習的世界還很大 (MLOps, Edge AI, Quantum ML...)，但你已經掌握了最核心的鑰匙。
-
-**Keep Learning, Keep Coding!** 
-*(別忘了去 GitHub 點個 Star!)*
+## 5. 下一關預告
+RAG 是目前企業導入 AI 最重要的技術。
+Day 41 我們將進入 **中級考題解析**。
+我們會拿真實的考試題目來練習，驗收這 40 天的學習成果！
