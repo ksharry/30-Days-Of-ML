@@ -112,8 +112,8 @@
 | **40. 矩陣運算** | (C) np.dot(v1, v2) 為內積 | Day 01 (Math) |
 | **41. 條件機率程式碼** | (D) P(A\|B) = P(A∩B)/P(B) | Day 08 (Prob) |
 | **42. VGG16 參數量最多** | (B) 全連接層 (Linear) | Day 45 (VGG16) |
-| **43. VGG16 運算量最多** | (A) 卷積層 (Conv2d) | Day 45 (VGG16)  |
-| **44. VGG16 敘述正確** | (D) **VGG16** 架構為 13 層卷積 + 3 層全連接 | Day 45 (VGG16)  |
+| **43. VGG16 運算量最多** | (A) 卷積層 (Conv2d) | Day 45 (VGG16) |
+| **44. VGG16 敘述正確** | (D) **VGG16** 架構為 13 層卷積 + 3 層全連接 | Day 45 (VGG16) |
 | **45. 遷移學習凍結** | (B) 設定 `param.requires_grad = False` | Day 26 (Transfer) |
 | **46. PCA 降噪修正** | (B) 需使用 `inverse_transform` 還原 | Day 16 (PCA) |
 | **47. KNN 交叉驗證** | (B) 程式碼 A 與 C 正確 | Day 07 (KNN) |
