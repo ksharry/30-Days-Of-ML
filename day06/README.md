@@ -25,20 +25,61 @@
 2.  **標準化**：使用 `StandardScaler`。這對於繪製漂亮的決策邊界非常重要。
 
 ## 2. 原理
-### 核心公式與參數
+### 2.1 核心公式與參數
 邏輯回歸的核心是 **Sigmoid 函數**，它能將任何數值壓縮到 0 到 1 之間，代表「機率」。
 
 $$P(y=1|x) = \frac{1}{1 + e^{-(ax+b)}}$$
 
 *   **$ax+b$**：原本的線性回歸公式。
+
 *   **Sigmoid**：將直線彎曲成 S 型曲線。
 *   **決策邊界 (Decision Boundary)**：通常以 0.5 為界。機率 > 0.5 猜 1 (買)，機率 < 0.5 猜 0 (不買)。
 
-### 評估指標概念 (Evaluation Metrics)
+### 2.2 特徵工程與穩定性分析 (Feature Engineering & Stability)
+在建立信用評分卡 (Credit Scorecard) 或風險模型時，我們不僅關心準確率，更關心模型的**解釋性**與**穩定性**。
+
+#### 特徵選擇與多重共線性 (Multicollinearity) 分析
+*   **問題**：如果兩個特徵高度相關 (例如「年收入」和「月收入」)，模型會感到困惑，不知道該把權重給誰。這會導致參數估計不穩定，甚至正負號相反。
+*   **檢測方法**：**VIF (Variance Inflation Factor, 變異數膨脹因子)**。
+    *   通常 VIF > 10 (嚴格一點是 > 5) 代表存在嚴重共線性，建議移除該特徵或進行降維 (PCA)。
+    *   **本案實測**：`Age` VIF = **4.58**，`EstimatedSalary` VIF = **4.58**。兩者皆小於 5，無嚴重共線性問題。
+
+#### 分箱 (Binning) 與資訊值 (Information Value, IV) 檢定
+*   **分箱 (Binning)**：將連續變數切成幾個區間 (例如：年齡 20-30, 30-40...)。
+    *   **目的**：增加模型對異常值的魯棒性 (Robustness)，並捕捉非線性關係。
+*   **WOE (Weight of Evidence)**：衡量每個箱子裡「好人/壞人」比例與整體比例的差異。
+*   **IV (Information Value)**：衡量這整個特徵 (所有箱子加起來) 對預測目標有多大的貢獻。
+    *   **IV < 0.02**: 無預測力 (Useless)
+    *   **0.02 < IV < 0.1**: 弱預測力 (Weak)
+    *   **0.1 < IV < 0.3**: 中等預測力 (Medium)
+    *   **IV > 0.3**: 強預測力 (Strong) -> **這是我們要找的好特徵！**
+    *   **本案實測**：
+        *   `Age` IV = **2.40** (超強預測力)
+        *   `EstimatedSalary` IV = **1.48** (超強預測力)
+        *   結論：這兩個特徵都非常有效！
+
+#### 樣本穩定性指標 (Population Stability Index, PSI)
+*   **問題**：模型上線後，客群可能會改變 (例如：疫情爆發，大家的消費習慣變了)。這時候模型還準嗎？
+*   **PSI**：用來衡量「開發時的樣本分佈」與「現在實際的樣本分佈」差多少。
+    *   **PSI < 0.1**: 穩定 (No shift) -> 模型可以繼續用。
+    *   **0.1 < PSI < 0.25**: 略有變動 (Minor shift) -> 需密切觀察。
+    *   **PSI > 0.25**: 重大變動 (Major shift) -> **模型失效，需要重新訓練！**
+    *   **本案實測 (Train vs Test)**：
+        *   `Age` PSI = **0.18** (略有變動，需觀察)
+        *   `EstimatedSalary` PSI = **0.29** (重大變動，注意！因為資料量小且隨機切分，分佈差異較大)
+
+### 2.4 評估指標概念 (Evaluation Metrics)
 我們使用混淆矩陣 (Confusion Matrix) 來評估分類模型的表現。
 *(詳細的評估指標如 Precision, Recall, F1-Score 與 ROC 曲線，我們將在 **Day 12** 進行深入探討)*
 
-![Confusion Matrix Explanation](pic/6-5.png)
+
+| | **真實狀況 (Actual Condition)** | |
+| :--- | :---: | :---: |
+| | **事實為真 (True)** | **事實為假 (False)** |
+| **預測狀況 (Predicted Condition)** | | |
+| **預測為 <span style="color:red; background-color:#ffe6e6; padding:2px;">陽性 (Positive)</span>** | **TP** | **FP** <br> (TYPE I ERROR) |
+| **預測為 <span style="color:blue; background-color:#e6f3ff; padding:2px;">陰性 (Negative)</span>** | **FN** <br> (TYPE II ERROR) | **TN** |
+
 
 ## 3. 實戰
 ### Python 程式碼實作

@@ -105,7 +105,13 @@ random_search.fit(X_train, y_train)
 #### 5.3 流程三：不要過度調參 (Over-tuning)
 *   **提醒**：如果調了半天只進步 0.0001，那可能是在浪費時間，甚至導致 Overfitting。資料品質通常比參數更重要。
 
-## 6. 總結
+## 6. 進階：AutoML (自動化機器學習)
+如果 Grid Search 是地毯式轟炸，Random Search 是隨機抽樣，那 **AutoML (如 Optuna)** 就是配備了導航系統的精準導彈。
+*   **概念**：它不僅僅是調參數，還能自動幫你選擇模型、甚至做特徵工程。
+*   **貝葉斯優化 (Bayesian Optimization)**：這是 AutoML 常用的核心技術。它會參考「上一次的實驗結果」來決定「下一次要試哪組參數」，而不是像 Random Search 那樣瞎猜。這讓它能用更少的次數找到更好的解。
+*   **常用工具**：Optuna, TPOT, Auto-sklearn。
+
+## 7. 總結
 Day 22 我們學習了 **模型調參**。
 *   **Grid Search** 是地毯式搜索，慢但穩。
 *   **Random Search** 是隨機抽樣，快且有效。

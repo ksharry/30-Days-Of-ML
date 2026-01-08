@@ -48,7 +48,7 @@
 | **33. 罕見詞訓練 (Word2Vec)** | (C) Skip-gram 模型 | Day 31 (NLP) (已補充) |
 | **34. 個體識別** | (C) 實例分割 (Instance Segmentation) | Day 32 (CV) (已補充) |
 | **35. CLIP 特性** | (A) 圖文對比學習，零樣本分類 | Day 33 (GenAI) (已補充) |
-| **36. 系統化參數測試** | (B) 網格搜尋 (Grid Search) | Day 22 (Tuning) |
+| **36. 系統化參數測試** | (B) 網格搜尋 (Grid Search) | Day 22 (Tuning) (AutoML) |
 | **37. GPU 記憶體不足** | (B) 較小 Batch Size 搭配資料分片 | Day 24 (Training) |
 | **38. Stable Diffusion 清晰度** | (B) 增加 **取樣步數** 並選擇高品質取樣器 | Day 35 (Diffusion) |
 | **39. ARIMA 殘差自相關** | (C) 模型配適不足，需調整 p, q 參數 | Day 44 (Time Series) (已補充) |
@@ -79,8 +79,8 @@
 | **7. LSTM 應用** | (A) 預測電力需求趨勢 (時間序列) | Day 28 (LSTM) |
 | **8. 資訊增益應用** | (D) 決策樹模型 | Day 09 (Decision Tree) |
 | **9. 距離模型前處理** | (A) 特徵縮放 (Feature Scaling) | Day 07 (KNN) |
-| **10. AutoML 適用情境** | (C) 行銷部門需快速比較多種模型 | Day 22 (Tuning) |
-| **11. Random Search 優勢** | (D) 更有效率搜尋高維參數空間 | Day 22 (Tuning) |
+| **10. AutoML 適用情境** | (C) 行銷部門需快速比較多種模型 | Day 22 (Tuning) (AutoML) |
+| **11. Random Search 優勢** | (D) 更有效率搜尋高維參數空間 | Day 22 (Tuning) (AutoML) |
 | **12. 改善收斂不穩** | (C) 調整學習率 (Learning Rate) | Day 24 (Training) |
 | **13. 標籤偏差原因** | (B) 標記資料帶有主觀偏見 | Day 43 (Bias) (已補充) |
 | **14. 可解釋性關鍵情境** | (C) 醫療診斷 (腫瘤判斷) | Day 39 (XAI) |
