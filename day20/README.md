@@ -66,6 +66,14 @@ $$Obj \approx \text{const} + g_i f_t(x_i) + \frac{1}{2} h_i f_t^2(x_i)$$
 *   **左邊 (紅色線)**：是目前的預測結果。可以看到隨著棒次增加 (Tree 1 -> Tree 1+2 -> Tree 1+2+3)，紅線越來越貼近黑色的數據點。
 *   **右邊 (藍色線)**：是每一棒要解決的「殘差」。可以看到殘差越來越小，代表誤差被一點一點修補起來了。
 
+### 2.3 進階技巧：Early Stopping 與 Patience
+在訓練 XGBoost 時，我們常會看到驗證集的 Loss 上上下下震盪，這時候該什麼時候停下來呢？
+*   **Early Stopping (早期停止)**：當驗證集的表現不再進步時，就停止訓練，防止 Overfitting。
+*   **Patience (耐心值)**：
+    *   **問題**：有時候 Loss 只是暫時變差 (震盪)，下一輪可能又變好了。如果一變差就停，可能會錯過後面的好結果。
+    *   **解法**：設定一個 `early_stopping_rounds` (即 Patience)。例如設為 10，代表「就算現在變差了，我再多給你 10 次機會」。如果 10 次內都沒創新高，才真的停止。
+    *   **效果**：有效解決 Loss 震盪造成的誤判，找到真正的全域最佳解。
+
 ## 3. 實戰
 ### Python 程式碼實作
 完整程式連結：[XGBoost_Diabetes.py](XGBoost_Diabetes.py)
@@ -83,7 +91,7 @@ model = XGBClassifier(n_estimators=100, learning_rate=0.1, max_depth=3)
 
 # 3. 邊訓練邊驗證 (Early Stopping)
 # 如果修正 10 次發現誤差都沒有變小，就提早結束，省力氣
-model.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=False)
+model.fit(X_train, y_train, eval_set=[(X_test, y_test)], early_stopping_rounds=10, verbose=False)
 ```
 
 ## 4. 模型評估與視覺化

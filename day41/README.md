@@ -85,7 +85,7 @@
 | **13. 標籤偏差原因** | (B) 標記資料帶有主觀偏見 | Day 43 (Bias) (已補充) |
 | **14. 可解釋性關鍵情境** | (C) 醫療診斷 (腫瘤判斷) | Day 39 (XAI) |
 | **15. R-Squared 意義** | (B) 85% 的變異可被模型解釋 | Day 02 (Regression) |
-| **16. F1 Score 計算** | (A) 2*(0.8*0.6)/(0.8+0.6) ≈ 0.686 | Day 12 (Evaluation) (已補充) |
+| **16. F1 Score 計算** | (A) 2*(0.8*0.6)/(0.8+0.6) ≈ 0.686 | Day 12 (Evaluation) |
 | **17. 動量優化器** | (B) Adam (結合動量與 RMSProp) | Day 24 (Training) |
 | **18. XGBoost 改進** | (A) 引入 **正則化項**、支援缺失值與並行 | Day 20 (XGBoost) |
 | **19. 不平衡資料處理 (不適合)** | (C) 使用準確率 (Accuracy) 評估 | Day 11 (Imbalanced) |
@@ -98,9 +98,9 @@
 | **26. 防止過擬合 (非)** | (D) 擴增輸入特徵 (增加複雜度) | Day 04 (Regularization) |
 | **27. 線性激活問題** | (D) 改用 ReLU 引入非線性 | Day 23 (MLP) |
 | **28. 取樣偏差** | (C) 訓練樣本僅涵蓋高活躍顧客 | Day 43 (Bias) (已補充) |
-| **29. 長期穩健性** | (D) 時間序列交叉驗證 (Rolling Window) | Day 27 (Time Series) |
+| **29. 長期穩健性** | (D) 時間序列交叉驗證 (Rolling Window) | Day 44 (Time Series) (已補充) |
 | **30. 跨語言效能下降** | (C) 語言轉移造成 Recall 下降 | Day 26 (Transfer) |
-| **31. 早停策略** | (B) 監控驗證集損失並設定 Patience | Day 24 (Training) |
+| **31. 早停策略** | (B) 監控驗證集損失並設定 Patience | Day 20 (XGBoost) |
 | **32. 特徵篩選 (正則化)** | (D) L1 正則化 (Lasso) | Day 04 (Regularization) |
 | **33. 全對全比對複雜度** | (B) O(n²) | Day 07 (KNN) |
 | **34. 小樣本驗證** | (D) 分層留一法 (Stratified LOOCV) | Day 12 (Evaluation) (已補充) |
@@ -108,12 +108,12 @@
 | **36. 同態加密特性** | (D) 加密狀態下仍可進行運算 | Day 43 (Security) (已補充) |
 | **37. 安全多方計算** | (D) 同態加密 + MPC + 雜湊 + 對稱加密 | Day 43 (Security) (已補充) |
 | **38. 程式碼指標** | (B) MSE (均方誤差) | Day 02 (Regression) |
-| **39. 程式碼正則化** | (C) Dropout (隨機丟棄神經元) | Day 24 (Training) |
+| **39. 程式碼正則化** | (C) Dropout (隨機丟棄神經元) | Day 25 (CNN) |
 | **40. 矩陣運算** | (C) np.dot(v1, v2) 為內積 | Day 01 (Math) |
 | **41. 條件機率程式碼** | (D) P(A\|B) = P(A∩B)/P(B) | Day 08 (Prob) |
-| **42. VGG16 參數量最多** | (B) 全連接層 (Linear) | Day 26 (VGG16) |
-| **43. VGG16 運算量最多** | (A) 卷積層 (Conv2d) | Day 25 (CNN) (已補充) |
-| **44. VGG16 敘述正確** | (D) **VGG16** 架構為 13 層卷積 + 3 層全連接 | Day 26 (VGG16) |
+| **42. VGG16 參數量最多** | (B) 全連接層 (Linear) | Day 45 (VGG16) |
+| **43. VGG16 運算量最多** | (A) 卷積層 (Conv2d) | Day 45 (VGG16)  |
+| **44. VGG16 敘述正確** | (D) **VGG16** 架構為 13 層卷積 + 3 層全連接 | Day 45 (VGG16)  |
 | **45. 遷移學習凍結** | (B) 設定 `param.requires_grad = False` | Day 26 (Transfer) |
 | **46. PCA 降噪修正** | (B) 需使用 `inverse_transform` 還原 | Day 16 (PCA) |
 | **47. KNN 交叉驗證** | (B) 程式碼 A 與 C 正確 | Day 07 (KNN) |

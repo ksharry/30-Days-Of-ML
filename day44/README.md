@@ -18,6 +18,18 @@
     *   今天的價格 - 昨天的價格 = 漲跌幅。
     *   漲跌幅通常會在 0 附近波動，就是平穩的！
 
+### 1.2 時間序列驗證策略 (Time Series Validation)
+這是一個非常重要的考點 (Q29)。
+*   **問題**：一般的 K-Fold Cross Validation 能不能用在時間序列？
+    *   **答案**：**絕對不行！** 因為時間序列有「順序性」。如果你隨機切分 (Random Split)，就會發生「拿未來的資料來預測過去」(Look-ahead Bias) 的荒謬情況。
+*   **正確策略**：**Rolling Window Cross Validation (滾動視窗交叉驗證)**，又稱為 Time Series Split。
+    *   **方法**：
+        *   Fold 1: Train [1-3月], Test [4月]
+        *   Fold 2: Train [1-4月], Test [5月]
+        *   Fold 3: Train [1-5月], Test [6月]
+    *   **特點**：永遠只用「過去」預測「未來」，符合真實世界情境。
+    *   **應用**：評估模型在長期時間軸上的**穩健性 (Robustness)**。
+
 ## 2. ARIMA 模型詳解
 ARIMA 是三個字的縮寫：**AR + I + MA**。
 
